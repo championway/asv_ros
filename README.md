@@ -19,7 +19,6 @@
 |IMU		|???						|
 |GPS			|???					|
 |Depth sensors	|???						|
-g on...]()
 
 ## Installation
 
