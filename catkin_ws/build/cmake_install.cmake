@@ -135,6 +135,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/arg/asv_ros/catkin_ws/build/localization/localization/cmake_install.cmake")
   include("/home/arg/asv_ros/catkin_ws/build/asv_msgs/cmake_install.cmake")
   include("/home/arg/asv_ros/catkin_ws/build/joystick_control/cmake_install.cmake")
+  include("/home/arg/asv_ros/catkin_ws/build/navigation/cmake_install.cmake")
   include("/home/arg/asv_ros/catkin_ws/build/control/cmake_install.cmake")
 
 endif()

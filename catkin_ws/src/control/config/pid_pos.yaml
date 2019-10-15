@@ -2,12 +2,12 @@
 dictitems:
   Kd: 0.01
   Ki: 0.0
-  Kp: 0.34
+  Kp: 0.16
   groups: !!python/object/new:dynamic_reconfigure.encoding.Config
     dictitems:
       Kd: 0.01
       Ki: 0.0
-      Kp: 0.34
+      Kp: 0.16
       groups: !!python/object/new:dynamic_reconfigure.encoding.Config
         state: []
       id: 0

@@ -20,9 +20,7 @@
 |GPS			|???					|
 |Depth sensors	|???						|
 
-## Installation
-
-## How to Build (Software)
+## How to Build
 1. For ROS part
 ```
 $ cd ~/
@@ -58,12 +56,5 @@ $ roslaunch asv localizatin.launch
 
 ### Run Single Ponit Navigation
 ```
-(TX2)
-$ roslaunch duckiepond moos.launch sim:=false veh:=BRIAN moos_folder:=single_waypt
-(TX2)
-$ cd ~/duckiepond-nctu/moos/missions/single_waypt
-$ ./launch_vehicle.sh -b
-(LAPTOP)
-$ cd ~/duckiepond-nctu/moos/missions/single_waypt
-$ ./launch_shoreside.sh
+$ roslaunch asv waypoint.launch
 ```

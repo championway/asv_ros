@@ -47,11 +47,16 @@ if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_
     "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Boxlist.msg"
     "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg"
     "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg"
+    "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+    "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
     )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/asv_msgs/srv" TYPE FILE FILES "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/asv_msgs/srv" TYPE FILE FILES
+    "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
+    "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+    )
 endif()
 
 if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)

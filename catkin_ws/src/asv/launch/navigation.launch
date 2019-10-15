@@ -1,11 +1,13 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="veh" default="BRIAN"/>
-    <arg name="sim" default="false" />
+    <arg name="veh" default="ASV"/>
 
     <group ns="$(arg veh)">
-        <node pkg="control" type="multipoint.py" name="multi_waypoint" output="screen" >
-            <param name="nav/sim" value="$(arg sim)"/> 
+    	<remap from="get_goals_rviz/odometry" to="localization_gps_imu/odometry"/>
+    	<remap from="navigation/odometry" to="localization_gps_imu/odometry"/>
+        <node pkg="navigation" type="get_goals_rviz.py" name="get_goals_rviz" output="screen" >
+        </node>
+        <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
         </node>
     </group>
 

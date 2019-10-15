@@ -16,7 +16,7 @@ import rospkg
 from cv_bridge import CvBridge, CvBridgeError
 from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
-from duckiepond.msg import MotorCmd,UsvDrive
+from asv_msgs.msg import RobotGoal, MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
 
 from PID import PID_control
@@ -33,60 +33,45 @@ class Robot_PID():
 		self.cmd_ctrl_min = -0.95
 		self.station_keeping_dis = 3.5 # meters
 		self.frame_id = 'map'
-		self.is_station_keeping = False
-		self.stop_pos = []
-		self.final_goal = None # The final goal that you want to arrive
-		self.goal = self.final_goal
+		self.goal = None
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 
-
-		# Param
-		self.tune  = rospy.get_param('~tune', True)
-
-		self.sub_goal = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
-
 		self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
-		rospy.Subscriber('localization_gps_imu/odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber('robot_goal', RobotGoal, self.robot_goal_cb, queue_size = 1, buff_size = 2**24)
 
-		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
-		self.station_keeping_srv = rospy.Service("station_keeping", SetBool, self.station_keeping_cb)
+		self.pub_goal = rospy.Publisher("~goal_point", Marker, queue_size = 1)
+		
+		self.pos_control = PID_control("Position")
+		self.ang_control = PID_control("Angular")
 
-		if self.tune:
-			self.pos_control = PID_control("Position")
-			self.ang_control = PID_control("Angular")
+		self.ang_station_control = PID_control("Angular_station")
+		self.pos_station_control = PID_control("Position_station")
 
-			self.ang_station_control = PID_control("Angular_station")
-			self.pos_station_control = PID_control("Position_station")
+		self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position")
+		self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular")
+		self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
+		self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
+		
+		self.initialize_PID()
 
-			self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position")
-			self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular")
-			self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
-			self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
-			
-			self.initialize_PID()
-		else:
-			print 'no working...'
-
-	def odom_cb(self, msg):
-		self.frame_id = msg.header.frame_id
-		robot_position = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-		if not self.is_station_keeping:
-			self.stop_pos = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-		quat = (msg.pose.pose.orientation.x,\
-				msg.pose.pose.orientation.y,\
-				msg.pose.pose.orientation.z,\
-				msg.pose.pose.orientation.w)
+	def robot_goal_cb(self, msg):
+		self.goal = [msg.goal.position.x, msg.goal.position.y]
+		self.robot_position = [msg.robot.position.x, msg.robot.position.y]
+		quat = (msg.robot.orientation.x,\
+				msg.robot.orientation.y,\
+				msg.robot.orientation.z,\
+				msg.robot.orientation.w)
 		_, _, yaw = tf.transformations.euler_from_quaternion(quat)
 
-		if self.goal is None: # if the robot haven't recieve any goal
+		if len(self.goal) == 0 or len(self.robot_position) == 0: # if the robot haven't recieve any goal
 			return
 
 		#yaw = yaw + np.pi/2
-		goal_distance = self.get_distance(robot_position, self.goal)
-		goal_angle = self.get_goal_angle(yaw, robot_position, self.goal)
+		goal_distance = self.get_distance(self.robot_position, self.goal)
+		goal_angle = self.get_goal_angle(yaw, self.robot_position, self.goal)
 		
-		if goal_distance < self.station_keeping_dis or self.is_station_keeping:
+		if goal_distance < self.station_keeping_dis:
 			rospy.loginfo("Station Keeping")
 			pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
 		else:
@@ -125,22 +110,6 @@ class Robot_PID():
 			pos_output = - pos_output
 			ang_output = - ang_output
 		return pos_output, ang_output
-
-	def goal_cb(self, p):
-		self.final_goal = [p.pose.position.x, p.pose.position.y]
-		self.goal = self.final_goal
-
-	def station_keeping_cb(self, req):
-		if req.data == True:
-			self.goal = self.stop_pos
-			self.is_station_keeping = True
-		else:
-			self.goal = self.final_goal
-			self.is_station_keeping = False
-		res = SetBoolResponse()
-		res.success = True
-		res.message = "recieved"
-		return res
 
 	def cmd_constarin(self, input):
 		if input > self.cmd_ctrl_max:

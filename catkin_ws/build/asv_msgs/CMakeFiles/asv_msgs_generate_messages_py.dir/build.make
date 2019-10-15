@@ -53,28 +53,39 @@ CMAKE_BINARY_DIR = /home/arg/asv_ros/catkin_ws/build
 # Include the progress variables for this target.
 include asv_msgs/CMakeFiles/asv_msgs_generate_messages_py.dir/progress.make
 
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py
 
 
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python from MSG asv_msgs/RobotPath"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
+
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating Python from MSG asv_msgs/VelocityVector"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python from MSG asv_msgs/VelocityVector"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating Python from MSG asv_msgs/Motor4Cmd"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Python from MSG asv_msgs/Motor4Cmd"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
@@ -82,77 +93,103 @@ asv_msgs/CMakeFiles/asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/d
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py: /opt/ros/melodic/share/sensor_msgs/msg/CompressedImage.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating Python from MSG asv_msgs/Boxlist"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Python from MSG asv_msgs/Boxlist"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Boxlist.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating Python from MSG asv_msgs/MotorCmd"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Python from MSG asv_msgs/MotorCmd"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
+
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating Python from MSG asv_msgs/RobotGoal"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating Python from MSG asv_msgs/BoolStamped"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating Python from MSG asv_msgs/BoolStamped"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating Python from MSG asv_msgs/UsvDrive"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating Python from MSG asv_msgs/UsvDrive"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating Python from MSG asv_msgs/Heading"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating Python from MSG asv_msgs/Heading"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating Python from MSG asv_msgs/Box"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating Python from MSG asv_msgs/Box"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg
+
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /opt/ros/melodic/lib/genpy/gensrv_py.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Generating Python code from SRV asv_msgs/SetRobotPath"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/gensrv_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py: /opt/ros/melodic/lib/genpy/gensrv_py.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py: /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating Python code from SRV asv_msgs/SetValue"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Generating Python code from SRV asv_msgs/SetValue"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/gensrv_py.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating Python msg __init__.py for asv_msgs"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Generating Python msg __init__.py for asv_msgs"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg --initpy
 
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /opt/ros/melodic/lib/genpy/genmsg_py.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py
+/home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py
 /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Generating Python srv __init__.py for asv_msgs"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Generating Python srv __init__.py for asv_msgs"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/genpy/cmake/../../../lib/genpy/genmsg_py.py -o /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv --initpy
 
 asv_msgs_generate_messages_py: asv_msgs/CMakeFiles/asv_msgs_generate_messages_py
+asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotPath.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_VelocityVector.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Motor4Cmd.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Boxlist.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_MotorCmd.py
+asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_RobotGoal.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_BoolStamped.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_UsvDrive.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Heading.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/_Box.py
+asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetRobotPath.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/_SetValue.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/msg/__init__.py
 asv_msgs_generate_messages_py: /home/arg/asv_ros/catkin_ws/devel/lib/python2.7/dist-packages/asv_msgs/srv/__init__.py

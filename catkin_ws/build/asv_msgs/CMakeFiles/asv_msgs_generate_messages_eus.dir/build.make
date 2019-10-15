@@ -53,27 +53,38 @@ CMAKE_BINARY_DIR = /home/arg/asv_ros/catkin_ws/build
 # Include the progress variables for this target.
 include asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus.dir/progress.make
 
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/VelocityVector.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Motor4Cmd.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/MotorCmd.l
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/BoolStamped.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/UsvDrive.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Heading.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Box.l
+asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetValue.l
 asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/manifest.l
 
 
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l: /opt/ros/melodic/lib/geneus/gen_eus.py
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating EusLisp code from asv_msgs/RobotPath.msg"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
+
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/VelocityVector.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/VelocityVector.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating EusLisp code from asv_msgs/VelocityVector.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating EusLisp code from asv_msgs/VelocityVector.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Motor4Cmd.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Motor4Cmd.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Motor4Cmd.l: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating EusLisp code from asv_msgs/Motor4Cmd.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating EusLisp code from asv_msgs/Motor4Cmd.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l: /opt/ros/melodic/lib/geneus/gen_eus.py
@@ -81,55 +92,75 @@ asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l: /opt/ros/melodic/share/sensor_msgs/msg/CompressedImage.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating EusLisp code from asv_msgs/Boxlist.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating EusLisp code from asv_msgs/Boxlist.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Boxlist.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/MotorCmd.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/MotorCmd.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/MotorCmd.l: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating EusLisp code from asv_msgs/MotorCmd.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating EusLisp code from asv_msgs/MotorCmd.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
+
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l: /opt/ros/melodic/lib/geneus/gen_eus.py
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating EusLisp code from asv_msgs/RobotGoal.msg"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/BoolStamped.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/BoolStamped.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/BoolStamped.l: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating EusLisp code from asv_msgs/BoolStamped.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating EusLisp code from asv_msgs/BoolStamped.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/UsvDrive.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/UsvDrive.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/UsvDrive.l: /opt/ros/melodic/share/std_msgs/msg/Header.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating EusLisp code from asv_msgs/UsvDrive.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating EusLisp code from asv_msgs/UsvDrive.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Heading.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Heading.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating EusLisp code from asv_msgs/Heading.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating EusLisp code from asv_msgs/Heading.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Box.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Box.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating EusLisp code from asv_msgs/Box.msg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating EusLisp code from asv_msgs/Box.msg"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg
+
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /opt/ros/melodic/lib/geneus/gen_eus.py
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Point.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Quaternion.msg
+/home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l: /opt/ros/melodic/share/geometry_msgs/msg/Pose.msg
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Generating EusLisp code from asv_msgs/SetRobotPath.srv"
+	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetValue.l: /opt/ros/melodic/lib/geneus/gen_eus.py
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetValue.l: /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating EusLisp code from asv_msgs/SetValue.srv"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Generating EusLisp code from asv_msgs/SetValue.srv"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py /home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv -Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg -Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg -Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg -Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg -p asv_msgs -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv
 
 /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/manifest.l: /opt/ros/melodic/lib/geneus/gen_eus.py
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating EusLisp manifest code for asv_msgs"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/arg/asv_ros/catkin_ws/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Generating EusLisp manifest code for asv_msgs"
 	cd /home/arg/asv_ros/catkin_ws/build/asv_msgs && ../catkin_generated/env_cached.sh /usr/bin/python2 /opt/ros/melodic/share/geneus/cmake/../../../lib/geneus/gen_eus.py -m -o /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs asv_msgs std_msgs sensor_msgs
 
 asv_msgs_generate_messages_eus: asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus
+asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotPath.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/VelocityVector.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Motor4Cmd.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Boxlist.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/MotorCmd.l
+asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/RobotGoal.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/BoolStamped.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/UsvDrive.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Heading.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/msg/Box.l
+asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetRobotPath.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/srv/SetValue.l
 asv_msgs_generate_messages_eus: /home/arg/asv_ros/catkin_ws/devel/share/roseus/ros/asv_msgs/manifest.l
 asv_msgs_generate_messages_eus: asv_msgs/CMakeFiles/asv_msgs_generate_messages_eus.dir/build.make

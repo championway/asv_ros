@@ -2,7 +2,8 @@
 (cl:in-package :asdf)
 
 (defsystem "asv_msgs-msg"
-  :depends-on (:roslisp-msg-protocol :roslisp-utils :sensor_msgs-msg
+  :depends-on (:roslisp-msg-protocol :roslisp-utils :geometry_msgs-msg
+               :sensor_msgs-msg
                :std_msgs-msg
 )
   :components ((:file "_package")
@@ -18,6 +19,10 @@
     (:file "_package_Motor4Cmd" :depends-on ("_package"))
     (:file "MotorCmd" :depends-on ("_package_MotorCmd"))
     (:file "_package_MotorCmd" :depends-on ("_package"))
+    (:file "RobotGoal" :depends-on ("_package_RobotGoal"))
+    (:file "_package_RobotGoal" :depends-on ("_package"))
+    (:file "RobotPath" :depends-on ("_package_RobotPath"))
+    (:file "_package_RobotPath" :depends-on ("_package"))
     (:file "UsvDrive" :depends-on ("_package_UsvDrive"))
     (:file "_package_UsvDrive" :depends-on ("_package"))
     (:file "VelocityVector" :depends-on ("_package_VelocityVector"))

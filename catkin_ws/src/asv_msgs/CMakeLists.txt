@@ -29,11 +29,14 @@ add_message_files(
   Boxlist.msg
   BoolStamped.msg
   UsvDrive.msg
+  RobotPath.msg
+  RobotGoal.msg
 )
 
 add_service_files(
   FILES
   SetValue.srv
+  SetRobotPath.srv
 )
 
 generate_messages(

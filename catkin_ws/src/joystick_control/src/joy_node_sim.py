@@ -3,7 +3,7 @@ import rospy
 import math
 
 from sensor_msgs.msg import Joy
-from duckiepond.msg import MotorCmd,Heading,UsvDrive
+from asv_msgs.msg import MotorCmd,Heading,UsvDrive
 from std_msgs.msg import Float32
 
 

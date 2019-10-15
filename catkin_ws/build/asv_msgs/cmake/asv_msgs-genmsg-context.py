@@ -1,7 +1,7 @@
 # generated from genmsg/cmake/pkg-genmsg.context.in
 
-messages_str = "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Boxlist.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg"
-services_str = "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
+messages_str = "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Heading.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Box.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Boxlist.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+services_str = "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv;/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
 pkg_name = "asv_msgs"
 dependencies_str = "std_msgs;sensor_msgs"
 langs = "gencpp;geneus;genlisp;gennodejs;genpy"

@@ -1,6 +1,6 @@
 # generated from genmsg/cmake/pkg-genmsg.cmake.em
 
-message(STATUS "asv_msgs: 8 messages, 1 services")
+message(STATUS "asv_msgs: 10 messages, 2 services")
 
 set(MSG_I_FLAGS "-Iasv_msgs:/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg;-Istd_msgs:/opt/ros/melodic/share/std_msgs/cmake/../msg;-Isensor_msgs:/opt/ros/melodic/share/sensor_msgs/cmake/../msg;-Igeometry_msgs:/opt/ros/melodic/share/geometry_msgs/cmake/../msg")
 
@@ -16,6 +16,11 @@ add_custom_target(asv_msgs_generate_messages ALL)
 # verify that message/service dependencies have not changed since configure
 
 
+
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "asv_msgs" "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" "geometry_msgs/Pose:geometry_msgs/Quaternion:geometry_msgs/Point"
+)
 
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
@@ -42,9 +47,19 @@ add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
   COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "asv_msgs" "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" "std_msgs/Header"
 )
 
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "asv_msgs" "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" "geometry_msgs/Pose:geometry_msgs/Quaternion:geometry_msgs/Point"
+)
+
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
 add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
   COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "asv_msgs" "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" "std_msgs/Header"
+)
+
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
+add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
+  COMMAND ${CATKIN_ENV} ${PYTHON_EXECUTABLE} ${GENMSG_CHECK_DEPS_SCRIPT} "asv_msgs" "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" "asv_msgs/RobotPath:geometry_msgs/Point:geometry_msgs/Quaternion:geometry_msgs/Pose"
 )
 
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
@@ -69,6 +84,12 @@ add_custom_target(_asv_msgs_generate_messages_check_deps_${_filename}
 ### Section generating for lang: gencpp
 ### Generating Messages
 _generate_msg_cpp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_cpp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg"
   "${MSG_I_FLAGS}"
   ""
@@ -90,6 +111,12 @@ _generate_msg_cpp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg"
   "${MSG_I_FLAGS}"
   "/opt/ros/melodic/share/std_msgs/cmake/../msg/Header.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_cpp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
   ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/asv_msgs
 )
 _generate_msg_cpp(asv_msgs
@@ -119,6 +146,12 @@ _generate_msg_cpp(asv_msgs
 
 ### Generating Services
 _generate_srv_cpp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+  "${MSG_I_FLAGS}"
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gencpp_INSTALL_DIR}/asv_msgs
+)
+_generate_srv_cpp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
   "${MSG_I_FLAGS}"
   ""
@@ -137,6 +170,8 @@ add_custom_target(asv_msgs_generate_messages_cpp
 add_dependencies(asv_msgs_generate_messages asv_msgs_generate_messages_cpp)
 
 # add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg" NAME_WE)
@@ -147,7 +182,11 @@ get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/B
 add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_cpp _asv_msgs_generate_messages_check_deps_${_filename})
@@ -165,6 +204,12 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS asv_msgs_generate_messages_cpp)
 
 ### Section generating for lang: geneus
 ### Generating Messages
+_generate_msg_eus(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
+  ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/asv_msgs
+)
 _generate_msg_eus(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg"
   "${MSG_I_FLAGS}"
@@ -187,6 +232,12 @@ _generate_msg_eus(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg"
   "${MSG_I_FLAGS}"
   "/opt/ros/melodic/share/std_msgs/cmake/../msg/Header.msg"
+  ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_eus(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
   ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/asv_msgs
 )
 _generate_msg_eus(asv_msgs
@@ -216,6 +267,12 @@ _generate_msg_eus(asv_msgs
 
 ### Generating Services
 _generate_srv_eus(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+  "${MSG_I_FLAGS}"
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg"
+  ${CATKIN_DEVEL_PREFIX}/${geneus_INSTALL_DIR}/asv_msgs
+)
+_generate_srv_eus(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
   "${MSG_I_FLAGS}"
   ""
@@ -234,6 +291,8 @@ add_custom_target(asv_msgs_generate_messages_eus
 add_dependencies(asv_msgs_generate_messages asv_msgs_generate_messages_eus)
 
 # add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg" NAME_WE)
@@ -244,7 +303,11 @@ get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/B
 add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_eus _asv_msgs_generate_messages_check_deps_${_filename})
@@ -262,6 +325,12 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS asv_msgs_generate_messages_eus)
 
 ### Section generating for lang: genlisp
 ### Generating Messages
+_generate_msg_lisp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/asv_msgs
+)
 _generate_msg_lisp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg"
   "${MSG_I_FLAGS}"
@@ -284,6 +353,12 @@ _generate_msg_lisp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg"
   "${MSG_I_FLAGS}"
   "/opt/ros/melodic/share/std_msgs/cmake/../msg/Header.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_lisp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
   ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/asv_msgs
 )
 _generate_msg_lisp(asv_msgs
@@ -313,6 +388,12 @@ _generate_msg_lisp(asv_msgs
 
 ### Generating Services
 _generate_srv_lisp(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+  "${MSG_I_FLAGS}"
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genlisp_INSTALL_DIR}/asv_msgs
+)
+_generate_srv_lisp(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
   "${MSG_I_FLAGS}"
   ""
@@ -331,6 +412,8 @@ add_custom_target(asv_msgs_generate_messages_lisp
 add_dependencies(asv_msgs_generate_messages asv_msgs_generate_messages_lisp)
 
 # add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg" NAME_WE)
@@ -341,7 +424,11 @@ get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/B
 add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_lisp _asv_msgs_generate_messages_check_deps_${_filename})
@@ -359,6 +446,12 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS asv_msgs_generate_messages_lisp)
 
 ### Section generating for lang: gennodejs
 ### Generating Messages
+_generate_msg_nodejs(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/asv_msgs
+)
 _generate_msg_nodejs(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg"
   "${MSG_I_FLAGS}"
@@ -381,6 +474,12 @@ _generate_msg_nodejs(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg"
   "${MSG_I_FLAGS}"
   "/opt/ros/melodic/share/std_msgs/cmake/../msg/Header.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_nodejs(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
   ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/asv_msgs
 )
 _generate_msg_nodejs(asv_msgs
@@ -410,6 +509,12 @@ _generate_msg_nodejs(asv_msgs
 
 ### Generating Services
 _generate_srv_nodejs(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+  "${MSG_I_FLAGS}"
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg"
+  ${CATKIN_DEVEL_PREFIX}/${gennodejs_INSTALL_DIR}/asv_msgs
+)
+_generate_srv_nodejs(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
   "${MSG_I_FLAGS}"
   ""
@@ -428,6 +533,8 @@ add_custom_target(asv_msgs_generate_messages_nodejs
 add_dependencies(asv_msgs_generate_messages asv_msgs_generate_messages_nodejs)
 
 # add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg" NAME_WE)
@@ -438,7 +545,11 @@ get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/B
 add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_nodejs _asv_msgs_generate_messages_check_deps_${_filename})
@@ -456,6 +567,12 @@ list(APPEND ${PROJECT_NAME}_EXPORTED_TARGETS asv_msgs_generate_messages_nodejs)
 
 ### Section generating for lang: genpy
 ### Generating Messages
+_generate_msg_py(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/asv_msgs
+)
 _generate_msg_py(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg"
   "${MSG_I_FLAGS}"
@@ -478,6 +595,12 @@ _generate_msg_py(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg"
   "${MSG_I_FLAGS}"
   "/opt/ros/melodic/share/std_msgs/cmake/../msg/Header.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/asv_msgs
+)
+_generate_msg_py(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg"
+  "${MSG_I_FLAGS}"
+  "/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg"
   ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/asv_msgs
 )
 _generate_msg_py(asv_msgs
@@ -507,6 +630,12 @@ _generate_msg_py(asv_msgs
 
 ### Generating Services
 _generate_srv_py(asv_msgs
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv"
+  "${MSG_I_FLAGS}"
+  "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Point.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Quaternion.msg;/opt/ros/melodic/share/geometry_msgs/cmake/../msg/Pose.msg"
+  ${CATKIN_DEVEL_PREFIX}/${genpy_INSTALL_DIR}/asv_msgs
+)
+_generate_srv_py(asv_msgs
   "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetValue.srv"
   "${MSG_I_FLAGS}"
   ""
@@ -525,6 +654,8 @@ add_custom_target(asv_msgs_generate_messages_py
 add_dependencies(asv_msgs_generate_messages asv_msgs_generate_messages_py)
 
 # add dependencies to all check dependencies targets
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotPath.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/VelocityVector.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/Motor4Cmd.msg" NAME_WE)
@@ -535,7 +666,11 @@ get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/B
 add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/MotorCmd.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/RobotGoal.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/BoolStamped.msg" NAME_WE)
+add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
+get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/srv/SetRobotPath.srv" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
 get_filename_component(_filename "/home/arg/asv_ros/catkin_ws/src/asv_msgs/msg/UsvDrive.msg" NAME_WE)
 add_dependencies(asv_msgs_generate_messages_py _asv_msgs_generate_messages_check_deps_${_filename})
