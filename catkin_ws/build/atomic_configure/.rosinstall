@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/arg/asv_ros/catkin_ws/devel/setup.sh

@@ -1,0 +1,8 @@
+prefix=/home/arg/asv_ros/catkin_ws/devel
+
+Name: control
+Description: Description of control
+Version: 0.0.0
+Cflags: -I/home/arg/asv_ros/catkin_ws/devel/include
+Libs: -L/home/arg/asv_ros/catkin_ws/devel/lib 
+Requires: 

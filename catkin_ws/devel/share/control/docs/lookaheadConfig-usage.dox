@@ -1,0 +1,7 @@
+\subsubsection usage Usage
+\verbatim
+<node name="lookahead_srv" pkg="control" type="lookahead_srv">
+  <param name="Look_Ahead" type="double" value="0.0" />
+</node>
+\endverbatim
+

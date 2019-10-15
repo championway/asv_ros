@@ -1,0 +1,8 @@
+prefix=/home/arg/asv_ros/catkin_ws/install
+
+Name: duckiepond
+Description: Description of duckiepond
+Version: 0.0.0
+Cflags: -I/home/arg/asv_ros/catkin_ws/install/include
+Libs: -L/home/arg/asv_ros/catkin_ws/install/lib 
+Requires: 

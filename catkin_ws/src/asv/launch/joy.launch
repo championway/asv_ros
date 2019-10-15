@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="veh" default="ASV"/>
+		<include file="$(find joystick_control)/launch/joy_node.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+        <include file="$(find joystick_control)/launch/joystick.launch">
+            <arg name="veh" value="$(arg veh)"/>
+        </include>
+</launch>
