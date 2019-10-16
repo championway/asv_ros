@@ -917,22 +917,40 @@ clean: asv/CMakeFiles/std_msgs_generate_messages_py.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Directory level rules for directory localization/localization
+# Directory level rules for directory asv_config
 
 # Convenience name for "all" pass in the directory.
-localization/localization/all:
+asv_config/all:
 
-.PHONY : localization/localization/all
+.PHONY : asv_config/all
 
 # Convenience name for "clean" pass in the directory.
-localization/localization/clean:
+asv_config/clean:
 
-.PHONY : localization/localization/clean
+.PHONY : asv_config/clean
 
 # Convenience name for "preinstall" pass in the directory.
-localization/localization/preinstall:
+asv_config/preinstall:
 
-.PHONY : localization/localization/preinstall
+.PHONY : asv_config/preinstall
+
+#=============================================================================
+# Directory level rules for directory localization
+
+# Convenience name for "all" pass in the directory.
+localization/all:
+
+.PHONY : localization/all
+
+# Convenience name for "clean" pass in the directory.
+localization/clean:
+
+.PHONY : localization/clean
+
+# Convenience name for "preinstall" pass in the directory.
+localization/preinstall:
+
+.PHONY : localization/preinstall
 
 #=============================================================================
 # Directory level rules for directory asv_msgs

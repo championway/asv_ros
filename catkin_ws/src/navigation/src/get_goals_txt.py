@@ -12,30 +12,50 @@ from asv_msgs.srv import SetRobotPath, SetRobotPathResponse
 from std_srvs.srv import SetBool, SetBoolResponse
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Odometry
+from geodesy.utm import UTMPoint, fromLatLong
 import rospkg
+import os
 
 class ROBOT_GOAL():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.frame_id = "map"
+		self.path_list = []
+		self.robot_orig = []
+		self.get_orig = False
 		self.rcv_goals = []
 		self.goals = []
 		self.clear = False
 		self.start_navigation = False
 		self.set_path_succ = False	# If set path got wrong, we need to resend again
+		
+		rospack = rospkg.RosPack()
+		txt_name = rospy.get_param("~txt_name", "test1.txt")
+		self.txt_path = os.path.join(rospack.get_path('asv_config'), "path", txt_name)
+		if not os.path.isfile(self.txt_path):
+			rospy.signal_shutdown("Quit")
+			print("[%s] ERROR!!! No path txt file detected" %self.node_name)
+			return
+		read_succ = self.read_txt(self.txt_path)
+		if not read_succ:
+			rospy.signal_shutdown("Quit")
+			print("[%s] ERROR!!! Path txt reading error" %self.node_name)
+			return
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
 		self.navigation_srv = rospy.Service("start_navigation", SetBool, self.navigation_cb)
 		self.clear_srv = rospy.Service("clear_goals", SetBool, self.clear_cb)
 		self.pub_marker = rospy.Publisher('goals_marker', MarkerArray, queue_size=1)
-		rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goal_cb, queue_size=1)
+		self.sub_orig = rospy.Subscriber("robot_origin", Point, self.orig_cb, queue_size=1)
 		rospy.Subscriber('odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-
-
+		
 	def odom_cb(self, msg):
 		if self.clear:
 			self.reset()
+		if not self.get_orig:
+			rospy.loginfo("Haven't recieve robot origin position")
+			return
 		robot_position = [msg.pose.pose.position.x, msg.pose.pose.position.y]
 		quat = (msg.pose.pose.orientation.x,\
 				msg.pose.pose.orientation.y,\
@@ -49,14 +69,44 @@ class ROBOT_GOAL():
 		if self.start_navigation and not self.set_path_succ:
 			self.set_path()
 
+	def read_txt(self, txt_path):
+		print("Read file: %s" %txt_path)
+		file = open(txt_path, "r")
+		self.path_list = []
+		for f in file:
+			try:
+				#line = f.split('\n')
+				line = f.strip()
+				if line[0] == '#':
+					continue
+				data = line.split(',')
+				self.path_list.append([float(data[0]), float(data[1])])
+			except:
+				return False
+		file.close()
+		return True
+
+	def orig_cb(self, msg):
+		rospy.loginfo("get orig")
+		self.robot_orig = [msg.x, msg.y]
+		self.get_orig = True
+		self.utm_transform()
+		self.sub_orig.unregister()
+
+	def utm_transform(self):
+		for data in self.path_list:
+			p = Pose()
+			utm_data = fromLatLong(data[0], data[1])
+			x = utm_data.easting - self.robot_orig[0]
+			y = utm_data.northing - self.robot_orig[1]
+			p.position.x, p.position.y = x, y
+			self.rcv_goals.append(p)
+
 	def reset(self):
 		self.set_path_succ = False
 		del self.rcv_goals[:]
 		del self.goals[:]
 		self.clear = False
-
-	def goal_cb(self, p):
-		self.rcv_goals.append(p.pose)
 
 	def navigation_cb(self, req):
 		if req.data == True:
@@ -176,6 +226,6 @@ class ROBOT_GOAL():
 		self.pub_waypoint.publish(marker)'''
 
 if __name__ == '__main__':
-	rospy.init_node('ROBOT_GOAL')
+	rospy.init_node('ROBOT_GOAL_TXT')
 	foo = ROBOT_GOAL()
 	rospy.spin()

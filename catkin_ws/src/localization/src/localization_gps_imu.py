@@ -8,7 +8,7 @@ Locailization by gps and imu
 import rospy
 from sensor_msgs.msg import NavSatFix, Imu
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Pose, Point
 from std_msgs.msg import Float64
 from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer
 from std_srvs.srv import EmptyRequest, EmptyResponse, Empty
@@ -30,7 +30,9 @@ class LocailizationGPSImu(object):
         self.prior_roll = 0
         self.prior_pitch = 0
         self.prior_yaw = 0
-        self.start = False   
+        self.flush_count = 0
+        self.start = False
+        self.robot_origin = Point()
         self.covariance = np.zeros((36,), dtype=float)
         self.odometry = Odometry()
         self.br = tf.TransformBroadcaster()
@@ -46,11 +48,12 @@ class LocailizationGPSImu(object):
         self.srv_imu_offset = rospy.Service('~imu_offset', SetValue, self.cb_srv_imu_offest)
 
         # Publisher
-        self.pub_odm = rospy.Publisher("~odometry", Odometry, queue_size=1)
+        self.pub_odm = rospy.Publisher("odometry", Odometry, queue_size=1)
+        self.pub_orig = rospy.Publisher("robot_origin", Point, queue_size=1)
 
         # Subscriber
-        sub_imu = message_filters.Subscriber("~imu/data", Imu)
-        sub_gps = message_filters.Subscriber("~fix", NavSatFix)
+        sub_imu = message_filters.Subscriber("imu/data", Imu)
+        sub_gps = message_filters.Subscriber("fix", NavSatFix)
         ats = ApproximateTimeSynchronizer((sub_imu, sub_gps), queue_size = 1, slop = 0.1)
         ats.registerCallback(self.cb_gps_imu)
 
@@ -65,6 +68,14 @@ class LocailizationGPSImu(object):
         self.pose.orientation = msg_imu.orientation
 
     def cb_gps_imu(self, msg_imu, msg_gps):
+        if self.flush_count < 10:
+            # rospy.loginfo("[%s] Flush Data" %self.node_name)
+            self.flush_count = self.flush_count + 1
+            self.utm_orig = fromLatLong(msg_gps.latitude, msg_gps.longitude)
+            self.robot_origin.x = self.utm_orig.easting
+            self.robot_origin.y = self.utm_orig.northing
+            return        
+        self.pub_orig.publish(self.robot_origin)
         self.cb_gps(msg_gps)
         self.cb_imu(msg_imu)
         self.kalman_filter()

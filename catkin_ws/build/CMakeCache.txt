@@ -297,6 +297,12 @@ asv_BINARY_DIR:STATIC=/home/arg/asv_ros/catkin_ws/build/asv
 asv_SOURCE_DIR:STATIC=/home/arg/asv_ros/catkin_ws/src/asv
 
 //Value Computed by CMake
+asv_config_BINARY_DIR:STATIC=/home/arg/asv_ros/catkin_ws/build/asv_config
+
+//Value Computed by CMake
+asv_config_SOURCE_DIR:STATIC=/home/arg/asv_ros/catkin_ws/src/asv_config
+
+//Value Computed by CMake
 asv_msgs_BINARY_DIR:STATIC=/home/arg/asv_ros/catkin_ws/build/asv_msgs
 
 //Value Computed by CMake
@@ -409,10 +415,10 @@ joystick_control_SOURCE_DIR:STATIC=/home/arg/asv_ros/catkin_ws/src/joystick_cont
 lib:FILEPATH=/opt/ros/melodic/lib/libtf2.so
 
 //Value Computed by CMake
-localization_BINARY_DIR:STATIC=/home/arg/asv_ros/catkin_ws/build/localization/localization
+localization_BINARY_DIR:STATIC=/home/arg/asv_ros/catkin_ws/build/localization
 
 //Value Computed by CMake
-localization_SOURCE_DIR:STATIC=/home/arg/asv_ros/catkin_ws/src/localization/localization
+localization_SOURCE_DIR:STATIC=/home/arg/asv_ros/catkin_ws/src/localization
 
 //The directory containing a CMake configuration file for message_filters.
 message_filters_DIR:PATH=/opt/ros/melodic/share/message_filters/cmake
@@ -632,7 +638,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=10
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

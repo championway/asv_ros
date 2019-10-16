@@ -33,15 +33,15 @@ class NAVIGATION():
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
-		self.pub_lookahead = rospy.Publisher("~lookahead_point", Marker, queue_size = 1)
+		# self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
 		self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
-		self.path_srv = rospy.Service("/set_path", SetRobotPath, self.path_cb)
+		self.path_srv = rospy.Service("set_path", SetRobotPath, self.path_cb)
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
 
 		self.purepursuit = PurePursuit()
 		self.purepursuit.set_lookahead(4.5)
 
-		rospy.Subscriber("~odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 
 
 	def odom_cb(self, msg):
@@ -60,6 +60,9 @@ class NAVIGATION():
 		reach_goal = self.purepursuit.set_robot_pose(self.robot_position, yaw)
 		pursuit_point = self.purepursuit.get_pursuit_point()
 		
+		if reach_goal or reach_goal is None:
+			return
+
 		rg = RobotGoal()
 		rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
 		rg.robot = msg.pose.pose
@@ -132,7 +135,7 @@ class NAVIGATION():
 		marker.color.b = 1.0
 		marker.color.g = 1.0
 		marker.color.r = 0.0
-		self.pub_lookahead.publish(marker)
+		#self.pub_lookahead.publish(marker)
 
 	def lookahead_cb(self, config, level):
 		print("Look Ahead Distance: {Look_Ahead}\n".format(**config))

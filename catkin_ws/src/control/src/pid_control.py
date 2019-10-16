@@ -27,8 +27,8 @@ class Robot_PID():
 		self.dis4constV = 5. # Distance for constant velocity
 		self.pos_ctrl_max = 1
 		self.pos_ctrl_min = 0.0
-		self.pos_station_max = 0.8
-		self.pos_station_min = -0.8
+		# self.pos_station_max = 0.8
+		# self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 0.95
 		self.cmd_ctrl_min = -0.95
 		self.station_keeping_dis = 3.5 # meters
@@ -40,18 +40,18 @@ class Robot_PID():
 		self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		rospy.Subscriber('robot_goal', RobotGoal, self.robot_goal_cb, queue_size = 1, buff_size = 2**24)
 
-		self.pub_goal = rospy.Publisher("~goal_point", Marker, queue_size = 1)
+		self.pub_goal = rospy.Publisher("goal_point", Marker, queue_size = 1)
 		
 		self.pos_control = PID_control("Position")
 		self.ang_control = PID_control("Angular")
 
-		self.ang_station_control = PID_control("Angular_station")
-		self.pos_station_control = PID_control("Position_station")
+		# self.ang_station_control = PID_control("Angular_station")
+		# self.pos_station_control = PID_control("Position_station")
 
 		self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position")
 		self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular")
-		self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
-		self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
+		# self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
+		# self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
 		
 		self.initialize_PID()
 
@@ -73,7 +73,8 @@ class Robot_PID():
 		
 		if goal_distance < self.station_keeping_dis:
 			rospy.loginfo("Station Keeping")
-			pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
+			# pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
+			pos_output, ang_output = self.control(goal_distance, goal_angle)
 		else:
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 
@@ -135,13 +136,13 @@ class Robot_PID():
 	def initialize_PID(self):
 		self.pos_control.setSampleTime(1)
 		self.ang_control.setSampleTime(1)
-		self.pos_station_control.setSampleTime(1)
-		self.ang_station_control.setSampleTime(1)
+		# self.pos_station_control.setSampleTime(1)
+		# self.ang_station_control.setSampleTime(1)
 
 		self.pos_control.SetPoint = 0.0
 		self.ang_control.SetPoint = 0.0
-		self.pos_station_control.SetPoint = 0.0
-		self.ang_station_control.SetPoint = 0.0
+		# self.pos_station_control.SetPoint = 0.0
+		# self.ang_station_control.SetPoint = 0.0
 
 	def get_goal_angle(self, robot_yaw, robot, goal):
 		robot_angle = np.degrees(robot_yaw)

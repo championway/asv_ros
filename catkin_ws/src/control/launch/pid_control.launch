@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="control" type="pid_control.py" name="PID_control" output="screen" >
+        </node>
+
+	    <!-- Load dynamic reconfigure -->
+	    <node pkg="dynamic_reconfigure" type="dynparam" name="load_pos_param" args="load /$(arg veh)/PID_control/Position $(find asv_config)/pid/pid_pos.yaml"/>
+	    <node pkg="dynamic_reconfigure" type="dynparam" name="load_ang_param" args="load /$(arg veh)/PID_control/Angular $(find asv_config)/pid/pid_ang.yaml"/>
+    </group>
+</launch>

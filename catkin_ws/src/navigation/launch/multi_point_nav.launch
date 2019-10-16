@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+    <arg name="txt_name" default="gazebo.txt"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="navigation" type="get_goals_txt.py" name="get_goals_txt" output="screen" >
+            <param name="txt_name" value="$(arg txt_name)"/>
+        </node>
+        <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
+        </node>
+    </group>
+
+</launch>

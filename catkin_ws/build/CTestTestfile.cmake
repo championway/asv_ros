@@ -6,7 +6,8 @@
 # testing this directory and lists subdirectories to be tested as well.
 subdirs("gtest")
 subdirs("asv")
-subdirs("localization/localization")
+subdirs("asv_config")
+subdirs("localization")
 subdirs("asv_msgs")
 subdirs("joystick_control")
 subdirs("navigation")
