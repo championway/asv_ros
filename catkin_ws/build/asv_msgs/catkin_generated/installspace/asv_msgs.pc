@@ -1,8 +1,0 @@
-prefix=/home/arg/asv_ros/catkin_ws/install
-
-Name: asv_msgs
-Description: Description of asv_msgs
-Version: 0.0.0
-Cflags: -I/home/arg/asv_ros/catkin_ws/install/include
-Libs: -L/home/arg/asv_ros/catkin_ws/install/lib 
-Requires: 

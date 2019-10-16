@@ -1,2 +1,0 @@
-asv:asv_config:asv_msgs:control:joystick_control:localization:navigation
--DCATKIN_DEVEL_PREFIX=/home/arg/asv_ros/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/arg/asv_ros/catkin_ws/install -G Unix Makefiles

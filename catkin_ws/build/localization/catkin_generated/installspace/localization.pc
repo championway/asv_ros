@@ -1,8 +1,0 @@
-prefix=/home/arg/asv_ros/catkin_ws/install
-
-Name: localization
-Description: Description of localization
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/arg/asv_ros/catkin_ws/install/lib 
-Requires: 
