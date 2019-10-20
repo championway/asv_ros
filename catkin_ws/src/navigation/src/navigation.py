@@ -30,6 +30,7 @@ class NAVIGATION():
 		self.final_goal = None # The final goal that you want to arrive
 		self.goal = self.final_goal
 		self.robot_position = None
+		self.cycle = rospy.get_param("~cycle", True)
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
@@ -60,7 +61,17 @@ class NAVIGATION():
 		reach_goal = self.purepursuit.set_robot_pose(self.robot_position, yaw)
 		pursuit_point = self.purepursuit.get_pursuit_point()
 		
-		if reach_goal or reach_goal is None:
+		if reach_goal or pursuit_point is None:
+			if self.cycle:
+				# The start point is the last point of the list
+				start_point = [self.goals[-1].position.x, self.goals[-1].position.y]
+				self.purepursuit.set_goal(start_point, self.goals)
+			else:
+				rospy.loginfo("[%s]Approach destination" %(self.node_name))
+				rg = RobotGoal()
+				rg.goal.position.x, rg.goal.position.y = self.goals[-1].position.x, self.goals[-1].position.y
+				rg.robot = msg.pose.pose
+				self.pub_robot_goal.publish(rg)
 			return
 
 		rg = RobotGoal()

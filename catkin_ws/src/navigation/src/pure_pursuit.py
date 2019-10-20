@@ -29,7 +29,7 @@ class PurePursuit(object):
 		#self.pub_cmd = rospy.Publisher('/car_cmd', Twist, queue_size=1)
 		self.pub_finish = rospy.Publisher('pure_pursuit/finished', Bool, queue_size=1)
 		self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
-		self.pub_waypoint = rospy.Publisher("path_marker",Marker, queue_size=1)
+		self.pub_waypoint = rospy.Publisher("pursuit_marker",Marker, queue_size=1)
 		rospy.loginfo("[/PurePursuit] Initialized ...")
 
 	def initial_param(self):
@@ -67,7 +67,6 @@ class PurePursuit(object):
 		# Reach
 		if self.destination_pose == None:
 			self.active = False
-			rospy.loginfo("[%s]Approach destination" %(self.node_name))
 			msg = Bool()
 			msg.data = True
 			self.pub_finish.publish(msg)
@@ -128,7 +127,7 @@ class PurePursuit(object):
 		marker.scale.y = 0.5
 		marker.scale.z = 0.5
 		marker.color.g = 1.0
-		marker.color.a = 1.0
+		marker.color.a = 0.75
 		for waypoint in waypoints:
 			wp = Point()
 			wp.x, wp.y = waypoint[:2]

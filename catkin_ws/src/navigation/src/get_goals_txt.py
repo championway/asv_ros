@@ -28,6 +28,7 @@ class ROBOT_GOAL():
 		self.clear = False
 		self.start_navigation = False
 		self.set_path_succ = False	# If set path got wrong, we need to resend again
+		self.cycle = rospy.get_param("~cycle", True)
 		
 		rospack = rospkg.RosPack()
 		txt_name = rospy.get_param("~txt_name", "test1.txt")
@@ -47,6 +48,7 @@ class ROBOT_GOAL():
 		self.navigation_srv = rospy.Service("start_navigation", SetBool, self.navigation_cb)
 		self.clear_srv = rospy.Service("clear_goals", SetBool, self.clear_cb)
 		self.pub_marker = rospy.Publisher('goals_marker', MarkerArray, queue_size=1)
+		self.pub_waypoint = rospy.Publisher("path_marker",Marker, queue_size=1)
 		self.sub_orig = rospy.Subscriber("robot_origin", Point, self.orig_cb, queue_size=1)
 		rospy.Subscriber('odometry', Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 		
@@ -66,6 +68,7 @@ class ROBOT_GOAL():
 		self.robot_position = robot_position
 		self.goals = self.rcv_goals[:]
 		self.drawPoints()
+		self.drawWaypoint()
 		if self.start_navigation and not self.set_path_succ:
 			self.set_path()
 
@@ -190,15 +193,42 @@ class ROBOT_GOAL():
 			marker.pose.orientation.y = 0.0
 			marker.pose.orientation.z = 0.0
 			marker.pose.orientation.w = 1.0
-			marker.scale.x = 0.7
-			marker.scale.y = 0.7
-			marker.scale.z = 0.7
+			marker.scale.x = 1.5
+			marker.scale.y = 1.5
+			marker.scale.z = 1.5
 			marker.color.r = 1
 			marker.color.g = 0
 			marker.color.b = 0
 			marker.color.a = 1
 			marker_array.markers.append(marker)
 		self.pub_marker.publish(marker_array)
+
+	def drawWaypoint(self):
+		marker = Marker()
+		marker.header.frame_id = self.frame_id
+		marker.header.stamp = rospy.Time.now()
+		marker.ns = "points_for_waypoint"
+		marker.action = Marker.ADD
+		marker.pose.orientation.w = 1.0
+		marker.id = 0
+		marker.type = Marker.LINE_STRIP
+		marker.scale.x = 0.7
+		marker.scale.y = 0.7
+		marker.scale.z = 0.7
+		marker.color.g = 1.0
+		marker.color.b = 1.0
+		marker.color.a = 0.75
+		for i in range(len(self.goals)):
+			wp = Point()
+			wp.x, wp.y = self.goals[i].position.x, self.goals[i].position.y
+			wp.z = 0
+			marker.points.append(wp)
+		if self.cycle:
+			wp = Point()
+			wp.x, wp.y = self.goals[0].position.x, self.goals[0].position.y
+			wp.z = 0
+			marker.points.append(wp)
+		self.pub_waypoint.publish(marker)
 
 	'''def drawPath(self):
 		marker = Marker()
