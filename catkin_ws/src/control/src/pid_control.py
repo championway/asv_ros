@@ -72,7 +72,7 @@ class Robot_PID():
 		goal_angle = self.get_goal_angle(yaw, self.robot_position, self.goal)
 		
 		if goal_distance < self.station_keeping_dis:
-			rospy.loginfo("Station Keeping")
+			# rospy.loginfo("Station Keeping")
 			# pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 		else:
