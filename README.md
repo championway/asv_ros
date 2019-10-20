@@ -66,5 +66,5 @@ $ rosservice call /ASV/start_navigation "data: true"
 success: True
 message: "recieved"
 
-- Ust "TAB" to help you type this command
+- Use "TAB" to help you type this command
 ```
