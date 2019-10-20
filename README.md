@@ -36,25 +36,24 @@ $ cd ~/asv_ros/
 $ source environment.sh
 ```
 
-## How to Run
-
+## Multi-point Navigation
+- cycle:=False --> The ASV will stop at the end point.
+- cycle:=True --> The ASV will keep doing the cyle navigation.
+- You can skip typing "veh:=[Your vehicle name]", your default name will be "ASV"
 
 ### Run Sensor
+Open the sensor on the ASV, and make sure all the sensor ROS topics are publishing.
 ```
 TODO
+```
+
+### Run Navigation
+```
+$ roslaunch asv navigation.launch cycle:=[True/False]
 ```
 
 ### Run Joystick
 ```
 $ roslaunch asv joy.launch veh:=[Your vehicle name]
-```
-
-### Run Localization
-```
-$ roslaunch asv localizatin.launch
-```
-
-### Run Single Ponit Navigation
-```
-$ roslaunch asv waypoint.launch
+press "Start"
 ```
