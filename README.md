@@ -14,11 +14,11 @@
 
 ## Sensors
 
-|Name | Type |
-|-------		|--------					|
-|IMU		|???						|
-|GPS			|???					|
-|Depth sensors	|???						|
+|Name | Type | Rostopic |
+|-------		|--------	|--------	|
+|IMU		|???		|/mavros/imu/static_pressure		|
+|GPS			|???		|/mavros/global_position/global_position	|
+|Depth sensors	|???		|???		|
 
 ## How to Build
 1. For ROS part
@@ -56,4 +56,12 @@ $ roslaunch asv navigation.launch cycle:=[True/False]
 ```
 $ roslaunch asv joy.launch veh:=[Your vehicle name]
 press "Start"
+```
+### Start Navigation
+```
+$ rosservice call /ASV/start_navigation "data: true" 
+success: True
+message: "recieved"
+
+- Ust "TAB" to help you type this command
 ```
