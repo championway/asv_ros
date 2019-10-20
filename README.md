@@ -4,7 +4,7 @@
 |Reference|
 |---------|
 |[Dukciepond Website](https://robotx-nctu.github.io/duckiepond)|
-|[David Chen's Website](https://championway.github.io)|
+|[My Website](https://championway.github.io)|
 
 - If you have any question or suggestion, please feel free to contact me:
 ccpwearth@gmail.com
