@@ -25,12 +25,14 @@ class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
 		self.dis4constV = 5. # Distance for constant velocity
-		self.pos_ctrl_max = 1
+		self.alpha_p = 1.2
+		self.alpha_a = 1.3
+		self.pos_ctrl_max = 3
 		self.pos_ctrl_min = 0.0
 		# self.pos_station_max = 0.8
 		# self.pos_station_min = -0.8
-		self.cmd_ctrl_max = 0.95
-		self.cmd_ctrl_min = -0.95
+		self.cmd_ctrl_max = 2.5
+		self.cmd_ctrl_min = -2.5
 		self.station_keeping_dis = 3.5 # meters
 		self.frame_id = 'map'
 		self.goal = None
@@ -79,9 +81,12 @@ class Robot_PID():
 			pos_output, ang_output = self.control(goal_distance, goal_angle)
 
 		cmd_msg = MotorCmd()
-
-		cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
-		cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+		if not msg.only_angle.data: # for navigation
+			cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
+			cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+		else: # if only for rotation, instead of moving forward
+			cmd_msg.right = self.cmd_constarin(ang_output)
+			cmd_msg.left = self.cmd_constarin(ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
@@ -90,10 +95,10 @@ class Robot_PID():
 		self.ang_control.update(goal_angle)
 
 		# pos_output will always be positive
-		pos_output = self.pos_constrain(-self.pos_control.output/self.dis4constV)
+		pos_output = self.pos_constrain(self.alpha_p*(-self.pos_control.output/self.dis4constV))
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
-		ang_output = self.ang_control.output/180.
+		ang_output = self.alpha_a*(self.ang_control.output/180.)
 		return pos_output, ang_output
 
 	def station_keeping(self, goal_distance, goal_angle):
@@ -101,10 +106,10 @@ class Robot_PID():
 		self.ang_station_control.update(goal_angle)
 
 		# pos_output will always be positive
-		pos_output = self.pos_station_constrain(-self.pos_station_control.output/self.dis4constV)
+		pos_output = self.pos_station_constrain(self.alpha_p*(-self.pos_station_control.output/self.dis4constV))
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
-		ang_output = self.ang_station_control.output/180.
+		ang_output = self.alpha_a*(self.ang_station_control.output/180.)
 
 		# if the goal is behind the robot
 		if abs(goal_angle) > 90: 
@@ -183,11 +188,12 @@ class Robot_PID():
 		marker.pose.position.x = goal[0]
 		marker.pose.position.y = goal[1]
 		marker.id = 0
-		marker.scale.x = 0.6
-		marker.scale.y = 0.6
-		marker.scale.z = 0.6
+		marker.scale.x = 1.5
+		marker.scale.y = 1.5
+		marker.scale.z = 1.5
 		marker.color.a = 1.0
 		marker.color.g = 1.0
+		marker.color.r = 1.0
 		self.pub_goal.publish(marker)
 
 	def pos_pid_cb(self, config, level):
