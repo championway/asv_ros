@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="control" type="diving_control.py" name="diving_control" output="screen" >
+        </node>
+    </group>
+</launch>
