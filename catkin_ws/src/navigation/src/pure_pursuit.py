@@ -67,6 +67,7 @@ class PurePursuit(object):
 		# Reach
 		if self.destination_pose == None:
 			self.active = False
+			rospy.loginfo("[%s]Approach destination" %(self.node_name))
 			msg = Bool()
 			msg.data = True
 			self.pub_finish.publish(msg)

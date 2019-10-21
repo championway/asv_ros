@@ -67,7 +67,6 @@ class NAVIGATION():
 				start_point = [self.goals[-1].position.x, self.goals[-1].position.y]
 				self.purepursuit.set_goal(start_point, self.goals)
 			else:
-				rospy.loginfo("[%s]Approach destination" %(self.node_name))
 				rg = RobotGoal()
 				rg.goal.position.x, rg.goal.position.y = self.goals[-1].position.x, self.goals[-1].position.y
 				rg.robot = msg.pose.pose
