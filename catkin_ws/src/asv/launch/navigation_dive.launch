@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+    <arg name="txt_name" default="gazebo.txt"/>
+    <arg name="latitude" default="21.30996"/>
+    <arg name="longitude" default="-157.8901"/>
+    <arg name="imu_rotate" default='0' />
+    <arg name="cycle" default="True"/>
+
+    <include file="$(find localization)/launch/localization_gps_imu.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="latitude" value="$(arg latitude)"/>
+        <arg name="longitude" value="$(arg longitude)"/>
+        <arg name="imu_rotate" value="$(arg imu_rotate)" />
+    </include>
+
+    <include file="$(find control)/launch/pid_control.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+
+    <include file="$(find control)/launch/diving_control.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include>
+
+    <include file="$(find navigation)/launch/multi_point_nav_dive.launch">
+        <arg name="veh" value="$(arg veh)"/>
+        <arg name="cycle" value="$(arg cycle)"/>
+        <arg name="txt_name" value="$(arg txt_name)"/>
+    </include>
+
+    <!-- <include file="$(find joystick_control)/launch/joystick.launch">
+        <arg name="veh" value="$(arg veh)"/>
+    </include> -->
+
+</launch>
