@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+    <arg name="txt_name" default="gazebo.txt"/>
+    <arg name="cycle" default="True"/>
+
+    <remap from="imu/data" to="/wamv/sensors/imu/imu/data"/>
+    <group ns="$(arg veh)">
+        <node pkg="navigation" type="get_goals_txt.py" name="get_goals_txt" output="screen" >
+            <param name="cycle" value="$(arg cycle)"/>
+            <param name="txt_name" value="$(arg txt_name)"/>
+        </node>
+
+        <node pkg="navigation" type="navigation_dive.py" name="navigation_dive" output="screen" >
+            <param name="cycle" value="$(arg cycle)"/>
+        </node>
+    </group>
+
+</launch>

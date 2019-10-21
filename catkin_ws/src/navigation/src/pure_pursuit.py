@@ -25,6 +25,8 @@ class PurePursuit(object):
 		self.start = True
 		self.robot_go = False
 		self.get_waypoint = True
+		self.change_to_next_idx = False
+		self.is_change_next_idx = False
 		# Init subscribers and publishers
 		#self.pub_cmd = rospy.Publisher('/car_cmd', Twist, queue_size=1)
 		self.pub_finish = rospy.Publisher('pure_pursuit/finished', Bool, queue_size=1)
@@ -50,7 +52,6 @@ class PurePursuit(object):
 				self.waypoints.append([goal[i].position.x, goal[i].position.y])
 			self.robot_go = True
 			self.get_waypoint = False
-		
 
 	# Pose subscriber callback
 	def set_robot_pose(self, position, yaw):
@@ -85,6 +86,9 @@ class PurePursuit(object):
 		self.lookahead_distance = lh
 		self.threshold_proximity = lh 
 
+	def is_last_idx(self):
+		return self.current_waypoint_index == len(self.waypoints)
+
 	def car_control(self, v, omega):
 		omega = omega * 1.5
 		self.publish_cmd(v, omega)
@@ -108,11 +112,13 @@ class PurePursuit(object):
 		wp.z = 0
 		marker.points.append(wp)
 		marker.id = 0
-		marker.scale.x = 0.5
-		marker.scale.y = 0.5
-		marker.scale.z = 0.5
+		marker.scale.x = 0.7
+		marker.scale.y = 0.7
+		marker.scale.z = 0.7
 		marker.color.a = 1.0
 		marker.color.b = 1.0
+		marker.color.g = 1.0
+		marker.color.r = 1.0
 		self.pub_lookahead.publish(marker)
 
 	def publish_waypoint(self, waypoints):
@@ -275,7 +281,8 @@ class PurePursuit(object):
 		# If distance from robot pose to next waypoint is less than the lookahead distance, then we reach this
 		# waypoint
 		if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
-			rospy.loginfo("[%s]Arrived waypoint: %d"%(self.node_name, cwpi))
+			if cwpi != 0:
+				rospy.loginfo("[%s]Arrived waypoint: %d"%(self.node_name, cwpi))
 			# If there are more than or equal to one waypoint left, then add the current_waypoint_index for next iteration
 			if self.current_waypoint_index < len(self.waypoints)-1:
 				self.current_waypoint_index = self.current_waypoint_index + 1
@@ -295,8 +302,28 @@ class PurePursuit(object):
 			fake_robot_waypoint = self.closestPoint(self.robot_pose, wp[cwpi-1], wp[cwpi])[:2]
 			# If closest point is not on the line segment
 			if fake_robot_waypoint == (None, None):
+				if cwpi == 0:
+					dis1 = self.distanceBtwnPoints(wp[cwpi][0], wp[cwpi][1], x_robot, y_robot)
+					dis2 = self.distanceBtwnPoints(wp[cwpi+1][0], wp[cwpi+1][1], x_robot, y_robot)
+				else:
+					dis1 = self.distanceBtwnPoints(wp[cwpi-1][0], wp[cwpi-1][1], x_robot, y_robot)
+					dis2 = self.distanceBtwnPoints(wp[cwpi][0], wp[cwpi][1], x_robot, y_robot)
+				if dis1 < dis2:
+					fake_robot_waypoint = (wp[cwpi-1][0], wp[cwpi-1][1])
+					self.change_to_next_idx = False
+				else:
+					fake_robot_waypoint = (wp[cwpi][0], wp[cwpi][1])
+					self.change_to_next_idx = True
+				if self.change_to_next_idx and not self.is_change_next_idx:
+					if self.current_waypoint_index < len(self.waypoints)-1:
+						if cwpi != 0:
+							rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
+						self.current_waypoint_index = self.current_waypoint_index + 1
+						self.is_change_next_idx = True
 				# Set last waypoint as fake waypoint
-				fake_robot_waypoint = (wp[cwpi-1][0], wp[cwpi-1][1])
+				# fake_robot_waypoint = (wp[cwpi-1][0], wp[cwpi-1][1])
+			else:
+				self.is_change_next_idx = False
 		# Insert new fake waypoint, and remove waypoints which have been visited
 		waypoints_to_search = [fake_robot_waypoint] + wp[cwpi : ]
 		# Not use
@@ -307,7 +334,7 @@ class PurePursuit(object):
 		if (x_intersect, y_intersect) == (None, None):
 			if self.start:
 				if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
-					rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
+					#rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
 					self.current_waypoint_index = self.current_waypoint_index + 1
 					self.start = False
 			return fake_robot_waypoint
