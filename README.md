@@ -63,8 +63,6 @@ press "Start"
 ### Start Navigation
 ```
 $ rosservice call /ASV/start_navigation "data: true" 
-success: True
-message: "recieved"
 
 - Use "TAB" to help you type this command
 ```
