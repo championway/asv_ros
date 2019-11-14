@@ -3,8 +3,10 @@ import rospy
 import math
 
 from sensor_msgs.msg import Joy
-from asv_msgs.msg import MotorCmd,Heading,UsvDrive
+from asv_msgs.msg import MotorCmd, Heading
 from std_msgs.msg import Float32
+# from asv_msgs.msg import UsvDrive
+from robotx_gazebo.msg import UsvDrive
 
 
 class JoyMapper(object):
@@ -12,11 +14,14 @@ class JoyMapper(object):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
         self.if_vrx = rospy.get_param("~vrx", False)
+        self.gazebo = rospy.get_param("~gazebo", False)
 
         # Publications
         if self.if_vrx:
             self.pub_motor_right = rospy.Publisher("/wamv/thrusters/right_thrust_cmd",Float32,queue_size=1)
             self.pub_motor_left = rospy.Publisher("/wamv/thrusters/left_thrust_cmd",Float32,queue_size=1)
+        if self.gazebo:
+            self.pub_motor_cmd = rospy.Publisher("/cmd_drive",UsvDrive,queue_size=1)
         else:
             self.pub_motor_cmd = rospy.Publisher("motor_cmd",UsvDrive,queue_size=1)
 

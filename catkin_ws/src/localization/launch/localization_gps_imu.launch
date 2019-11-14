@@ -7,8 +7,8 @@
     <arg name="imu_rotate" default='0' />
 
     <group ns="$(arg veh)">
-        <remap from="fix" to="/wamv/sensors/gps/gps/fix"/>
-        <remap from="imu/data" to="/wamv/sensors/imu/imu/data"/>
+        <remap from="fix" to="/gps"/>
+        <remap from="imu/data" to="/imu/data"/>
         <node unless="$(arg gps_duplicate)" pkg="localization" type="localization_gps_imu.py" name="localization_gps_imu" respawn="false" output="screen">
             <param name="latitude" value="$(arg latitude)"/>
             <param name="longitude" value="$(arg longitude)"/>

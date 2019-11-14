@@ -3,7 +3,7 @@ import rospy
 import math
 
 from sensor_msgs.msg import Joy
-from asv_msgs.msg import MotorCmd,Heading
+from asv_msgs.msg import MotorCmd, Heading
 
 class JoyMapper(object):
     def __init__(self):

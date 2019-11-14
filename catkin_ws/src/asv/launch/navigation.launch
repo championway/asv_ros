@@ -6,6 +6,8 @@
     <arg name="longitude" default="-157.8901"/>
     <arg name="imu_rotate" default='0' />
     <arg name="cycle" default="True"/>
+    <arg name="port" default="/dev/ttyACM0"/>
+    <arg name="gazebo" default="false"/>
 
     <include file="$(find localization)/launch/localization_gps_imu.launch">
         <arg name="veh" value="$(arg veh)"/>
@@ -24,8 +26,10 @@
         <arg name="txt_name" value="$(arg txt_name)"/>
     </include>
 
-    <!-- <include file="$(find joystick_control)/launch/joystick.launch">
+    <include file="$(find joystick_control)/launch/joystick.launch">
         <arg name="veh" value="$(arg veh)"/>
-    </include> -->
+        <arg name="port" value="$(arg port)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
+    </include>
 
 </launch>

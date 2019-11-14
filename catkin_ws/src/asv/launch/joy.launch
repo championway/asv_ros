@@ -1,12 +1,14 @@
 <?xml version="1.0"?>
 <launch>
 	<arg name="veh" default="ASV"/>
+	<arg name="gazebo" default="true"/>
 
 	<include file="$(find joystick_control)/launch/joy_node.launch">
         <arg name="veh" value="$(arg veh)"/>
     </include>
     <include file="$(find joystick_control)/launch/joystick.launch">
         <arg name="veh" value="$(arg veh)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
     </include>
     
 </launch>
