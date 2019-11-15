@@ -13,16 +13,18 @@ class JoyMapper(object):
         # Publications
         self.pub_motor_cmd = rospy.Publisher("motor_cmd", MotorCmd, queue_size=1)
 
-        # Subscriptions
-        self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
-        self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
-
         #varibles
         self.emergencyStop = False
         self.autoMode = False
         self.motor_msg = MotorCmd()
         self.motor_msg.right = 0
         self.motor_msg.left = 0
+        self.MAX = 0.6
+        self.MIN = -0.6
+
+        # Subscriptions
+        self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
+        self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
 
         #timer
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
@@ -36,9 +38,9 @@ class JoyMapper(object):
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-            self.motor_msg.right = max(min(cmd_msg.left,0.6),-0.6)
-            self.motor_msg.left = max(min(cmd_msg.right,0.6),-0.6)
-
+            self.motor_msg.right = max(min(cmd_msg.left, self.MAX), self.MIN)
+            self.motor_msg.left = max(min(cmd_msg.right, self.MAX), self.MIN)
+            
     def cbJoy(self, joy_msg):
         self.processButtons(joy_msg)
         if not self.emergencyStop and not self.autoMode:
@@ -48,8 +50,8 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.right = max(min(speed - difference , 1),-1)
-            self.motor_msg.left = max(min(speed + difference , 1),-1)
+            self.motor_msg.right = max(min(speed - difference , self.MAX), self.MIN)
+            self.motor_msg.left = max(min(speed + difference , self.MAX), self.MIN)
 
     def processButtons(self, joy_msg):
         # Button A
