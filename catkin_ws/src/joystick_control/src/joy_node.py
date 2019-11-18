@@ -30,11 +30,11 @@ class JoyMapper(object):
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
 
     def cb_publish(self,event):
-        self.motor_msg.right = -self.motor_msg.right
         if self.emergencyStop:
             self.motor_msg.right = 0
             self.motor_msg.left = 0
         
+        self.motor_msg.right = -self.motor_msg.right
         self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
