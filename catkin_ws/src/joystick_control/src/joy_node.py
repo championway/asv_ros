@@ -50,7 +50,7 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.right = max(min(speed - difference , self.MAX), self.MIN)
+            self.motor_msg.right = -max(min(speed - difference , self.MAX), self.MIN)
             self.motor_msg.left = max(min(speed + difference , self.MAX), self.MIN)
 
     def processButtons(self, joy_msg):
