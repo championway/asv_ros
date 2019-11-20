@@ -3,6 +3,7 @@ import rospy
 import math
 
 from sensor_msgs.msg import Joy
+from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.msg import MotorCmd, Heading
 
 class JoyMapper(object):
@@ -52,28 +53,18 @@ class JoyMapper(object):
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
             self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
             self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            go_down = -(self.joy.axes[2] - 1.)/2.
+            go_up = -(self.joy.axes[5] - 1.)/2.
+            self.motor_msg.horizontal = max(min((go_down - go_up)*self.MAX, self.MAX), self.MIN)
 
     def processButtons(self, joy_msg):
-        # Button A
-        if (joy_msg.buttons[0] == 1):
-            rospy.loginfo('A button')
-            
-        # Y button
-        elif (joy_msg.buttons[3] == 1):
-            rospy.loginfo('Y button')
-
-        # Left back button
-        elif (joy_msg.buttons[4] == 1):
-            rospy.loginfo('left back button')
-
-        # Right back button
-        elif (joy_msg.buttons[5] == 1):
-            rospy.loginfo('right back button')
-
-        # Back button
-        elif (joy_msg.buttons[6] == 1):
-            rospy.loginfo('back button')
-            
+        # Button B
+        if (joy_msg.buttons[1] == 1):
+            if self.autoMode:
+                self.start_navigation()
+            else:
+                rospy.loginfo("Manul mode, cannot go navigation!")
+        
         # Start button
         elif (joy_msg.buttons[7] == 1):
             self.autoMode = not self.autoMode
@@ -91,14 +82,23 @@ class JoyMapper(object):
                 self.motor_msg.left = 0
             else:
                 rospy.loginfo('emergency stop release')
-        # Left joystick button
-        elif (joy_msg.buttons[9] == 1):
-            rospy.loginfo('left joystick button')
 
         else:
             some_active = sum(joy_msg.buttons) > 0
             if some_active:
-                rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
+                pass
+                #rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
+
+    def start_navigation(self):
+        rospy.loginfo("SRV: Start Navigation")
+        set_bool = SetBoolRequest()
+        set_bool.data = True
+        try:
+            srv = rospy.ServiceProxy('start_navigation', SetBool)
+            resp = srv(set_bool)
+            return resp
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
 
     def on_shutdown(self):
         self.motor_msg.right = 0
