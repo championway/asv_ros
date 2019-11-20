@@ -7,8 +7,10 @@
     <arg name="imu_rotate" default='0' />
 
     <group ns="$(arg veh)">
-        <remap from="fix" to="/gps"/>
-        <remap from="imu/data" to="/imu/data"/>
+        <remap from="fix" to="/mavros/global_position/raw/fix"/>
+        <remap from="imu/data" to="/mavros/imu/data"/>
+        <!-- <remap from="fix" to="/gps"/>
+        <remap from="imu/data" to="/imu/data"/> -->
         <node unless="$(arg gps_duplicate)" pkg="localization" type="localization_gps_imu.py" name="localization_gps_imu" respawn="false" output="screen">
             <param name="latitude" value="$(arg latitude)"/>
             <param name="longitude" value="$(arg longitude)"/>
