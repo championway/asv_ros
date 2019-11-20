@@ -3,7 +3,7 @@
     <arg name="veh" default="ASV"/>
     <arg name="gazebo" default="false"/>
     <arg name="differential_constrain" default="0.2" />
-    <arg name="port" default="/dev/ttyACM0"/>
+    <arg name="port" default="/dev/ttyUSB0"/>
 
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
