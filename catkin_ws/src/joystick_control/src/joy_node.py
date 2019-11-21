@@ -20,8 +20,8 @@ class JoyMapper(object):
         self.motor_msg = MotorCmd()
         self.motor_msg.right = 0
         self.motor_msg.left = 0
-        self.MAX = 0.5
-        self.MIN = -0.5
+        self.MAX = 0.6
+        self.MIN = -0.6
         self.dive_MAX = 0.8
         self.dive_MIN = -0.8
 
