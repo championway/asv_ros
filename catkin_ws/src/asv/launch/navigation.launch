@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="veh" default="ASV"/>
-    <arg name="txt_name" default="gazebo.txt"/>
+    <arg name="txt_name" default="test1.txt"/>
     <arg name="latitude" default="21.30996"/>
     <arg name="longitude" default="-157.8901"/>
     <arg name="imu_rotate" default='0' />
