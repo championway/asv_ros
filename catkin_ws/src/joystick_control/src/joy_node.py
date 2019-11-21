@@ -20,8 +20,8 @@ class JoyMapper(object):
         self.motor_msg = MotorCmd()
         self.motor_msg.right = 0
         self.motor_msg.left = 0
-        self.MAX = 0.6
-        self.MIN = -0.6
+        self.MAX = 0.4
+        self.MIN = -0.4
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
