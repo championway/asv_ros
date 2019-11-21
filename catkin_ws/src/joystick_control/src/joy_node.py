@@ -22,6 +22,8 @@ class JoyMapper(object):
         self.motor_msg.left = 0
         self.MAX = 0.5
         self.MIN = -0.5
+        self.dive_MAX = 0.8
+        self.dive_MIN = -0.8
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
@@ -55,7 +57,7 @@ class JoyMapper(object):
             self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
             go_down = -(self.joy.axes[2] - 1.)/2.
             go_up = -(self.joy.axes[5] - 1.)/2.
-            self.motor_msg.horizontal = max(min((go_down - go_up)*self.MAX, self.MAX), self.MIN)
+            self.motor_msg.horizontal = max(min((go_down - go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
 
     def processButtons(self, joy_msg):
         # Button B
