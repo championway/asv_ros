@@ -24,6 +24,9 @@ class JoyMapper(object):
         self.MIN = -0.6
         self.dive_MAX = 0.8
         self.dive_MIN = -0.8
+        self.check_no_signal = False
+
+        self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
@@ -32,10 +35,15 @@ class JoyMapper(object):
         #timer
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
 
-    def cb_publish(self,event):
+    def cb_publish(self, event):
         if self.emergencyStop:
             self.motor_msg.right = 0
             self.motor_msg.left = 0
+
+        if self.check_no_signal:
+            self.motor_msg.right = 0
+            self.motor_msg.left = 0
+            self.motor_msg.horizontal = 0.5
         
         self.pub_motor_cmd.publish(self.motor_msg)
 
@@ -43,6 +51,7 @@ class JoyMapper(object):
         if not self.emergencyStop and self.autoMode:
             self.motor_msg.right = -max(min(cmd_msg.right, self.MAX), self.MIN)
             self.motor_msg.left = max(min(cmd_msg.left, self.MAX), self.MIN)
+            self.motor_msg.horizontal = max(min(cmd_msg.horizontal, self.MAX), self.MIN)
             
     def cbJoy(self, joy_msg):
         self.processButtons(joy_msg)
@@ -101,6 +110,19 @@ class JoyMapper(object):
             return resp
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
+
+    def no_signal_cb(self, req):
+        if req.data == True:
+            self.check_no_signal = True
+            rospy.loginfo("No Signal")
+        else:
+            self.check_no_signal = False
+            self.motor_msg.horizontal = 0
+            rospy.loginfo("Got Signal")
+        res = SetBoolResponse()
+        res.success = True
+        res.message = "recieved"
+        return res
 
     def on_shutdown(self):
         self.motor_msg.right = 0
