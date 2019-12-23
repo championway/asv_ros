@@ -18,17 +18,18 @@ class CHECK_SIGNAL():
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
         self.time_start = rospy.get_time()
+        self.time_threshold = rospy.get_param("~sec", 4.0)
         
         # self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
         # self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
 
-        self.gps_sub = rospy.Subscriber("gps/data", NavSatFix, self.gps_cb, queue_size = 1, buff_size = 2**24)
-        self.imu_sub = rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+        self.gps_sub = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix, self.gps_cb, queue_size = 1, buff_size = 2**24)
+        self.imu_sub = rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
 
         rospy.Timer(rospy.Duration(1), self.event_cb)
 
     def event_cb(self, event):
-        if (rospy.get_time() - self.time_start) > 5:
+        if (rospy.get_time() - self.time_start) > self.time_threshold:
             if not self.send_no_signal:
                 self.srv_no_signal()
         else:

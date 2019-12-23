@@ -43,7 +43,7 @@ class JoyMapper(object):
         if self.check_no_signal:
             self.motor_msg.right = 0
             self.motor_msg.left = 0
-            self.motor_msg.horizontal = -0.5
+            self.motor_msg.horizontal = 0.5
         
         self.pub_motor_cmd.publish(self.motor_msg)
 
