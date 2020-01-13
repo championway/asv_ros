@@ -17,7 +17,6 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 
-
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
@@ -31,6 +30,8 @@ add_message_files(
   UsvDrive.msg
   RobotPath.msg
   RobotGoal.msg
+  ControlCmd.msg
+  Status.msg
 )
 
 add_service_files(

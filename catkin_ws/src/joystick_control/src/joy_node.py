@@ -4,7 +4,7 @@ import math
 
 from sensor_msgs.msg import Joy
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
-from asv_msgs.msg import MotorCmd, Heading
+from asv_msgs.msg import MotorCmd, Heading, ControlCmd, Status
 
 class JoyMapper(object):
     def __init__(self):
@@ -13,6 +13,7 @@ class JoyMapper(object):
 
         # Publications
         self.pub_motor_cmd = rospy.Publisher("motor_cmd", MotorCmd, queue_size=1)
+        self.pub_status = rospy.Publisher("status", Status, queue_size=1)
 
         #varibles
         self.emergencyStop = False
@@ -25,12 +26,15 @@ class JoyMapper(object):
         self.dive_MAX = 0.8
         self.dive_MIN = -0.8
         self.check_no_signal = False
+        self.navigate = False
+        self.pre_ControlMsg = ControlCmd()
 
         self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
 
         # Subscriptions
-        self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd,self.cbCmd,queue_size=1)
+        self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd, self.cbCmd, queue_size=1)
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
+        self.sub_control_cmd = rospy.Subscriber("cmd_control", ControlCmd, self.cbControlCmd, queue_size = 1)
 
         #timer
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
@@ -44,7 +48,16 @@ class JoyMapper(object):
             self.motor_msg.right = 0
             self.motor_msg.left = 0
             self.motor_msg.horizontal = -0.5
+
+        status = Status()
+        status.right = self.motor_msg.right
+        status.left = self.motor_msg.left
+        status.horizontal = self.motor_msg.horizontal
+        status.manual = not self.autoMode
+        status.estop = self.emergencyStop
+        status.navigate = self.navigate
         
+        self.pub_status.publish(status)
         self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
@@ -100,12 +113,45 @@ class JoyMapper(object):
                 pass
                 #rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
 
+    def cbControlCmd(self, msg):
+        if self.pre_ControlMsg.manual != msg.manual:
+            self.autoMode = not msg.manual
+
+        if self.pre_ControlMsg.navigate != msg.navigate:
+            if msg.navigate:
+                if self.autoMode:
+                    self.start_navigation()
+
+        if self.pre_ControlMsg.estop != msg.estop:
+            self.emergencyStop = msg.estop
+            
+        if self.emergencyStop:
+            self.motor_msg.right = 0
+            self.motor_msg.left = 0
+
+        if not self.emergencyStop and not self.autoMode and msg.useVJoystick:
+            boat_heading_msg = Heading()
+            forward = -msg.forward/100.
+            right = -msg.right/100.
+            boat_heading_msg.speed = math.sqrt((math.pow(forward,2)+math.pow(right,2))/2)
+            boat_heading_msg.phi = math.atan2(forward, right)
+            speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
+            difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
+            self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
+            self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            go_up = -msg.up/100.
+            self.motor_msg.horizontal = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
+
+        self.pre_ControlMsg = msg
+
+
     def start_navigation(self):
         rospy.loginfo("SRV: Start Navigation")
         set_bool = SetBoolRequest()
         set_bool.data = True
         try:
             srv = rospy.ServiceProxy('start_navigation', SetBool)
+            self.navigate = True
             resp = srv(set_bool)
             return resp
         except rospy.ServiceException, e:
