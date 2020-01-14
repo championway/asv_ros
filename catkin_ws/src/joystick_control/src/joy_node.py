@@ -6,13 +6,19 @@ from sensor_msgs.msg import Joy
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.msg import MotorCmd, Heading, ControlCmd, Status
 
+from robotx_gazebo.msg import UsvDrive
+
 class JoyMapper(object):
     def __init__(self):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
+        self.gazebo = False
+
         # Publications
         self.pub_motor_cmd = rospy.Publisher("motor_cmd", MotorCmd, queue_size=1)
+        if self.gazebo:
+            self.pub_motor_cmd = rospy.Publisher("/cmd_drive",UsvDrive,queue_size=1)
         self.pub_status = rospy.Publisher("status", Status, queue_size=1)
 
         #varibles
@@ -58,7 +64,13 @@ class JoyMapper(object):
         status.navigate = self.navigate
         
         self.pub_status.publish(status)
-        self.pub_motor_cmd.publish(self.motor_msg)
+        if self.gazebo:
+            motor_msg = UsvDrive()
+            motor_msg.right = self.motor_msg.right
+            motor_msg.left = self.motor_msg.left
+            self.pub_motor_cmd.publish(motor_msg)
+        else:
+            self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
@@ -84,10 +96,13 @@ class JoyMapper(object):
     def processButtons(self, joy_msg):
         # Button B
         if (joy_msg.buttons[1] == 1):
-            if self.autoMode:
-                self.start_navigation()
-            else:
-                rospy.loginfo("Manul mode, cannot go navigation!")
+            self.navigate = True
+            self.start_navigation(True)
+
+        # Button A
+        if (joy_msg.buttons[0] == 1):
+            self.navigate = False
+            self.start_navigation(False)
         
         # Start button
         elif (joy_msg.buttons[7] == 1):
@@ -118,9 +133,13 @@ class JoyMapper(object):
             self.autoMode = not msg.manual
 
         if self.pre_ControlMsg.navigate != msg.navigate:
+            self.navigate = msg.navigate
             if msg.navigate:
-                if self.autoMode:
-                    self.start_navigation()
+                self.start_navigation(True)
+                rospy.loginfo("Start Navigation!")
+            else:
+                self.start_navigation(False)
+                rospy.loginfo("Reset Navigation!")
 
         if self.pre_ControlMsg.estop != msg.estop:
             self.emergencyStop = msg.estop
@@ -145,13 +164,14 @@ class JoyMapper(object):
         self.pre_ControlMsg = msg
 
 
-    def start_navigation(self):
-        rospy.loginfo("SRV: Start Navigation")
+    def start_navigation(self, isTrue):
         set_bool = SetBoolRequest()
-        set_bool.data = True
+        if isTrue:
+            set_bool.data = True
+        else:
+            set_bool.data = False
         try:
             srv = rospy.ServiceProxy('start_navigation', SetBool)
-            self.navigate = True
             resp = srv(set_bool)
             return resp
         except rospy.ServiceException, e:

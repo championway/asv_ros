@@ -9,7 +9,7 @@ import time
 from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
 from asv_msgs.msg import RobotPath
 from asv_msgs.srv import SetRobotPath, SetRobotPathResponse
-from std_srvs.srv import SetBool, SetBoolResponse
+from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Odometry
 from geodesy.utm import UTMPoint, fromLatLong
@@ -111,14 +111,26 @@ class ROBOT_GOAL():
 		del self.goals[:]
 		self.clear = False
 
+	def resetNavigation(self):
+		self.start_navigation = False
+		self.set_path_succ = False
+		set_bool = SetBoolRequest()
+		set_bool.data = True
+		try:
+			srv = rospy.ServiceProxy('reset_goals', SetBool)
+			resp = srv(set_bool)
+			return resp
+		except rospy.ServiceException, e:
+			print "Service call failed: %s"%e
+
 	def navigation_cb(self, req):
 		if req.data == True:
 			rospy.loginfo("Start Navigation")
 			self.start_navigation = True
 			self.set_path_succ = False
 		else:
-			rospy.loginfo("Stop Navigation")
-			self.start_navigation = False
+			rospy.loginfo("Reset Navigation")
+			self.resetNavigation()
 		res = SetBoolResponse()
 		res.success = True
 		res.message = "recieved"

@@ -42,7 +42,8 @@ class Ui_Form(object):
         self.updownCmd = 0
         self.forbackCmd = 0
         self.dead_zone = 10
-        self.useVJoyStick = True
+        self.useVJoyStick = False
+        self.pre_status = Status()
         self.estop = False
         self.manual = True
         self.navigate = False
@@ -61,16 +62,17 @@ class Ui_Form(object):
         self.cmd_publiser.publish(cmd)
 
     def cbStatus(self, msg):
-        if self.manual != msg.manual:
+        if self.pre_status.manual != msg.manual:
             self.manual = msg.manual
-        if self.estop != msg.estop:
+        if self.pre_status.estop != msg.estop:
             self.estop = msg.estop
-        if self.navigate != msg.navigate:
+        if self.pre_status.navigate != msg.navigate:
             self.navigate = msg.navigate
+        self.check_Navigate(msg.navigate)
         text = ""
-        text = "[Left Motor]  " + str(msg.left) + "\n"
-        text += "[Right Motor]  " + str(msg.right) + "\n"
-        text += "[Horizontal Motor]  " + str(msg.horizontal) + "\n"
+        text = "[Left Motor]  \t" + str(msg.left) + "\n"
+        text += "[Right Motor]  \t" + str(msg.right) + "\n"
+        text += "[Horizontal Motor]  \t" + str(msg.horizontal) + "\n"
         if msg.estop:
             text += "[Emergency Stop]  \tTrue\n"
         else:
@@ -85,6 +87,7 @@ class Ui_Form(object):
             text += "[Navigation]  \tFalse\n"
 
         # self.update_status_text(text)
+        self.pre_status = msg
         self.thread.run_(text)
 
     def update_status_text(self, msg):
@@ -93,6 +96,9 @@ class Ui_Form(object):
 
 
     def cb_VJoyStick(self):
+        self.check_VJoystick()
+
+    def check_VJoystick(self):
         if self.useVJoyStickBtn.isChecked():
             self.useVJoyStick = True
             self.updownScroll.setEnabled(True)
@@ -110,9 +116,19 @@ class Ui_Form(object):
             self.leftrightValue.setEnabled(False)
             self.forbackValue.setEnabled(False)
 
+    def check_Navigate(self, isNav):
+        if isNav:
+            self.navigateBtn.setEnabled(False)
+            self.navigateResetBtn.setEnabled(True)
+        else:
+            self.navigateBtn.setEnabled(True)
+            self.navigateResetBtn.setEnabled(False)
         
     def cb_navigate(self):
         self.navigate = True
+
+    def cb_resetNavigate(self):
+        self.navigate = False
 
     def cb_manual(self):
         self.manual = True
@@ -147,9 +163,12 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(976, 553)
-        self.navigatieBtn = QtGui.QPushButton(Form)
-        self.navigatieBtn.setGeometry(QtCore.QRect(640, 10, 181, 51))
-        self.navigatieBtn.setObjectName(_fromUtf8("navigatieBtn"))
+        self.navigateBtn = QtGui.QPushButton(Form)
+        self.navigateBtn.setGeometry(QtCore.QRect(550, 10, 181, 51))
+        self.navigateBtn.setObjectName(_fromUtf8("navigateBtn"))
+        self.navigateResetBtn = QtGui.QPushButton(Form)
+        self.navigateResetBtn.setGeometry(QtCore.QRect(740, 10, 181, 51))
+        self.navigateResetBtn.setObjectName(_fromUtf8("navigateResetBtn"))
         self.manualBtn = QtGui.QPushButton(Form)
         self.manualBtn.setGeometry(QtCore.QRect(590, 70, 141, 51))
         self.manualBtn.setObjectName(_fromUtf8("manualBtn"))
@@ -163,7 +182,7 @@ class Ui_Form(object):
         self.imageView.setGeometry(QtCore.QRect(10, 10, 501, 361))
         self.imageView.setObjectName(_fromUtf8("imageView"))
         self.statusInput = QtGui.QTextEdit(Form)
-        self.statusInput.setGeometry(QtCore.QRect(10, 390, 211, 151))
+        self.statusInput.setGeometry(QtCore.QRect(10, 390, 161, 151))
         self.statusInput.setObjectName(_fromUtf8("statusInput"))
         self.leftrightScroll = QtGui.QScrollBar(Form)
         self.leftrightScroll.setGeometry(QtCore.QRect(630, 400, 191, 16))
@@ -183,7 +202,7 @@ class Ui_Form(object):
         self.updownScroll.setOrientation(QtCore.Qt.Vertical)
         self.updownScroll.setObjectName(_fromUtf8("updownScroll"))
         self.statusOutput = QtGui.QTextBrowser(Form)
-        self.statusOutput.setGeometry(QtCore.QRect(240, 390, 271, 151))
+        self.statusOutput.setGeometry(QtCore.QRect(190, 390, 321, 151))
         self.statusOutput.setObjectName(_fromUtf8("statusOutput"))
         self.updownValue = QtGui.QTextBrowser(Form)
         self.updownValue.setGeometry(QtCore.QRect(530, 510, 101, 31))
@@ -207,7 +226,8 @@ class Ui_Form(object):
 
         self.retranslateUi(Form)
         
-        QtCore.QObject.connect(self.navigatieBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_navigate)
+        QtCore.QObject.connect(self.navigateBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_navigate)
+        QtCore.QObject.connect(self.navigateResetBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_resetNavigate)
         QtCore.QObject.connect(self.manualBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_manual)
         QtCore.QObject.connect(self.autoBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_auto)
         QtCore.QObject.connect(self.estopBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop)
@@ -236,12 +256,14 @@ class Ui_Form(object):
         self.forbackScroll.setMaximum(200)
         self.forbackScroll.setValue(100)
         self.forbackValue.setText("Value: " + str(0))
-        self.useVJoyStickBtn.setChecked(True)
-        self.sub_status = rospy.Subscriber("/ASV/status",Status, self.cbStatus, queue_size=1)
+        self.useVJoyStickBtn.setChecked(False)
+        self.check_VJoystick()
+        self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
-        self.navigatieBtn.setText(_translate("Form", "Start Navigate 開始導航", None))
+        self.navigateBtn.setText(_translate("Form", "Start Navigate 開始導航", None))
+        self.navigateResetBtn.setText(_translate("Form", "Reset Navigate 重設導航", None))
         self.manualBtn.setText(_translate("Form", "Manual 手動", None))
         self.autoBtn.setText(_translate("Form", "Autonomous 自動", None))
         self.estopBtn.setText(_translate("Form", "Emergency Stop 緊急停止", None))

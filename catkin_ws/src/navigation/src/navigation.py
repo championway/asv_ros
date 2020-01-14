@@ -37,6 +37,7 @@ class NAVIGATION():
 		# self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
 		self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
 		self.path_srv = rospy.Service("set_path", SetRobotPath, self.path_cb)
+		self.reset_srv = rospy.Service("reset_goals", SetBool, self.reset_cb)
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
 
 		self.purepursuit = PurePursuit()
@@ -85,6 +86,15 @@ class NAVIGATION():
 		# 	self.publish_lookahead(self.robot_position, self.final_goal[-1])
 		# else:
 		# 	self.publish_lookahead(self.robot_position, pursuit_point)
+
+	def reset_cb(self, req):
+		if req.data == True:
+			self.goals = []
+			self.get_path = False
+		res = SetBoolResponse()
+		res.success = True
+		res.message = "recieved"
+		return res
 
 	def path_cb(self, req):
 		rospy.loginfo("Get Path")
