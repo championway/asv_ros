@@ -10,6 +10,11 @@ import rospy
 from PyQt4 import QtCore, QtGui
 from asv_msgs.msg import ControlCmd, Status
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
+from sensor_msgs.msg import Image, CompressedImage
+from cv_bridge import CvBridge, CvBridgeError
+import numpy as np
+import cv2
+import time
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -32,8 +37,15 @@ class MyThread(QtCore.QThread):
         super(MyThread, self).__init__(parent)
 
     def run_(self, message):
-        #time.sleep(random.random() * 5)
         self.trigger.emit(message)
+
+class ImgThread(QtCore.QThread):
+    trigger = QtCore.pyqtSignal(object)
+
+    def __init__(self, parent=None):
+        super(ImgThread, self).__init__(parent)
+    def run_(self, qt_image):
+       self.trigger.emit(qt_image)
 
 class Ui_Form(object):
 
@@ -44,9 +56,12 @@ class Ui_Form(object):
         self.dead_zone = 10
         self.useVJoyStick = False
         self.pre_status = Status()
+        self.cv_bridge = CvBridge()
+        self.is_compressed = True
         self.estop = False
         self.manual = True
         self.navigate = False
+        self.switchScreen = True
         self.cmd_publiser = rospy.Publisher("/ASV/cmd_control", ControlCmd, queue_size = 1)
         self.timer = rospy.Timer(rospy.Duration(0.1),self.cb_publish)
 
@@ -90,10 +105,49 @@ class Ui_Form(object):
         self.pre_status = msg
         self.thread.run_(text)
 
+    def cbImage(self, msg):
+        try:
+            if self.is_compressed:
+                np_arr = np.fromstring(msg.data, np.uint8)
+                cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
+            else:
+                cv_image = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError as e:
+            print(e)
+        if not self.switchScreen:
+            self.img1_thread.run_(cv_image)
+        else:
+            self.img2_thread.run_(cv_image)
+
     def update_status_text(self, msg):
         # self.statusOutput.clear()
         self.statusOutput.setText(msg)
 
+    def update_image_1(self, cv_image):
+        w = self.imageView_1.width()
+        h = self.imageView_1.height()
+        ratio_w = w/float(cv_image.shape[1])
+        ratio_h = h/float(cv_image.shape[0])
+        if ratio_w < ratio_h:
+            h = int(float(cv_image.shape[0])*ratio_w)
+        else:
+            w = int(float(cv_image.shape[1])*ratio_h)
+        cv_image = cv2.resize(cv_image, (w, h), interpolation=cv2.INTER_CUBIC)
+        qt_image = QtGui.QImage(cv_image.data, w, h, cv_image.strides[0], QtGui.QImage.Format_RGB888).rgbSwapped()
+        self.imageView_1.setPixmap(QtGui.QPixmap.fromImage(qt_image))
+
+    def update_image_2(self, cv_image):
+        w = self.imageView_2.width()
+        h = self.imageView_2.height()
+        ratio_w = w/float(cv_image.shape[1])
+        ratio_h = h/float(cv_image.shape[0])
+        if ratio_w < ratio_h:
+            h = int(float(cv_image.shape[0])*ratio_w)
+        else:
+            w = int(float(cv_image.shape[1])*ratio_h)
+        cv_image = cv2.resize(cv_image, (w, h), interpolation=cv2.INTER_CUBIC)
+        qt_image = QtGui.QImage(cv_image.data, w, h, cv_image.strides[0], QtGui.QImage.Format_RGB888).rgbSwapped()
+        self.imageView_2.setPixmap(QtGui.QPixmap.fromImage(qt_image))
 
     def cb_VJoyStick(self):
         self.check_VJoystick()
@@ -119,10 +173,10 @@ class Ui_Form(object):
     def check_Navigate(self, isNav):
         if isNav:
             self.navigateBtn.setEnabled(False)
-            self.navigateResetBtn.setEnabled(True)
+            self.resetNavigateBtn.setEnabled(True)
         else:
             self.navigateBtn.setEnabled(True)
-            self.navigateResetBtn.setEnabled(False)
+            self.resetNavigateBtn.setEnabled(False)
         
     def cb_navigate(self):
         self.navigate = True
@@ -141,6 +195,13 @@ class Ui_Form(object):
 
     def cb_estop_release(self):
         self.estop = False
+
+    def cb_switchScreen(self):
+        self.switchScreen = not self.switchScreen
+        null_img = np.zeros((300, 450, 3), np.uint8)
+        null_img[:,:] = (200, 200, 200)
+        self.img1_thread.run_(null_img)
+        self.img2_thread.run_(null_img)
 
     def updownScrollMoved(self):
         self.updownCmd = -(self.updownScroll.value()-100)
@@ -162,76 +223,80 @@ class Ui_Form(object):
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(976, 553)
+        Form.resize(1020, 553)
         self.navigateBtn = QtGui.QPushButton(Form)
-        self.navigateBtn.setGeometry(QtCore.QRect(550, 10, 181, 51))
+        self.navigateBtn.setGeometry(QtCore.QRect(600, 10, 181, 51))
         self.navigateBtn.setObjectName(_fromUtf8("navigateBtn"))
-        self.navigateResetBtn = QtGui.QPushButton(Form)
-        self.navigateResetBtn.setGeometry(QtCore.QRect(740, 10, 181, 51))
-        self.navigateResetBtn.setObjectName(_fromUtf8("navigateResetBtn"))
         self.manualBtn = QtGui.QPushButton(Form)
-        self.manualBtn.setGeometry(QtCore.QRect(590, 70, 141, 51))
+        self.manualBtn.setGeometry(QtCore.QRect(640, 70, 141, 51))
         self.manualBtn.setObjectName(_fromUtf8("manualBtn"))
         self.autoBtn = QtGui.QPushButton(Form)
-        self.autoBtn.setGeometry(QtCore.QRect(740, 70, 141, 51))
+        self.autoBtn.setGeometry(QtCore.QRect(790, 70, 141, 51))
         self.autoBtn.setObjectName(_fromUtf8("autoBtn"))
         self.estopBtn = QtGui.QPushButton(Form)
-        self.estopBtn.setGeometry(QtCore.QRect(520, 130, 211, 61))
+        self.estopBtn.setGeometry(QtCore.QRect(590, 130, 191, 61))
         self.estopBtn.setObjectName(_fromUtf8("estopBtn"))
-        self.imageView = QtGui.QGraphicsView(Form)
-        self.imageView.setGeometry(QtCore.QRect(10, 10, 501, 361))
-        self.imageView.setObjectName(_fromUtf8("imageView"))
-        self.statusInput = QtGui.QTextEdit(Form)
-        self.statusInput.setGeometry(QtCore.QRect(10, 390, 161, 151))
-        self.statusInput.setObjectName(_fromUtf8("statusInput"))
+        self.imageView_1 = QtGui.QLabel(Form)
+        self.imageView_1.setGeometry(QtCore.QRect(10, 10, 561, 361))
+        self.imageView_1.setObjectName(_fromUtf8("imageView_1"))
         self.leftrightScroll = QtGui.QScrollBar(Form)
-        self.leftrightScroll.setGeometry(QtCore.QRect(630, 400, 191, 16))
+        self.leftrightScroll.setGeometry(QtCore.QRect(680, 400, 191, 16))
         self.leftrightScroll.setOrientation(QtCore.Qt.Horizontal)
         self.leftrightScroll.setObjectName(_fromUtf8("leftrightScroll"))
         self.updownName = QtGui.QTextBrowser(Form)
-        self.updownName.setGeometry(QtCore.QRect(530, 260, 101, 31))
+        self.updownName.setGeometry(QtCore.QRect(580, 260, 101, 31))
         self.updownName.setObjectName(_fromUtf8("updownName"))
         self.forbackName = QtGui.QTextBrowser(Form)
-        self.forbackName.setGeometry(QtCore.QRect(810, 260, 151, 31))
+        self.forbackName.setGeometry(QtCore.QRect(860, 260, 151, 31))
         self.forbackName.setObjectName(_fromUtf8("forbackName"))
         self.leftrightName = QtGui.QTextBrowser(Form)
-        self.leftrightName.setGeometry(QtCore.QRect(670, 260, 101, 31))
+        self.leftrightName.setGeometry(QtCore.QRect(720, 260, 101, 31))
         self.leftrightName.setObjectName(_fromUtf8("leftrightName"))
         self.updownScroll = QtGui.QScrollBar(Form)
-        self.updownScroll.setGeometry(QtCore.QRect(570, 300, 16, 201))
+        self.updownScroll.setGeometry(QtCore.QRect(620, 300, 16, 201))
         self.updownScroll.setOrientation(QtCore.Qt.Vertical)
         self.updownScroll.setObjectName(_fromUtf8("updownScroll"))
         self.statusOutput = QtGui.QTextBrowser(Form)
-        self.statusOutput.setGeometry(QtCore.QRect(190, 390, 321, 151))
+        self.statusOutput.setGeometry(QtCore.QRect(240, 380, 331, 161))
         self.statusOutput.setObjectName(_fromUtf8("statusOutput"))
         self.updownValue = QtGui.QTextBrowser(Form)
-        self.updownValue.setGeometry(QtCore.QRect(530, 510, 101, 31))
+        self.updownValue.setGeometry(QtCore.QRect(580, 510, 101, 31))
         self.updownValue.setObjectName(_fromUtf8("updownValue"))
         self.forbackScroll = QtGui.QScrollBar(Form)
-        self.forbackScroll.setGeometry(QtCore.QRect(870, 300, 16, 201))
+        self.forbackScroll.setGeometry(QtCore.QRect(920, 300, 16, 201))
         self.forbackScroll.setOrientation(QtCore.Qt.Vertical)
         self.forbackScroll.setObjectName(_fromUtf8("forbackScroll"))
         self.leftrightValue = QtGui.QTextBrowser(Form)
-        self.leftrightValue.setGeometry(QtCore.QRect(680, 510, 101, 31))
+        self.leftrightValue.setGeometry(QtCore.QRect(730, 510, 101, 31))
         self.leftrightValue.setObjectName(_fromUtf8("leftrightValue"))
         self.forbackValue = QtGui.QTextBrowser(Form)
-        self.forbackValue.setGeometry(QtCore.QRect(820, 510, 101, 31))
+        self.forbackValue.setGeometry(QtCore.QRect(870, 510, 101, 31))
         self.forbackValue.setObjectName(_fromUtf8("forbackValue"))
         self.useVJoyStickBtn = QtGui.QRadioButton(Form)
-        self.useVJoyStickBtn.setGeometry(QtCore.QRect(610, 210, 271, 22))
+        self.useVJoyStickBtn.setGeometry(QtCore.QRect(660, 230, 271, 22))
         self.useVJoyStickBtn.setObjectName(_fromUtf8("useVJoyStickBtn"))
         self.estopReleaseBtn = QtGui.QPushButton(Form)
-        self.estopReleaseBtn.setGeometry(QtCore.QRect(740, 130, 221, 61))
+        self.estopReleaseBtn.setGeometry(QtCore.QRect(790, 130, 221, 61))
         self.estopReleaseBtn.setObjectName(_fromUtf8("estopReleaseBtn"))
+        self.resetNavigateBtn = QtGui.QPushButton(Form)
+        self.resetNavigateBtn.setGeometry(QtCore.QRect(790, 10, 181, 51))
+        self.resetNavigateBtn.setObjectName(_fromUtf8("resetNavigateBtn"))
+        self.imageView_2 = QtGui.QLabel(Form)
+        self.imageView_2.setGeometry(QtCore.QRect(10, 380, 221, 161))
+        self.imageView_2.setObjectName(_fromUtf8("imageView_2"))
+        self.switchScreenBtn = QtGui.QPushButton(Form)
+        self.switchScreenBtn.setGeometry(QtCore.QRect(720, 200, 121, 27))
+        self.switchScreenBtn.setObjectName(_fromUtf8("switchScreenBtn"))
 
         self.retranslateUi(Form)
         
         QtCore.QObject.connect(self.navigateBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_navigate)
-        QtCore.QObject.connect(self.navigateResetBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_resetNavigate)
+        QtCore.QObject.connect(self.resetNavigateBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_resetNavigate)
         QtCore.QObject.connect(self.manualBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_manual)
         QtCore.QObject.connect(self.autoBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_auto)
         QtCore.QObject.connect(self.estopBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop)
         QtCore.QObject.connect(self.estopReleaseBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop_release)
+        QtCore.QObject.connect(self.switchScreenBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_switchScreen)
 
         self.updownScroll.valueChanged.connect(self.updownScrollMoved)
         self.leftrightScroll.valueChanged.connect(self.leftrightScrollMoved)
@@ -240,8 +305,13 @@ class Ui_Form(object):
         # self.thread = QtCore.QThread()
         self.thread = MyThread(Form)
         self.thread.trigger.connect(self.update_status_text)
+        self.imageView_1.setAlignment(QtCore.Qt.AlignCenter)
+        self.img1_thread = ImgThread(Form)
+        self.img1_thread.trigger.connect(self.update_image_1)
+        self.imageView_2.setAlignment(QtCore.Qt.AlignCenter)
+        self.img2_thread = ImgThread(Form)
+        self.img2_thread.trigger.connect(self.update_image_2)
 
-        
         QtCore.QMetaObject.connectSlotsByName(Form)
 
         self.init()
@@ -258,12 +328,13 @@ class Ui_Form(object):
         self.forbackValue.setText("Value: " + str(0))
         self.useVJoyStickBtn.setChecked(False)
         self.check_VJoystick()
+        self.cb_switchScreen()
+        self.sub_image = rospy.Subscriber("/usb_cam/image_raw/compressed",CompressedImage , self.cbImage, queue_size=1)
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
         self.navigateBtn.setText(_translate("Form", "Start Navigate 開始導航", None))
-        self.navigateResetBtn.setText(_translate("Form", "Reset Navigate 重設導航", None))
         self.manualBtn.setText(_translate("Form", "Manual 手動", None))
         self.autoBtn.setText(_translate("Form", "Autonomous 自動", None))
         self.estopBtn.setText(_translate("Form", "Emergency Stop 緊急停止", None))
@@ -304,7 +375,8 @@ class Ui_Form(object):
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">value: </p></body></html>", None))
         self.useVJoyStickBtn.setText(_translate("Form", "Use Virtual Joystick 使用虛擬遙控器", None))
         self.estopReleaseBtn.setText(_translate("Form", "E-Stop Releasesh 解除緊急停止", None))
-
+        self.resetNavigateBtn.setText(_translate("Form", "Reset Navigate 重設導航", None))
+        self.switchScreenBtn.setText(_translate("Form", "Switch 切換畫面", None))
 
 if __name__ == "__main__":
     import sys
