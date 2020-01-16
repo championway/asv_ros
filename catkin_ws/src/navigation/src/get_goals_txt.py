@@ -8,7 +8,7 @@ import math
 import time
 from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
 from asv_msgs.msg import RobotPath
-from asv_msgs.srv import SetRobotPath, SetRobotPathResponse
+from asv_msgs.srv import SetRobotPath, SetRobotPathResponse, SetString, SetStringResponse
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Odometry
@@ -26,22 +26,28 @@ class ROBOT_GOAL():
 		self.rcv_goals = []
 		self.goals = []
 		self.clear = False
+		self.get_path = False
 		self.start_navigation = False
 		self.set_path_succ = False	# If set path got wrong, we need to resend again
+		self.path_srv = rospy.Service("path_txt", SetString, self.path_cb)
 		self.cycle = rospy.get_param("~cycle", True)
+		self.gui = rospy.get_param("~gui", True)
 		
-		rospack = rospkg.RosPack()
-		txt_name = rospy.get_param("~txt_name", "test1.txt")
-		self.txt_path = os.path.join(rospack.get_path('asv_config'), "path", txt_name)
-		if not os.path.isfile(self.txt_path):
-			rospy.signal_shutdown("Quit")
-			print("[%s] ERROR!!! No path txt file detected" %self.node_name)
-			return
-		read_succ = self.read_txt(self.txt_path)
-		if not read_succ:
-			rospy.signal_shutdown("Quit")
-			print("[%s] ERROR!!! Path txt reading error" %self.node_name)
-			return
+		if not self.gui:
+			rospack = rospkg.RosPack()
+			txt_name = rospy.get_param("~txt_name", "test1.txt")
+			self.txt_path = os.path.join(rospack.get_path('asv_config'), "path", txt_name)
+			if not os.path.isfile(self.txt_path):
+				rospy.signal_shutdown("Quit")
+				print("[%s] ERROR!!! No path txt file detected" %self.node_name)
+				return
+			read_succ = self.read_txt(self.txt_path)
+			if not read_succ:
+				rospy.signal_shutdown("Quit")
+				print("[%s] ERROR!!! Path txt reading error" %self.node_name)
+				return
+			self.get_path = True
+
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
@@ -66,11 +72,12 @@ class ROBOT_GOAL():
 		_, _, yaw = tf.transformations.euler_from_quaternion(quat)
 
 		self.robot_position = robot_position
-		self.goals = self.rcv_goals[:]
-		self.drawPoints()
-		self.drawWaypoint()
-		if self.start_navigation and not self.set_path_succ:
-			self.set_path()
+		if self.get_path:
+			self.goals = self.rcv_goals[:]
+			self.drawPoints()
+			self.drawWaypoint()
+			if self.start_navigation and not self.set_path_succ:
+				self.set_path()
 
 	def read_txt(self, txt_path):
 		print("Read file: %s" %txt_path)
@@ -87,16 +94,44 @@ class ROBOT_GOAL():
 			except:
 				return False
 		file.close()
+		self.utm_transform()
 		return True
+
+	def read_str(self, s):
+		self.path_list = []
+		if len(s) == 0:
+			return False
+		for f in s.splitlines():
+			try:
+				line = f.strip()
+				if line[0] == '#':
+					continue
+				data = line.split(',')
+				self.path_list.append([float(data[0]), float(data[1])])
+			except:
+				return False
+		self.utm_transform()
+		return True
+
+
+	def path_cb(self, req):
+		res = SetStringResponse()
+		if self.read_str(req.str):
+			rospy.loginfo("Get Path")
+			self.get_path = True
+			res.success = True
+		else:
+			res.success = False
+		return res
 
 	def orig_cb(self, msg):
 		rospy.loginfo("get orig")
 		self.robot_orig = [msg.x, msg.y]
 		self.get_orig = True
-		self.utm_transform()
 		self.sub_orig.unregister()
 
 	def utm_transform(self):
+		self.rcv_goals = []
 		for data in self.path_list:
 			p = Pose()
 			utm_data = fromLatLong(data[0], data[1])
@@ -126,8 +161,9 @@ class ROBOT_GOAL():
 	def navigation_cb(self, req):
 		if req.data == True:
 			rospy.loginfo("Start Navigation")
-			self.start_navigation = True
-			self.set_path_succ = False
+			if not self.start_navigation:
+				self.start_navigation = True
+				self.set_path_succ = False
 		else:
 			rospy.loginfo("Reset Navigation")
 			self.resetNavigation()

@@ -3,11 +3,13 @@
     <arg name="veh" default="ASV"/>
     <arg name="txt_name" default="gazebo.txt"/>
     <arg name="cycle" default="True"/>
+    <arg name="gui" default="True"/>
 
     <group ns="$(arg veh)">
         <node pkg="navigation" type="get_goals_txt.py" name="get_goals_txt" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>
             <param name="txt_name" value="$(arg txt_name)"/>
+            <param name="gui" value="$(arg gui)"/>
         </node>
         <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>

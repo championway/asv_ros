@@ -38,6 +38,7 @@ add_service_files(
   FILES
   SetValue.srv
   SetRobotPath.srv
+  SetString.srv
 )
 
 generate_messages(

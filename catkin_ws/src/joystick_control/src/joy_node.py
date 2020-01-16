@@ -66,7 +66,7 @@ class JoyMapper(object):
         self.pub_status.publish(status)
         if self.gazebo:
             motor_msg = UsvDrive()
-            motor_msg.right = self.motor_msg.right
+            motor_msg.right = -self.motor_msg.right
             motor_msg.left = self.motor_msg.left
             self.pub_motor_cmd.publish(motor_msg)
         else:
