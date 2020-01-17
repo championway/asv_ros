@@ -86,21 +86,21 @@ class Ui_Form(object):
             self.navigate = msg.navigate
         self.check_Navigate(msg.navigate)
         text = ""
-        text = "[Left Motor]  \t" + str(msg.left) + "\n"
-        text += "[Right Motor]  \t" + str(msg.right) + "\n"
-        text += "[Horizontal Motor]  \t" + str(msg.horizontal) + "\n"
+        text = "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
+        text += "{:<18}".format("[Right Motor]") + str(msg.right) + "\n"
+        text += "{:<18}".format("[Up/Down Motor]") + str(msg.horizontal) + "\n"
         if msg.estop:
-            text += "[Emergency Stop]  \tTrue\n"
+            text += "{:<18}".format("[E-Stop]") + "True\n"
         else:
-            text += "[Emergency Stop]  \tFalse\n"
+            text += "{:<18}".format("[E-Stop]") + "False\n"
         if msg.manual:
-            text += "[Manual]  \t\tTrue\n"
+            text += "{:<18}".format("[Manual]") + "True\n"
         else:
-            text += "[Manual]  \t\tFalse\n"
+            text += "{:<18}".format("[Manual]") + "False\n"
         if msg.navigate:
-            text += "[Navigation]  \tTrue\n"
+            text += "{:<18}".format("[Navigation]") + "True\n"
         else:
-            text += "[Navigation]  \tFalse\n"
+            text += "{:<18}".format("[Navigation]") + "False\n"
 
         # self.update_status_text(text)
         self.pre_status = msg
@@ -212,7 +212,7 @@ class Ui_Form(object):
             resp = srv(txt)
             if resp.success:
                 self.navigate = True
-            rospy.loginfo("Send Path Success")
+                rospy.loginfo("Send Path Success")
             return resp
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
@@ -271,7 +271,7 @@ class Ui_Form(object):
         self.updownScroll.setOrientation(QtCore.Qt.Vertical)
         self.updownScroll.setObjectName(_fromUtf8("updownScroll"))
         self.statusOutput = QtGui.QTextBrowser(Form)
-        self.statusOutput.setGeometry(QtCore.QRect(260, 450, 311, 161))
+        self.statusOutput.setGeometry(QtCore.QRect(296, 450, 275, 161))
         self.statusOutput.setObjectName(_fromUtf8("statusOutput"))
         self.updownValue = QtGui.QTextBrowser(Form)
         self.updownValue.setGeometry(QtCore.QRect(580, 580, 101, 31))
@@ -305,7 +305,7 @@ class Ui_Form(object):
         self.status_text.setGeometry(QtCore.QRect(360, 420, 81, 17))
         self.status_text.setObjectName(_fromUtf8("status_text"))
         self.textEditPath = QtGui.QTextEdit(Form)
-        self.textEditPath.setGeometry(QtCore.QRect(10, 450, 241, 161))
+        self.textEditPath.setGeometry(QtCore.QRect(10, 450, 278, 161))
         self.textEditPath.setObjectName(_fromUtf8("textEditPath"))
 
         self.retranslateUi(Form)
