@@ -383,7 +383,7 @@ class Ui_Form(object):
         self.check_VJoystick()
         self.cb_imgBtn()
         # self.sub_image = rospy.Subscriber("/usb_cam/image_raw/compressed",CompressedImage , self.cbImage, queue_size=1)
-        self.sub_gps = rospy.Subscriber("/gps",NavSatFix , self.cbGPS, queue_size=1)
+        self.sub_gps = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix , self.cbGPS, queue_size=1)
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
 
     def retranslateUi(self, Form):
