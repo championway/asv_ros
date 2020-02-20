@@ -246,7 +246,7 @@ class Ui_Form(object):
         self.leftrightValue.setText("Value: " + str(self.leftrightCmd))
 
     def forbackScrollMoved(self):
-        self.forbackCmd = self.forbackScroll.value()-100
+        self.forbackCmd = -(self.forbackScroll.value()-100)
         if (abs(self.forbackCmd) < self.dead_zone):
             self.forbackCmd = 0
         self.forbackValue.setText("Value: " + str(self.forbackCmd))
