@@ -16,7 +16,7 @@ class JoyMapper(object):
         self.gazebo = rospy.get_param("~gazebo", False)
         if self.gazebo:
             rospy.loginfo("Using gazebo")
-        else
+        else:
             rospy.loginfo("Not using gazebo")
 
         # Publications
