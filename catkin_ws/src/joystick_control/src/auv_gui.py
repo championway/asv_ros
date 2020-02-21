@@ -234,7 +234,7 @@ class Ui_Form(object):
             print "Service call failed: %s"%e
 
     def updownScrollMoved(self):
-        self.updownCmd = -(self.updownScroll.value()-100)
+        self.updownCmd = self.updownScroll.value()-100
         if (abs(self.updownCmd) < self.dead_zone):
             self.updownCmd = 0
         self.updownValue.setText("Value: " + str(self.updownCmd))

@@ -74,6 +74,10 @@ class JoyMapper(object):
             motor_msg.left = self.motor_msg.left
             self.pub_motor_cmd.publish(motor_msg)
         else:
+            # Not sure
+            temp = motor_msg.left
+            motor_msg.left = -motor_msg.right
+            motor_msg.right = -temp
             self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
