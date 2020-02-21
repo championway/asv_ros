@@ -75,7 +75,7 @@ class JoyMapper(object):
             self.pub_motor_cmd.publish(motor_msg)
         else:
             # Not sure
-            self.temp = self.motor_msg.left
+            temp = self.motor_msg.left
             self.motor_msg.left = -self.motor_msg.right
             self.motor_msg.right = -temp
             self.pub_motor_cmd.publish(self.motor_msg)
