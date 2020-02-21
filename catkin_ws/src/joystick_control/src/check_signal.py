@@ -14,6 +14,7 @@ class CHECK_SIGNAL():
         self.node_name = rospy.get_name()
 
         self.send_no_signal = False
+        self.start = False
 
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
@@ -29,6 +30,8 @@ class CHECK_SIGNAL():
         rospy.Timer(rospy.Duration(1), self.event_cb)
 
     def event_cb(self, event):
+        if not self.start:
+            return
         if (rospy.get_time() - self.time_start) > self.time_threshold:
             if not self.send_no_signal:
                 self.srv_no_signal()
@@ -37,6 +40,7 @@ class CHECK_SIGNAL():
                 self.srv_got_signal()
 
     def gps_cb(self, msg):
+        self.start = True
         self.time_start = rospy.get_time()
 
 
