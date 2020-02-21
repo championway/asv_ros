@@ -18,7 +18,9 @@
         </group>
 
         <group unless="$(arg gazebo)">
-            <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen" />
+            <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen">
+                <param name="gazebo" value="$(arg gazebo)" />
+            </node>
             <node pkg="joystick_control" type="check_signal.py" name="check_signal" output="screen">
                 <param name="sec" value="$(arg sec)" />
             </node>
