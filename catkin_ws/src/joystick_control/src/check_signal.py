@@ -40,7 +40,9 @@ class CHECK_SIGNAL():
                 self.srv_got_signal()
 
     def gps_cb(self, msg):
-        self.start = True
+        if not self.start:
+            self.start = True
+            rospy.loginfo("Start to check signal!!!")
         self.time_start = rospy.get_time()
 
 
