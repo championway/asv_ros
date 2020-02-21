@@ -74,16 +74,12 @@ class JoyMapper(object):
             motor_msg.left = self.motor_msg.left
             self.pub_motor_cmd.publish(motor_msg)
         else:
-            # Not sure
-            temp = self.motor_msg.left
-            self.motor_msg.left = -self.motor_msg.right
-            self.motor_msg.right = -temp
             self.pub_motor_cmd.publish(self.motor_msg)
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
-            self.motor_msg.right = -max(min(cmd_msg.right, self.MAX), self.MIN)
-            self.motor_msg.left = max(min(cmd_msg.left, self.MAX), self.MIN)
+            self.motor_msg.left = max(min(cmd_msg.right, self.MAX), self.MIN)
+            self.motor_msg.right = -max(min(cmd_msg.left, self.MAX), self.MIN)
             self.motor_msg.horizontal = max(min(cmd_msg.horizontal, self.MAX), self.MIN)
             
     def cbJoy(self, joy_msg):
@@ -95,8 +91,8 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
-            self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            self.motor_msg.left = max(min(speed + difference , self.MAX), self.MIN)
+            self.motor_msg.right = -max(min(speed - difference , self.MAX), self.MIN)
             go_down = -(self.joy.axes[2] - 1.)/2.
             go_up = -(self.joy.axes[5] - 1.)/2.
             self.motor_msg.horizontal = max(min((go_down - go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
