@@ -44,7 +44,7 @@ class JoyMapper(object):
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd, self.cbCmd, queue_size=1)
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
-        # self.sub_control_cmd = rospy.Subscriber("cmd_control", ControlCmd, self.cbControlCmd, queue_size = 1)
+        self.sub_control_cmd = rospy.Subscriber("cmd_control", ControlCmd, self.cbControlCmd, queue_size = 1)
 
         #timer
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
@@ -59,15 +59,15 @@ class JoyMapper(object):
             self.motor_msg.left = 0
             self.motor_msg.horizontal = -0.5
 
-        # status = Status()
-        # status.right = self.motor_msg.right
-        # status.left = self.motor_msg.left
-        # status.horizontal = self.motor_msg.horizontal
-        # status.manual = not self.autoMode
-        # status.estop = self.emergencyStop
-        # status.navigate = self.navigate
+        status = Status()
+        status.right = self.motor_msg.right
+        status.left = self.motor_msg.left
+        status.horizontal = self.motor_msg.horizontal
+        status.manual = not self.autoMode
+        status.estop = self.emergencyStop
+        status.navigate = self.navigate
         
-        # self.pub_status.publish(status)
+        self.pub_status.publish(status)
         if self.gazebo:
             motor_msg = UsvDrive()
             motor_msg.right = -self.motor_msg.right
@@ -132,40 +132,40 @@ class JoyMapper(object):
                 pass
                 #rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
 
-    # def cbControlCmd(self, msg):
-    #     if self.pre_ControlMsg.manual != msg.manual:
-    #         self.autoMode = not msg.manual
+    def cbControlCmd(self, msg):
+        if self.pre_ControlMsg.manual != msg.manual:
+            self.autoMode = not msg.manual
 
-    #     if self.pre_ControlMsg.navigate != msg.navigate:
-    #         self.navigate = msg.navigate
-    #         if msg.navigate:
-    #             self.start_navigation(True)
-    #             rospy.loginfo("Start Navigation!")
-    #         else:
-    #             self.start_navigation(False)
-    #             rospy.loginfo("Reset Navigation!")
+        if self.pre_ControlMsg.navigate != msg.navigate:
+            self.navigate = msg.navigate
+            if msg.navigate:
+                self.start_navigation(True)
+                rospy.loginfo("Start Navigation!")
+            else:
+                self.start_navigation(False)
+                rospy.loginfo("Reset Navigation!")
 
-    #     if self.pre_ControlMsg.estop != msg.estop:
-    #         self.emergencyStop = msg.estop
+        if self.pre_ControlMsg.estop != msg.estop:
+            self.emergencyStop = msg.estop
             
-    #     if self.emergencyStop:
-    #         self.motor_msg.right = 0
-    #         self.motor_msg.left = 0
+        if self.emergencyStop:
+            self.motor_msg.right = 0
+            self.motor_msg.left = 0
 
-    #     if not self.emergencyStop and not self.autoMode and msg.useVJoystick:
-    #         boat_heading_msg = Heading()
-    #         forward = -msg.forward/100.
-    #         right = -msg.right/100.
-    #         boat_heading_msg.speed = math.sqrt((math.pow(forward,2)+math.pow(right,2))/2)
-    #         boat_heading_msg.phi = math.atan2(forward, right)
-    #         speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
-    #         difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-    #         self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
-    #         self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
-    #         go_up = -msg.up/100.
-    #         self.motor_msg.horizontal = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
+        if not self.emergencyStop and not self.autoMode and msg.useVJoystick:
+            boat_heading_msg = Heading()
+            forward = -msg.forward/100.
+            right = -msg.right/100.
+            boat_heading_msg.speed = math.sqrt((math.pow(forward,2)+math.pow(right,2))/2)
+            boat_heading_msg.phi = math.atan2(forward, right)
+            speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
+            difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
+            self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
+            self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            go_up = -msg.up/100.
+            self.motor_msg.horizontal = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
 
-    #     self.pre_ControlMsg = msg
+        self.pre_ControlMsg = msg
 
 
     def start_navigation(self, isTrue):
