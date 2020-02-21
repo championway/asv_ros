@@ -9,9 +9,11 @@
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
         <group if="$(arg gazebo)">
-            <node pkg="joystick_control" type="joy_node_sim.py" name="joymapper" output="screen">
+            <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen">
                 <param name="gazebo" value="$(arg gazebo)" />
-                <param name="vrx" value="false" />
+            </node>
+            <node pkg="joystick_control" type="check_signal.py" name="check_signal" output="screen">
+                <param name="sec" value="$(arg sec)" />
             </node>
         </group>
 

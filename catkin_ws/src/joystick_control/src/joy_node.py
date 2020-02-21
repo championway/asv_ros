@@ -13,7 +13,7 @@ class JoyMapper(object):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
-        self.gazebo = False
+        self.gazebo = rospy.get_param("~gazebo", False)
 
         # Publications
         self.pub_motor_cmd = rospy.Publisher("motor_cmd", MotorCmd, queue_size=1)
