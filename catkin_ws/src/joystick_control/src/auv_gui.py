@@ -9,8 +9,9 @@
 import rospy
 from PyQt4 import QtCore, QtGui
 from asv_msgs.msg import ControlCmd, Status
+from std_msgs.msg import Int32
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
-from asv_msgs.srv import SetString, SetStringResponse
+from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse
 from sensor_msgs.msg import Image, CompressedImage, NavSatFix
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
@@ -64,28 +65,32 @@ class Ui_Form(object):
         self.navigate = False
         self.lat = 0
         self.lng = 0
+        self.navStatus = 0
         self.has_ImgSub = False
         self.cmd_publiser = rospy.Publisher("/ASV/cmd_control", ControlCmd, queue_size = 1)
         self.timer = rospy.Timer(rospy.Duration(0.1),self.cb_publish)
 
     def cb_publish(self, event):
         cmd = ControlCmd()
-        cmd.useVJoystick = self.useVJoyStick
         cmd.forward = float(self.forbackCmd)
         cmd.right = float(self.leftrightCmd)
         cmd.up = float(self.updownCmd)
-        cmd.estop = self.estop
-        cmd.manual = self.manual
-        cmd.navigate = self.navigate
+        # cmd.useVJoystick = self.useVJoyStick
+        # cmd.estop = self.estop
+        # cmd.manual = self.manual
+        # cmd.navigate = self.navigate
         self.cmd_publiser.publish(cmd)
 
+    def cbNavStatus(self, msg):
+        self.navStatus = msg.data
+
     def cbStatus(self, msg):
-        if self.pre_status.manual != msg.manual:
-            self.manual = msg.manual
-        if self.pre_status.estop != msg.estop:
-            self.estop = msg.estop
-        if self.pre_status.navigate != msg.navigate:
-            self.navigate = msg.navigate
+        # if self.pre_status.manual != msg.manual:
+        #     self.manual = msg.manual
+        # if self.pre_status.estop != msg.estop:
+        #     self.estop = msg.estop
+        # if self.pre_status.navigate != msg.navigate:
+        #     self.navigate = msg.navigate
         self.check_Navigate(msg.navigate)
         text = ""
         text = "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
@@ -103,6 +108,10 @@ class Ui_Form(object):
             text += "{:<18}".format("[Navigation]") + "True\n"
         else:
             text += "{:<18}".format("[Navigation]") + "False\n"
+        if (self.navStatus!=-1):
+            text += "{:<18}".format("[Waypoint]") + str(self.navStatus) + "\n"
+        else:
+            text += "{:<18}".format("[Waypoint]") + "Destination\n"
 
         # self.update_status_text(text)
         self.pre_status = msg
@@ -159,7 +168,8 @@ class Ui_Form(object):
 
     def check_VJoystick(self):
         if self.useVJoyStickBtn.isChecked():
-            self.useVJoyStick = True
+            self.send_cmd("usevjoystick", True)
+            # self.useVJoyStick = True
             self.updownScroll.setEnabled(True)
             self.leftrightScroll.setEnabled(True)
             self.forbackScroll.setEnabled(True)
@@ -167,7 +177,8 @@ class Ui_Form(object):
             self.leftrightValue.setEnabled(True)
             self.forbackValue.setEnabled(True)
         else:
-            self.useVJoyStick = False
+            self.send_cmd("usevjoystick", False)
+            # self.useVJoyStick = False
             self.updownScroll.setEnabled(False)
             self.leftrightScroll.setEnabled(False)
             self.forbackScroll.setEnabled(False)
@@ -196,19 +207,24 @@ class Ui_Form(object):
         self.latlngThread.run_(str(self.lat) + ", " + str(self.lng))
 
     def cb_resetNavigate(self):
-        self.navigate = False
+        self.send_cmd("navigate", False)
+        # self.navigate = False
 
     def cb_manual(self):
-        self.manual = True
+        self.send_cmd("manual", True)
+        # self.manual = True
 
     def cb_auto(self):
-        self.manual = False
+        self.send_cmd("manual", False)
+        # self.manual = False
 
     def cb_estop(self):
-        self.estop = True
+        self.send_cmd("estop", True)
+        # self.estop = True
 
     def cb_estop_release(self):
-        self.estop = False
+        self.send_cmd("estop", False)
+        # self.estop = False
 
     def cb_imgBtn(self):
         null_img = np.zeros((300, 450, 3), np.uint8)
@@ -227,11 +243,25 @@ class Ui_Form(object):
             srv = rospy.ServiceProxy('/ASV/path_txt', SetString)
             resp = srv(txt)
             if resp.success:
-                self.navigate = True
+                self.send_cmd("navigate", True)
+                # self.navigate = True
                 rospy.loginfo("Send Path Success")
             return resp
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
+
+    def send_cmd(self, title, data):
+        try:
+            srv = rospy.ServiceProxy('/ASV/gui_cmd', SetCmd)
+            set_cmd = SetCmdRequest()
+            set_cmd.title = title
+            set_cmd.data = data
+            resp = srv(set_cmd)
+            if resp.success:
+                rospy.loginfo("Send command successfully")
+            return resp
+        except rospy.ServiceException, e:
+            return False
 
     def updownScrollMoved(self):
         self.updownCmd = self.updownScroll.value()-100
@@ -385,6 +415,7 @@ class Ui_Form(object):
         # self.sub_image = rospy.Subscriber("/usb_cam/image_raw/compressed",CompressedImage , self.cbImage, queue_size=1)
         self.sub_gps = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix , self.cbGPS, queue_size=1)
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
+        self.sub_nav_status = rospy.Subscriber("/ASV/pure_pursuit/status",Int32 , self.cbNavStatus, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))

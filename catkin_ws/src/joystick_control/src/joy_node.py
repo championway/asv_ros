@@ -5,6 +5,7 @@ import math
 from sensor_msgs.msg import Joy
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.msg import MotorCmd, Heading, ControlCmd, Status
+from asv_msgs.srv import SetCmd, SetCmdRequest, SetCmdResponse
 
 from robotx_gazebo.msg import UsvDrive
 
@@ -37,9 +38,11 @@ class JoyMapper(object):
         self.dive_MIN = -0.8
         self.check_no_signal = False
         self.navigate = False
+        self.useVJoystick = False
         self.pre_ControlMsg = ControlCmd()
 
         self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
+        self.gui_cmd_srv = rospy.Service("gui_cmd", SetCmd, self.gui_cmd_cb)
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd, self.cbCmd, queue_size=1)
@@ -70,8 +73,8 @@ class JoyMapper(object):
         self.pub_status.publish(status)
         if self.gazebo:
             motor_msg = UsvDrive()
-            motor_msg.right = -self.motor_msg.right
-            motor_msg.left = self.motor_msg.left
+            motor_msg.right = -self.motor_msg.left
+            motor_msg.left = self.motor_msg.right
             self.pub_motor_cmd.publish(motor_msg)
         else:
             self.pub_motor_cmd.publish(self.motor_msg)
@@ -132,27 +135,49 @@ class JoyMapper(object):
                 pass
                 #rospy.loginfo('No binding for joy_msg.buttons = %s' % str(joy_msg.buttons))
 
-    def cbControlCmd(self, msg):
-        if self.pre_ControlMsg.manual != msg.manual:
-            self.autoMode = not msg.manual
-
-        if self.pre_ControlMsg.navigate != msg.navigate:
-            self.navigate = msg.navigate
-            if msg.navigate:
+    def gui_cmd_cb(self, req):
+        if (req.title == 'usevjoystick'):
+            self.useVJoystick = req.data
+        elif (req.title == 'navigate'):
+            self.navigate = req.data
+            if req.data:
                 self.start_navigation(True)
                 rospy.loginfo("Start Navigation!")
             else:
                 self.start_navigation(False)
                 rospy.loginfo("Reset Navigation!")
+        elif (req.title == 'manual'):
+            self.autoMode = not req.data
+        elif (req.title == 'estop'):
+            self.emergencyStop = req.data
+            if req.data:
+                self.motor_msg.right = 0
+                self.motor_msg.left = 0
+        res = SetCmdResponse()
+        res.success = True
+        return res
 
-        if self.pre_ControlMsg.estop != msg.estop:
-            self.emergencyStop = msg.estop
+    def cbControlCmd(self, msg):
+        # if self.pre_ControlMsg.manual != msg.manual:
+        #     self.autoMode = not msg.manual
+
+        # if self.pre_ControlMsg.navigate != msg.navigate:
+        #     self.navigate = msg.navigate
+        #     if msg.navigate:
+        #         self.start_navigation(True)
+        #         rospy.loginfo("Start Navigation!")
+        #     else:
+        #         self.start_navigation(False)
+        #         rospy.loginfo("Reset Navigation!")
+
+        # if self.pre_ControlMsg.estop != msg.estop:
+        #     self.emergencyStop = msg.estop
             
-        if self.emergencyStop:
-            self.motor_msg.right = 0
-            self.motor_msg.left = 0
+        # if self.emergencyStop:
+        #     self.motor_msg.right = 0
+        #     self.motor_msg.left = 0
 
-        if not self.emergencyStop and not self.autoMode and msg.useVJoystick:
+        if not self.emergencyStop and not self.autoMode and self.useVJoystick:
             boat_heading_msg = Heading()
             forward = -msg.forward/100.
             right = -msg.right/100.
@@ -165,7 +190,7 @@ class JoyMapper(object):
             go_up = -msg.up/100.
             self.motor_msg.horizontal = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
 
-        self.pre_ControlMsg = msg
+        # self.pre_ControlMsg = msg
 
 
     def start_navigation(self, isTrue):

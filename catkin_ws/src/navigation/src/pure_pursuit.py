@@ -2,7 +2,7 @@
 
 import rospy
 from geometry_msgs.msg import PoseStamped, PointStamped, Twist, Point
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, Int32
 from nav_msgs.msg import Path, Odometry
 from message_filters import ApproximateTimeSynchronizer, TimeSynchronizer, Subscriber
 import numpy as np
@@ -27,8 +27,10 @@ class PurePursuit(object):
 		self.get_waypoint = True
 		self.change_to_next_idx = False
 		self.is_change_next_idx = False
+		self.status = 0
 		# Init subscribers and publishers
 		#self.pub_cmd = rospy.Publisher('/car_cmd', Twist, queue_size=1)
+		self.pub_status = rospy.Publisher('pure_pursuit/status', Int32, queue_size=1)
 		self.pub_finish = rospy.Publisher('pure_pursuit/finished', Bool, queue_size=1)
 		self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
 		self.pub_waypoint = rospy.Publisher("pursuit_marker",Marker, queue_size=1)
@@ -66,9 +68,13 @@ class PurePursuit(object):
 		self.robot_pose = (position[0], position[1], yaw)
 		self.destination_pose = self.pure_pursuit()
 		# Reach
+		status = Int32()
+		status.data = self.status
+		self.pub_status.publish(status)
 		if self.destination_pose == None:
 			self.active = False
 			rospy.loginfo("[%s]Approach destination" %(self.node_name))
+			self.status = -1
 			msg = Bool()
 			msg.data = True
 			self.pub_finish.publish(msg)
@@ -283,6 +289,7 @@ class PurePursuit(object):
 		if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
 			if cwpi != 0:
 				rospy.loginfo("[%s]Arrived waypoint: %d"%(self.node_name, cwpi))
+				self.status = cwpi
 			# If there are more than or equal to one waypoint left, then add the current_waypoint_index for next iteration
 			if self.current_waypoint_index < len(self.waypoints)-1:
 				self.current_waypoint_index = self.current_waypoint_index + 1
@@ -318,6 +325,7 @@ class PurePursuit(object):
 					if self.current_waypoint_index < len(self.waypoints)-1:
 						if cwpi != 0:
 							rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
+							self.status = cwpi
 						self.current_waypoint_index = self.current_waypoint_index + 1
 						self.is_change_next_idx = True
 				# Set last waypoint as fake waypoint
