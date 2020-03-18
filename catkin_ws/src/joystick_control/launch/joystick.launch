@@ -3,7 +3,7 @@
     <arg name="veh" default="ASV"/>
     <arg name="gazebo" default="false"/>
     <arg name="differential_constrain" default="0.2" />
-    <arg name="sec" default="3"/>
+    <arg name="sec" default="4"/>
     <arg name="port" default="/dev/ttyUSB0"/>
 
     <group ns="$(arg veh)">
@@ -15,6 +15,9 @@
             <node pkg="joystick_control" type="check_signal.py" name="check_signal" output="screen">
                 <param name="sec" value="$(arg sec)" />
             </node>
+            <node pkg="joystick_control" type="check_internet.py" name="check_internet" output="screen">
+                <param name="sec" value="$(arg sec)" />
+            </node>
         </group>
 
         <group unless="$(arg gazebo)">
@@ -22,6 +25,9 @@
                 <param name="gazebo" value="$(arg gazebo)" />
             </node>
             <node pkg="joystick_control" type="check_signal.py" name="check_signal" output="screen">
+                <param name="sec" value="$(arg sec)" />
+            </node>
+            <node pkg="joystick_control" type="check_internet.py" name="check_internet" output="screen">
                 <param name="sec" value="$(arg sec)" />
             </node>
             <node pkg="rosserial_python" type="serial_node.py" name="rosserial" output="screen">
