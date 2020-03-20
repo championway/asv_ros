@@ -67,10 +67,16 @@ class Ui_Form(object):
         self.lng = 0
         self.navStatus = 0
         self.has_ImgSub = False
+        self.master = rospy.get_master()
         self.cmd_publiser = rospy.Publisher("/ASV/cmd_control", ControlCmd, queue_size = 1)
         self.timer = rospy.Timer(rospy.Duration(0.1),self.cb_publish)
 
     def cb_publish(self, event):
+        try:
+            self.master.getSystemState()
+            self.internet_thread.run_('1')
+        except:
+            self.internet_thread.run_('0')
         cmd = ControlCmd()
         cmd.forward = float(self.forbackCmd)
         cmd.right = float(self.leftrightCmd)
@@ -133,6 +139,14 @@ class Ui_Form(object):
     def update_status_text(self, msg):
         # self.statusOutput.clear()
         self.statusOutput.setText(msg)
+
+    def update_internet_status(self, is_connect):
+        if is_connect == '1':
+            self.status_internet.setText(_translate("Form", "Connected 連線", None))
+            self.status_internet.setStyleSheet("color: rgb(0, 0, 255);")
+        else:
+            self.status_internet.setText(_translate("Form", "Disconnected 斷線", None))
+            self.status_internet.setStyleSheet("color: rgb(255, 0, 0);")
 
     def update_LatLng(self, msg):
         self.LatLngOutput.setText(msg)
@@ -350,6 +364,9 @@ class Ui_Form(object):
         self.status_text = QtGui.QLabel(Form)
         self.status_text.setGeometry(QtCore.QRect(410, 480, 81, 17))
         self.status_text.setObjectName(_fromUtf8("status_text"))
+        self.status_internet = QtGui.QLabel(Form)
+        self.status_internet.setGeometry(QtCore.QRect(760, 20, 161, 17))
+        self.status_internet.setObjectName(_fromUtf8("status_internet"))
         self.textEditPath = QtGui.QTextEdit(Form)
         self.textEditPath.setGeometry(QtCore.QRect(10, 510, 281, 161))
         self.textEditPath.setObjectName(_fromUtf8("textEditPath"))
@@ -386,6 +403,8 @@ class Ui_Form(object):
         # self.thread = QtCore.QThread()
         self.thread = MyThread(Form)
         self.thread.trigger.connect(self.update_status_text)
+        self.internet_thread = MyThread(Form)
+        self.internet_thread.trigger.connect(self.update_internet_status)
         self.latlngThread = MyThread(Form)
         self.latlngThread.trigger.connect(self.update_LatLng)
         self.imageView_1.setAlignment(QtCore.Qt.AlignCenter)
@@ -464,6 +483,7 @@ class Ui_Form(object):
         self.ImgTopicBtn.setText(_translate("Form", "OK 確定", None))
         self.path_text.setText(_translate("Form", "Path 路徑", None))
         self.status_text.setText(_translate("Form", "Status 狀態", None))
+        self.status_internet.setText(_translate("Form", "Connected 連線", None))
         self.LatLngOutput.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
