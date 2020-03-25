@@ -49,7 +49,7 @@ class CHECK_INTERNET():
         set_bool = SetBoolRequest()
         set_bool.data = True
         try:
-            srv = rospy.ServiceProxy('no_signal', SetBool)
+            srv = rospy.ServiceProxy('estop', SetBool)
             resp = srv(set_bool)
             self.send_no_internet = True
             return resp
@@ -62,7 +62,7 @@ class CHECK_INTERNET():
         set_bool = SetBoolRequest()
         set_bool.data = False
         try:
-            srv = rospy.ServiceProxy('no_signal', SetBool)
+            srv = rospy.ServiceProxy('estop', SetBool)
             resp = srv(set_bool)
             self.send_no_internet = False
             return resp

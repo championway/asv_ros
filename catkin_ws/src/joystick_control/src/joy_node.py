@@ -42,6 +42,7 @@ class JoyMapper(object):
         self.pre_ControlMsg = ControlCmd()
 
         self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
+        self.estop_srv = rospy.Service("estop", SetBool, self.estop_cb)
         self.gui_cmd_srv = rospy.Service("gui_cmd", SetCmd, self.gui_cmd_cb)
 
         # Subscriptions
@@ -214,6 +215,18 @@ class JoyMapper(object):
             self.check_no_signal = False
             self.motor_msg.horizontal = 0
             rospy.loginfo("Got Signal")
+        res = SetBoolResponse()
+        res.success = True
+        res.message = "recieved"
+        return res
+
+    def estop_cb(self, req):
+        if req.data == True:
+            self.emergencyStop = True
+            rospy.loginfo("EStop")
+        else:
+            self.emergencyStop = False
+            rospy.loginfo("Release EStop")
         res = SetBoolResponse()
         res.success = True
         res.message = "recieved"
