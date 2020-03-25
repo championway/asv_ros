@@ -32,6 +32,8 @@ add_message_files(
   RobotGoal.msg
   ControlCmd.msg
   Status.msg
+  SonarData.msg
+  SonarDataList.msg
 )
 
 add_service_files(
