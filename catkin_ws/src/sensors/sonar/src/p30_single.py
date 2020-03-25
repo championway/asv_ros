@@ -18,18 +18,18 @@ class SONAR_SINGLE():
             rospy.loginfo("Failed")
             exit(1)
 
-        rospy.Timer(rospy.Duration(0.2), self.event_cb)
+        rospy.Timer(rospy.Duration(0.1), self.event_cb)
 
     def event_cb(self, event):
         data = self.myPing.get_distance()
         if data:
             sl = SonarDataList()
             s = SonarData()
-            s.distance = int(data["distance"])
-            s.confidence = int(data["confidence"])
+            s.distance = float(data["distance"])
+            s.confidence = float(data["confidence"])
             sl.list.append(s)
             self.pub_sonar.publish(sl)
-            # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
+            print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
         else:
             print("Failed to get distance data")
 
