@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
 <launch>
 	<arg name="veh" default="ASV"/>
-	<node ns="$(arg veh)" pkg="sonar" type="p30_single.py" name="p30_single"></node>
+	<node ns="$(arg veh)" pkg="sonar" type="p30_single.py" name="p30_single" output="screen"></node>
 </launch>
