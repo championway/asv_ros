@@ -21,7 +21,7 @@ class SONAR_SINGLE():
         rospy.Timer(rospy.Duration(1.2), self.event_cb)
 
     def event_cb(self, event):
-        data = myPing.get_distance()
+        data = self.myPing.get_distance()
         if data:
             sl = SonarDataList()
             s = SonarData()
