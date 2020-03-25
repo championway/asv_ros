@@ -15,7 +15,7 @@ class CHECK_INTERNET():
         self.node_name = rospy.get_name()
 
         self.send_no_internet = False
-        self.url = '172.101.99.11'
+        self.url = 'http://site.baidu.com/'
 
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
