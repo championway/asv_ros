@@ -18,7 +18,7 @@ class SONAR_SINGLE():
             rospy.loginfo("Failed")
             exit(1)
 
-        rospy.Timer(rospy.Duration(1.2), self.event_cb)
+        rospy.Timer(rospy.Duration(0.1), self.event_cb)
 
     def event_cb(self, event):
         data = self.myPing.get_distance()
