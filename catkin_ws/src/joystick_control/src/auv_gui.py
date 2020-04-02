@@ -220,6 +220,15 @@ class Ui_Form(object):
     def cb_LatLngBtn(self):
         self.latlngThread.run_(str(self.lat) + ", " + str(self.lng))
 
+    def cb_FileBtn(self):
+        fileName = QtGui.QFileDialog.getOpenFileName(self.window, 'OpenFile')
+        # self.myTextBox.setText(fileName)
+        text=open(fileName).read()
+        # text_edit.setPlainText(text)
+        rospy.loginfo("Load file: " + fileName)
+        # self.textEditPath.append(text)
+        self.textEditPath.setPlainText(text)
+
     def cb_resetNavigate(self):
         self.send_cmd("navigate", False)
         # self.navigate = False
@@ -296,6 +305,7 @@ class Ui_Form(object):
         self.forbackValue.setText("Value: " + str(self.forbackCmd))
 
     def setupUi(self, Form):
+        self.window = Form
         Form.setObjectName(_fromUtf8("Form"))
         Form.resize(1038, 689)
         self.navigateBtn = QtGui.QPushButton(Form)
@@ -359,10 +369,13 @@ class Ui_Form(object):
         self.ImgTopicBtn.setGeometry(QtCore.QRect(510, 390, 71, 27))
         self.ImgTopicBtn.setObjectName(_fromUtf8("ImgTopicBtn"))
         self.path_text = QtGui.QLabel(Form)
-        self.path_text.setGeometry(QtCore.QRect(110, 480, 68, 17))
+        self.path_text.setGeometry(QtCore.QRect(110, 480, 68, 27))
         self.path_text.setObjectName(_fromUtf8("path_text"))
+        self.FileBtn = QtGui.QPushButton(Form)
+        self.FileBtn.setGeometry(QtCore.QRect(200, 480, 50, 27))
+        self.FileBtn.setObjectName(_fromUtf8("FileBtn"))
         self.status_text = QtGui.QLabel(Form)
-        self.status_text.setGeometry(QtCore.QRect(410, 480, 81, 17))
+        self.status_text.setGeometry(QtCore.QRect(410, 480, 81, 27))
         self.status_text.setObjectName(_fromUtf8("status_text"))
         self.status_internet = QtGui.QLabel(Form)
         self.status_internet.setGeometry(QtCore.QRect(760, 20, 161, 17))
@@ -395,6 +408,7 @@ class Ui_Form(object):
         QtCore.QObject.connect(self.estopReleaseBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop_release)
         QtCore.QObject.connect(self.ImgTopicBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_imgBtn)
         QtCore.QObject.connect(self.LatLngBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_LatLngBtn)
+        QtCore.QObject.connect(self.FileBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_FileBtn)
 
         self.updownScroll.valueChanged.connect(self.updownScrollMoved)
         self.leftrightScroll.valueChanged.connect(self.leftrightScrollMoved)
@@ -492,6 +506,7 @@ class Ui_Form(object):
         self.path_text_2.setText(_translate("Form", "Image topic:", None))
         self.path_text_3.setText(_translate("Form", "Lat, Lng", None))
         self.LatLngBtn.setText(_translate("Form", "Get Lat, Lng 取得經緯度", None))
+        self.FileBtn.setText(_translate("Form", "File", None))
 
 if __name__ == "__main__":
     import sys
