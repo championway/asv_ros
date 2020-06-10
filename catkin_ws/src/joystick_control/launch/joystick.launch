@@ -4,7 +4,7 @@
     <arg name="gazebo" default="false"/>
     <arg name="differential_constrain" default="0.2" />
     <arg name="sec" default="4"/>
-    <arg name="port" default="/dev/ttyUSB0"/>
+    <arg name="port" default="/dev/motor"/>
 
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
