@@ -12,7 +12,7 @@ from asv_msgs.msg import ControlCmd, Status
 from std_msgs.msg import Int32
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse
-from sensor_msgs.msg import Image, CompressedImage, NavSatFix
+from sensor_msgs.msg import Image, CompressedImage, NavSatFix, BatteryState
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 import cv2
@@ -56,6 +56,8 @@ class Ui_Form(object):
         self.updownCmd = 0
         self.forbackCmd = 0
         self.dead_zone = 10
+        self.battery = 0.
+        self.battery_full = 16.8
         self.useVJoyStick = False
         self.pre_status = Status()
         self.cv_bridge = CvBridge()
@@ -90,6 +92,9 @@ class Ui_Form(object):
     def cbNavStatus(self, msg):
         self.navStatus = msg.data
 
+    def cbBattery(self, msg):
+        self.battery = msg.voltage
+
     def cbStatus(self, msg):
         # if self.pre_status.manual != msg.manual:
         #     self.manual = msg.manual
@@ -99,7 +104,9 @@ class Ui_Form(object):
         #     self.navigate = msg.navigate
         self.check_Navigate(msg.navigate)
         text = ""
-        text = "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
+        battery_percentage = (self.battery/self.battery_full)*100.
+        text = "{:<18}".format("[Battery]") + "%.3f V  (%.2f" %(self.battery, battery_percentage) + "%)\n"
+        text += "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
         text += "{:<18}".format("[Right Motor]") + str(msg.right) + "\n"
         text += "{:<18}".format("[Up/Down Motor]") + str(msg.horizontal) + "\n"
         if msg.estop:
@@ -449,6 +456,7 @@ class Ui_Form(object):
         self.sub_gps = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix , self.cbGPS, queue_size=1)
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
         self.sub_nav_status = rospy.Subscriber("/ASV/pure_pursuit/status",Int32 , self.cbNavStatus, queue_size=1)
+        self.sub_battery = rospy.Subscriber("/mavros/battery", BatteryState, self.cbBattery, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
