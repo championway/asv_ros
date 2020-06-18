@@ -268,6 +268,14 @@ class Ui_Form(object):
             self.sub_image = rospy.Subscriber(topic, Image , self.cbImage, queue_size=1)
         # self.img2_thread.run_(null_img)
 
+    def cb_recordPathBtn(self):
+        fname = str(self.RecordPathInput.toPlainText())
+        if fname != "":
+            self.record_path(fname)
+
+    def cb_savePathBtn(self):
+        self.save_path()
+
     def send_path(self, txt):
         try:
             srv = rospy.ServiceProxy('/ASV/path_txt', SetString)
@@ -276,6 +284,31 @@ class Ui_Form(object):
                 self.send_cmd("navigate", True)
                 # self.navigate = True
                 rospy.loginfo("Send Path Success")
+            return resp
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
+
+    def record_path(self, txt):
+        try:
+            srv = rospy.ServiceProxy('/ASV/record_path', SetString)
+            resp = srv(txt)
+            if resp.success:
+                self.RecordPathBtn.setEnabled(False)
+                self.SavePathBtn.setEnabled(True)
+                rospy.loginfo("Record Path Success")
+            return resp
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
+
+    def save_path(self):
+        set_bool = SetBoolRequest()
+        set_bool.data = True
+        try:
+            srv = rospy.ServiceProxy('/ASV/save_path', SetBool)
+            resp = srv(set_bool)
+            self.RecordPathBtn.setEnabled(True)
+            self.SavePathBtn.setEnabled(False)
+            rospy.loginfo("Save Path Success")            
             return resp
         except rospy.ServiceException, e:
             print "Service call failed: %s"%e
@@ -328,7 +361,7 @@ class Ui_Form(object):
         self.estopBtn.setGeometry(QtCore.QRect(610, 220, 191, 61))
         self.estopBtn.setObjectName(_fromUtf8("estopBtn"))
         self.imageView_1 = QtGui.QLabel(Form)
-        self.imageView_1.setGeometry(QtCore.QRect(10, 10, 571, 371))
+        self.imageView_1.setGeometry(QtCore.QRect(10, 10, 571, 331))
         self.imageView_1.setObjectName(_fromUtf8("imageView_1"))
         self.leftrightScroll = QtGui.QScrollBar(Form)
         self.leftrightScroll.setGeometry(QtCore.QRect(700, 530, 191, 16))
@@ -373,8 +406,14 @@ class Ui_Form(object):
         self.resetNavigateBtn.setGeometry(QtCore.QRect(810, 50, 181, 51))
         self.resetNavigateBtn.setObjectName(_fromUtf8("resetNavigateBtn"))
         self.ImgTopicBtn = QtGui.QPushButton(Form)
-        self.ImgTopicBtn.setGeometry(QtCore.QRect(510, 390, 71, 27))
+        self.ImgTopicBtn.setGeometry(QtCore.QRect(510, 350, 71, 27))
         self.ImgTopicBtn.setObjectName(_fromUtf8("ImgTopicBtn"))
+        self.RecordPathBtn = QtGui.QPushButton(Form)
+        self.RecordPathBtn.setGeometry(QtCore.QRect(430, 390, 71, 27))
+        self.RecordPathBtn.setObjectName(_fromUtf8("RecordPathBtn"))
+        self.SavePathBtn = QtGui.QPushButton(Form)
+        self.SavePathBtn.setGeometry(QtCore.QRect(510, 390, 71, 27))
+        self.SavePathBtn.setObjectName(_fromUtf8("SavePathBtn"))
         self.path_text = QtGui.QLabel(Form)
         self.path_text.setGeometry(QtCore.QRect(110, 480, 68, 27))
         self.path_text.setObjectName(_fromUtf8("path_text"))
@@ -391,14 +430,20 @@ class Ui_Form(object):
         self.textEditPath.setGeometry(QtCore.QRect(10, 510, 281, 161))
         self.textEditPath.setObjectName(_fromUtf8("textEditPath"))
         self.ImgTopicInput = QtGui.QTextEdit(Form)
-        self.ImgTopicInput.setGeometry(QtCore.QRect(100, 390, 401, 31))
+        self.ImgTopicInput.setGeometry(QtCore.QRect(100, 350, 401, 31))
         self.ImgTopicInput.setObjectName(_fromUtf8("ImgTopicInput"))
+        self.RecordPathInput = QtGui.QTextEdit(Form)
+        self.RecordPathInput.setGeometry(QtCore.QRect(100, 390, 321, 31))
+        self.RecordPathInput.setObjectName(_fromUtf8("RecordPathInput"))
         self.LatLngOutput = QtGui.QTextBrowser(Form)
         self.LatLngOutput.setGeometry(QtCore.QRect(100, 430, 301, 31))
         self.LatLngOutput.setObjectName(_fromUtf8("LatLngOutput"))
         self.path_text_2 = QtGui.QLabel(Form)
-        self.path_text_2.setGeometry(QtCore.QRect(10, 390, 91, 31))
+        self.path_text_2.setGeometry(QtCore.QRect(10, 350, 91, 31))
         self.path_text_2.setObjectName(_fromUtf8("path_text_2"))
+        self.record_path_text = QtGui.QLabel(Form)
+        self.record_path_text.setGeometry(QtCore.QRect(10, 390, 91, 31))
+        self.record_path_text.setObjectName(_fromUtf8("record_path_text"))
         self.path_text_3 = QtGui.QLabel(Form)
         self.path_text_3.setGeometry(QtCore.QRect(10, 430, 91, 31))
         self.path_text_3.setObjectName(_fromUtf8("path_text_3"))
@@ -414,6 +459,8 @@ class Ui_Form(object):
         QtCore.QObject.connect(self.estopBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop)
         QtCore.QObject.connect(self.estopReleaseBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_estop_release)
         QtCore.QObject.connect(self.ImgTopicBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_imgBtn)
+        QtCore.QObject.connect(self.RecordPathBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_recordPathBtn)
+        QtCore.QObject.connect(self.SavePathBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_savePathBtn)
         QtCore.QObject.connect(self.LatLngBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_LatLngBtn)
         QtCore.QObject.connect(self.FileBtn, QtCore.SIGNAL(_fromUtf8("clicked()")), self.cb_FileBtn)
 
@@ -452,6 +499,7 @@ class Ui_Form(object):
         self.useVJoyStickBtn.setChecked(False)
         self.check_VJoystick()
         self.cb_imgBtn()
+        self.SavePathBtn.setEnabled(False)
         # self.sub_image = rospy.Subscriber("/usb_cam/image_raw/compressed",CompressedImage , self.cbImage, queue_size=1)
         self.sub_gps = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix , self.cbGPS, queue_size=1)
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
@@ -503,6 +551,8 @@ class Ui_Form(object):
         self.estopReleaseBtn.setText(_translate("Form", "E-Stop Release 解除緊急停止", None))
         self.resetNavigateBtn.setText(_translate("Form", "Reset Navigate 重設導航", None))
         self.ImgTopicBtn.setText(_translate("Form", "OK 確定", None))
+        self.RecordPathBtn.setText(_translate("Form", "開始", None))
+        self.SavePathBtn.setText(_translate("Form", "存檔", None))
         self.path_text.setText(_translate("Form", "Path 路徑", None))
         self.status_text.setText(_translate("Form", "Status 狀態", None))
         self.status_internet.setText(_translate("Form", "Connected 連線", None))
@@ -512,6 +562,7 @@ class Ui_Form(object):
 "</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.path_text_2.setText(_translate("Form", "Image topic:", None))
+        self.record_path_text.setText(_translate("Form", "Saved file:", None))
         self.path_text_3.setText(_translate("Form", "Lat, Lng", None))
         self.LatLngBtn.setText(_translate("Form", "Get Lat, Lng 取得經緯度", None))
         self.FileBtn.setText(_translate("Form", "File", None))
