@@ -30,8 +30,6 @@ class SONAR_SINGLE():
         rospy.Timer(rospy.Duration(0.1), self.event_cb)
 
     def event_cb(self, event):
-        data_list = SonarDataList()
-
         data_front = self.p30Front.get_distance()
         data_left = self.p30Left.get_distance()
         data_right = self.p30Right.get_distance()
@@ -53,11 +51,12 @@ class SONAR_SINGLE():
             self.sonar_down.distance = float(data_down["distance"])
             self.sonar_down.confidence = float(data_down["confidence"])
 
+        data_list = SonarDataList()
         data_list.list.append(self.sonar_front)
         data_list.list.append(self.sonar_left)
         data_list.list.append(self.sonar_right)
         data_list.list.append(self.sonar_down)
-        self.pub_sonar.publish(sl)
+        self.pub_sonar.publish(data_list)
         print(data_list.list[0].distance + ", " + data_list.list[1].distance + ", " + data_list.list[2].distance + ", " + data_list.list[3].distance)
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
 
