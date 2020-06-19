@@ -38,20 +38,20 @@ class SONAR_SINGLE():
         data_down = self.p30Down.get_distance()
 
         if data_front:
-            self.sonar_front.distance = float(data["distance"])
-            self.sonar_front.confidence = float(data["confidence"])
+            self.sonar_front.distance = float(data_front["distance"])
+            self.sonar_front.confidence = float(data_front["confidence"])
 
         if data_left:
-            self.sonar_left.distance = float(data["distance"])
-            self.sonar_left.confidence = float(data["confidence"])
+            self.sonar_left.distance = float(data_left["distance"])
+            self.sonar_left.confidence = float(data_left["confidence"])
 
         if data_right:
-            self.sonar_right.distance = float(data["distance"])
-            self.sonar_right.confidence = float(data["confidence"])
+            self.sonar_right.distance = float(data_right["distance"])
+            self.sonar_right.confidence = float(data_right["confidence"])
 
         if data_down:
-            self.sonar_down.distance = float(data["distance"])
-            self.sonar_down.confidence = float(data["confidence"])
+            self.sonar_down.distance = float(data_down["distance"])
+            self.sonar_down.confidence = float(data_down["confidence"])
 
         data_list.append(self.sonar_front)
         data_list.append(self.sonar_left)
