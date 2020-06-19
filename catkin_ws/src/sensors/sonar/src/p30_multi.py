@@ -57,7 +57,7 @@ class SONAR_SINGLE():
         data_list.list.append(self.sonar_right)
         data_list.list.append(self.sonar_down)
         self.pub_sonar.publish(data_list)
-        print(data_list.list[0].distance + ", " + data_list.list[1].distance + ", " + data_list.list[2].distance + ", " + data_list.list[3].distance)
+        print(str(data_list.list[0].distance) + ", " + str(data_list.list[1].distance) + ", " + str(data_list.list[2].distance) + ", " + str(data_list.list[3].distance))
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
 
     def check_port(self):
