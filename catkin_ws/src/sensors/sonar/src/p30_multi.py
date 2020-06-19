@@ -61,7 +61,7 @@ class SONAR_SINGLE():
         data_list.append(self.sonar_right)
         data_list.append(self.sonar_down)
         self.pub_sonar.publish(sl)
-        print(data_list[0].distance + ", " + data_list[1].distance + ", " + data_list[2].distance + ", " + data_list[3].distance + ", " + )
+        print(data_list[0].distance + ", " + data_list[1].distance + ", " + data_list[2].distance + ", " + data_list[3].distance)
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
 
 if __name__ == '__main__':
