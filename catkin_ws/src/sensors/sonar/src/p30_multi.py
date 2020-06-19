@@ -16,6 +16,8 @@ class SONAR_SINGLE():
         self.p30Right = Ping1D()
         self.p30Down = Ping1D()
 
+        self.check_port()
+
         self.sonar_front = SonarData()
         self.sonar_left = SonarData()
         self.sonar_right = SonarData()
@@ -80,7 +82,7 @@ class SONAR_SINGLE():
         except:
             rospy.loginfo("sonar_right not exist")
             port_succ = False
-            
+
         try:
             self.p30Down.connect_serial("/dev/sonar_down", 115200)
         except:
