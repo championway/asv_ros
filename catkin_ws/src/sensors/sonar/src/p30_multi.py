@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import rospy
 import time
-import sys
+import stat
+import os.stat
 from brping import Ping1D
 from asv_msgs.msg import SonarData, SonarDataList
 
@@ -19,15 +20,6 @@ class SONAR_SINGLE():
         self.sonar_left = SonarData()
         self.sonar_right = SonarData()
         self.sonar_down = SonarData()
-
-        if not self.check_port():
-            rospy.loginfo("Failed  open the P30 sensors")
-            exit(1)
-
-        self.p30Front.connect_serial("/dev/sonar_front", 115200)
-        self.p30Left.connect_serial("/dev/sonar_left", 115200)
-        self.p30Right.connect_serial("/dev/sonar_right", 115200)
-        self.p30Down.connect_serial("/dev/sonar_down", 115200)
 
         self.pub_sonar = rospy.Publisher("sonar", SonarDataList, queue_size=1)
 
@@ -70,7 +62,33 @@ class SONAR_SINGLE():
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
 
     def check_port(self):
-        return os.path.exists("/dev/sonar_front") and os.path.exists("/dev/sonar_left") and os.path.exists("/dev/sonar_right") and os.path.exists("/dev/sonar_down")
+        port_succ = True
+        try:
+            self.p30Front.connect_serial("/dev/sonar_front", 115200)
+        except:
+            rospy.loginfo("sonar_front not exist")
+            port_succ = False
+
+        try:
+            self.p30Left.connect_serial("/dev/sonar_left", 115200)
+        except:
+            rospy.loginfo("sonar_left not exist")
+            port_succ = False
+
+        try:
+            self.p30Right.connect_serial("/dev/sonar_right", 115200)
+        except:
+            rospy.loginfo("sonar_right not exist")
+            port_succ = False
+            
+        try:
+            self.p30Down.connect_serial("/dev/sonar_down", 115200)
+        except:
+            rospy.loginfo("sonar_down not exist")
+            port_succ = False
+
+        if not port_succ:
+            exit()
 
 if __name__ == '__main__':
     rospy.init_node('SONAR_SINGLE')
