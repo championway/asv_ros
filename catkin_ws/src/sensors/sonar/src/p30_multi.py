@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 import rospy
 import time
-import stat
-import os.stat
 from brping import Ping1D
 from asv_msgs.msg import SonarData, SonarDataList
 
