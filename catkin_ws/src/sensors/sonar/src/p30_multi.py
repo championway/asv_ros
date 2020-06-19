@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import rospy
 import time
+import sys
 from brping import Ping1D
 from asv_msgs.msg import SonarData, SonarDataList
 
@@ -18,6 +19,10 @@ class SONAR_SINGLE():
         self.sonar_left = SonarData()
         self.sonar_right = SonarData()
         self.sonar_down = SonarData()
+
+        if not self.check_port():
+            rospy.loginfo("Failed  open the P30 sensors")
+            exit(1)
 
         self.p30Front.connect_serial("/dev/sonar_front", 115200)
         self.p30Left.connect_serial("/dev/sonar_left", 115200)
@@ -63,6 +68,9 @@ class SONAR_SINGLE():
         self.pub_sonar.publish(sl)
         print(data_list[0].distance + ", " + data_list[1].distance + ", " + data_list[2].distance + ", " + data_list[3].distance)
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
+
+    def check_port(self):
+        return os.path.exists("/dev/sonar_front") and os.path.exists("/dev/sonar_left") and os.path.exists("/dev/sonar_right") and os.path.exists("/dev/sonar_down")
 
 if __name__ == '__main__':
     rospy.init_node('SONAR_SINGLE')
