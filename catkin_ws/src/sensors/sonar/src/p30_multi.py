@@ -53,12 +53,12 @@ class SONAR_SINGLE():
             self.sonar_down.distance = float(data_down["distance"])
             self.sonar_down.confidence = float(data_down["confidence"])
 
-        data_list.append(self.sonar_front)
-        data_list.append(self.sonar_left)
-        data_list.append(self.sonar_right)
-        data_list.append(self.sonar_down)
+        data_list.list.append(self.sonar_front)
+        data_list.list.append(self.sonar_left)
+        data_list.list.append(self.sonar_right)
+        data_list.list.append(self.sonar_down)
         self.pub_sonar.publish(sl)
-        print(data_list[0].distance + ", " + data_list[1].distance + ", " + data_list[2].distance + ", " + data_list[3].distance)
+        print(data_list.list[0].distance + ", " + data_list.list[1].distance + ", " + data_list.list[2].distance + ", " + data_list.list[3].distance)
         # print("Distance: %s\tConfidence: %s%%" % (data["distance"], data["confidence"]))
 
     def check_port(self):
