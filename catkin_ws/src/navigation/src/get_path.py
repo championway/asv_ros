@@ -35,7 +35,7 @@ class GET_PATH():
         self.pose = Pose()
         self.pre_pose = Pose()
         self.pre_time = rospy.get_time()
-        self.time_threshold = 3.5.
+        self.time_threshold = 3.5
         self.dis_threshold = 5.
         self.first = True
         self.gps = NavSatFix()
