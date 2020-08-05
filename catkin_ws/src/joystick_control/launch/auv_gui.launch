@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+	<arg name="veh" default="ASV"/>
+	<node ns="$(arg veh)" pkg="joystick_control" type="auv_gui" name="auv_gui"></node>
+  <node ns="$(arg veh)" pkg="navigation" type="get_path" name="get_path"></node>
+</launch>
