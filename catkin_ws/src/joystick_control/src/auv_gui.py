@@ -11,7 +11,7 @@ from PyQt4 import QtCore, QtGui
 from asv_msgs.msg import ControlCmd, Status
 from std_msgs.msg import Int32
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
-from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse
+from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse
 from sensor_msgs.msg import Image, CompressedImage, NavSatFix, BatteryState
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
@@ -52,6 +52,7 @@ class ImgThread(QtCore.QThread):
 class Ui_Form(object):
 
     def __init__(self):
+        self.alphaCmd = 0
         self.leftrightCmd = 0
         self.updownCmd = 0
         self.forbackCmd = 0
@@ -276,6 +277,16 @@ class Ui_Form(object):
     def cb_savePathBtn(self):
         self.save_path()
 
+    def send_alpha(self, alpha):
+        try:
+            srv = rospy.ServiceProxy('/ASV/alphaV', SetValue)
+            resp = srv(alpha)
+            # if resp.success:
+            #     rospy.loginfo("Send Alpha Success")
+            return resp
+        except rospy.ServiceException, e:
+            print "Service call failed: %s"%e
+
     def send_path(self, txt):
         try:
             srv = rospy.ServiceProxy('/ASV/path_txt', SetString)
@@ -344,6 +355,11 @@ class Ui_Form(object):
             self.forbackCmd = 0
         self.forbackValue.setText("Value: " + str(self.forbackCmd))
 
+    def alphaVScrollMoved(self):
+        self.alphaCmd = (float(self.alphaVScroll.value())/100.)**2
+        self.alphaVValue.setText("Alpha: " + "%.2f" % self.alphaCmd)
+        self.send_alpha(self.alphaCmd)
+
     def setupUi(self, Form):
         self.window = Form
         Form.setObjectName(_fromUtf8("Form"))
@@ -396,8 +412,15 @@ class Ui_Form(object):
         self.forbackValue = QtGui.QTextBrowser(Form)
         self.forbackValue.setGeometry(QtCore.QRect(890, 640, 101, 31))
         self.forbackValue.setObjectName(_fromUtf8("forbackValue"))
+        self.alphaVValue = QtGui.QTextBrowser(Form)
+        self.alphaVValue.setGeometry(QtCore.QRect(630, 295, 101, 31))
+        self.alphaVValue.setObjectName(_fromUtf8("alphaVValue"))
+        self.alphaVScroll = QtGui.QScrollBar(Form)
+        self.alphaVScroll.setGeometry(QtCore.QRect(750, 300, 260, 22))
+        self.alphaVScroll.setOrientation(QtCore.Qt.Horizontal)
+        self.alphaVScroll.setObjectName(_fromUtf8("alphaVScroll"))
         self.useVJoyStickBtn = QtGui.QRadioButton(Form)
-        self.useVJoyStickBtn.setGeometry(QtCore.QRect(680, 330, 271, 22))
+        self.useVJoyStickBtn.setGeometry(QtCore.QRect(680, 340, 271, 22))
         self.useVJoyStickBtn.setObjectName(_fromUtf8("useVJoyStickBtn"))
         self.estopReleaseBtn = QtGui.QPushButton(Form)
         self.estopReleaseBtn.setGeometry(QtCore.QRect(810, 220, 221, 61))
@@ -467,6 +490,7 @@ class Ui_Form(object):
         self.updownScroll.valueChanged.connect(self.updownScrollMoved)
         self.leftrightScroll.valueChanged.connect(self.leftrightScrollMoved)
         self.forbackScroll.valueChanged.connect(self.forbackScrollMoved)
+        self.alphaVScroll.valueChanged.connect(self.alphaVScrollMoved)
         self.useVJoyStickBtn.toggled.connect(self.cb_VJoyStick)
         # self.thread = QtCore.QThread()
         self.thread = MyThread(Form)
@@ -493,10 +517,13 @@ class Ui_Form(object):
         self.leftrightScroll.setMaximum(200)
         self.leftrightScroll.setValue(100)
         self.leftrightValue.setText("Value: " + str(0))
+        self.alphaVValue.setText("Alpha: " + str(1))
         self.forbackScroll.setMaximum(200)
         self.forbackScroll.setValue(100)
         self.forbackValue.setText("Value: " + str(0))
         self.useVJoyStickBtn.setChecked(False)
+        self.alphaVScroll.setMaximum(200)
+        self.alphaVScroll.setValue(100)
         self.check_VJoystick()
         self.cb_imgBtn()
         self.SavePathBtn.setEnabled(False)
@@ -538,6 +565,11 @@ class Ui_Form(object):
 "</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">value: </p></body></html>", None))
         self.leftrightValue.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">value: </p></body></html>", None))
+        self.alphaVValue.setHtml(_translate("Form", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Ubuntu\'; font-size:11pt; font-weight:400; font-style:normal;\">\n"

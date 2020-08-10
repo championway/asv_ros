@@ -18,6 +18,7 @@ from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
 from asv_msgs.msg import RobotGoal, MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
+from asv_msgs.srv import SetValue, SetValueResponse
 
 from PID import PID_control
 
@@ -29,6 +30,7 @@ class Robot_PID():
 		self.alpha_a = 1.3
 		self.pos_ctrl_max = 3
 		self.pos_ctrl_min = 0.0
+		self.alpha_v = 1.0
 		# self.pos_station_max = 0.8
 		# self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 2.5
@@ -38,6 +40,8 @@ class Robot_PID():
 		self.goal = None
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
+
+		self.alpha_srv = rospy.Service("alphaV", SetValue, self.alpha_cb)
 
 		self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		rospy.Subscriber('robot_goal', RobotGoal, self.robot_goal_cb, queue_size = 1, buff_size = 2**24)
@@ -82,11 +86,11 @@ class Robot_PID():
 
 		cmd_msg = MotorCmd()
 		if not msg.only_angle.data: # for navigation
-			cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
-			cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+			cmd_msg.right = self.alpha_v * self.cmd_constarin(pos_output + ang_output)
+			cmd_msg.left = self.alpha_v * self.cmd_constarin(pos_output - ang_output)
 		else: # if only for rotation, instead of moving forward
-			cmd_msg.right = self.cmd_constarin(ang_output)
-			cmd_msg.left = self.cmd_constarin(ang_output)
+			cmd_msg.right = self.alpha_v * self.cmd_constarin(ang_output)
+			cmd_msg.left = self.alpha_v * self.cmd_constarin(ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 
@@ -116,6 +120,12 @@ class Robot_PID():
 			pos_output = - pos_output
 			ang_output = - ang_output
 		return pos_output, ang_output
+
+	def alpha_cb(self, req):
+		res = SetValueResponse()
+		self.alpha_v = req.value
+		res.success = True
+		return res
 
 	def cmd_constarin(self, input):
 		if input > self.cmd_ctrl_max:
