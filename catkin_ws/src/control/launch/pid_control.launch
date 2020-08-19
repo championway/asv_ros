@@ -7,7 +7,7 @@
         </node>
 
 	    <!-- Load dynamic reconfigure -->
-	    <node pkg="dynamic_reconfigure" type="dynparam" name="load_pos_param" args="load /$(arg veh)/PID_control/Position $(find asv_config)/pid/pid_pos.yaml"/>
-	    <node pkg="dynamic_reconfigure" type="dynparam" name="load_ang_param" args="load /$(arg veh)/PID_control/Angular $(find asv_config)/pid/pid_ang.yaml"/>
+	    <!-- <node pkg="dynamic_reconfigure" type="dynparam" name="load_pos_param" args="load /$(arg veh)/PID_control/Position $(find asv_config)/pid/pid_pos.yaml"/>
+	    <node pkg="dynamic_reconfigure" type="dynparam" name="load_ang_param" args="load /$(arg veh)/PID_control/Angular $(find asv_config)/pid/pid_ang.yaml"/> -->
     </group>
 </launch>

@@ -3,7 +3,10 @@ import numpy as np
 import cv2
 import roslib
 import rospy
+import rospkg
+import yaml
 import tf
+import os
 import struct
 import math
 import time
@@ -18,7 +21,7 @@ from dynamic_reconfigure.server import Server
 from control.cfg import pos_PIDConfig, ang_PIDConfig
 from asv_msgs.msg import RobotGoal, MotorCmd
 from std_srvs.srv import SetBool, SetBoolResponse
-from asv_msgs.srv import SetValue, SetValueResponse
+from asv_msgs.srv import SetValue, SetValueResponse, SetString, SetStringResponse
 
 from PID import PID_control
 
@@ -38,10 +41,19 @@ class Robot_PID():
 		self.station_keeping_dis = 3.5 # meters
 		self.frame_id = 'map'
 		self.goal = None
+		self.pid_parent = ["pos", "ang"]
+		self.pid_child = ["kp", "ki", "kd"]
+		rospack = rospkg.RosPack()
+		self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid.yaml")
+		self.pid_param = None
+
+		with open (self.pid_param_path, 'r') as file:
+			self.pid_param = yaml.safe_load(file)
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 
 		self.alpha_srv = rospy.Service("alphaV", SetValue, self.alpha_cb)
+		self.param_srv = rospy.Service("param", SetString, self.param_cb)
 
 		self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		rospy.Subscriber('robot_goal', RobotGoal, self.robot_goal_cb, queue_size = 1, buff_size = 2**24)
@@ -51,11 +63,13 @@ class Robot_PID():
 		self.pos_control = PID_control("Position")
 		self.ang_control = PID_control("Angular")
 
+		self.set_pid_param()
+
 		# self.ang_station_control = PID_control("Angular_station")
 		# self.pos_station_control = PID_control("Position_station")
 
-		self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position")
-		self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular")
+		# self.pos_srv = Server(pos_PIDConfig, self.pos_pid_cb, "Position")
+		# self.ang_srv = Server(ang_PIDConfig, self.ang_pid_cb, "Angular")
 		# self.pos_station_srv = Server(pos_PIDConfig, self.pos_station_pid_cb, "Angular_station")
 		# self.ang_station_srv = Server(ang_PIDConfig, self.ang_station_pid_cb, "Position_station")
 		
@@ -125,6 +139,28 @@ class Robot_PID():
 		res = SetValueResponse()
 		self.alpha_v = req.value
 		res.success = True
+		return res
+
+	def param_cb(self, req):
+		s = req.str
+		ss = s.split('/')
+		string_valid = False
+		if len(ss) == 3:
+			if ss[0] in self.pid_parent:
+				if ss[1] in self.pid_child:
+					try:
+						string_valid = True
+						self.pid_param[ss[0]][ss[1]] = float(ss[2])
+						with open(self.pid_param_path, "w") as file:
+							yaml.dump(self.pid_param, file)
+						self.set_pid_param()
+					except:
+						pass
+		res = SetStringResponse()
+		if string_valid:
+			res.success = True
+		else:
+			res.success = False
 		return res
 
 	def cmd_constarin(self, input):
@@ -205,6 +241,17 @@ class Robot_PID():
 		marker.color.g = 1.0
 		marker.color.r = 1.0
 		self.pub_goal.publish(marker)
+
+	def set_pid_param(self):
+		self.pos_control.setKp(self.pid_param['pos']['kp'])
+		self.pos_control.setKi(self.pid_param['pos']['ki'])
+		self.pos_control.setKd(self.pid_param['pos']['kd'])
+		self.ang_control.setKp(self.pid_param['ang']['kp'])
+		self.ang_control.setKi(self.pid_param['ang']['ki'])
+		self.ang_control.setKd(self.pid_param['ang']['kd'])
+		rospy.loginfo("PID parameters:")
+		print("pos: ", self.pid_param['pos'])
+		print("ang: ", self.pid_param['ang'])
 
 	def pos_pid_cb(self, config, level):
 		print("Position: [Kp]: {Kp}   [Ki]: {Ki}   [Kd]: {Kd}\n".format(**config))
