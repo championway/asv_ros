@@ -100,11 +100,11 @@ class Robot_PID():
 
 		cmd_msg = MotorCmd()
 		if not msg.only_angle.data: # for navigation
-			cmd_msg.right = self.cmd_constarin(self.alpha_v * (pos_output + ang_output))
-			cmd_msg.left = self.cmd_constarin(self.alpha_v * (pos_output - ang_output))
+			cmd_msg.right = self.cmd_constarin(self.alpha_v * pos_output + self.alpha_v/2.5 * ang_output)
+			cmd_msg.left = self.cmd_constarin(self.alpha_v * pos_output - self.alpha_v/2.5 * ang_output)
 		else: # if only for rotation, instead of moving forward
-			cmd_msg.right = self.cmd_constarin(self.alpha_v * ang_output)
-			cmd_msg.left = self.cmd_constarin(self.alpha_v * ang_output)
+			cmd_msg.right = self.cmd_constarin(ang_output)
+			cmd_msg.left = self.cmd_constarin(ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 

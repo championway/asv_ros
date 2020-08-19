@@ -522,7 +522,7 @@ class Ui_Form(object):
         self.forbackScroll.setValue(100)
         self.forbackValue.setText("Value: " + str(0))
         self.useVJoyStickBtn.setChecked(False)
-        self.alphaVScroll.setMaximum(200)
+        self.alphaVScroll.setMaximum(250)
         self.alphaVScroll.setValue(100)
         self.check_VJoystick()
         self.cb_imgBtn()
