@@ -84,7 +84,7 @@ class Robot_PID():
 				msg.robot.orientation.w)
 		_, _, yaw = tf.transformations.euler_from_quaternion(quat)
 
-		if len(self.goal) == 0 or len(self.robot_position) == 0: # if the robot haven't recieve any goal
+		if len(self.goal) == 0 or len(self.robot_position) == 0: # if the robot hasn't recieve any goal
 			return
 
 		#yaw = yaw + np.pi/2
