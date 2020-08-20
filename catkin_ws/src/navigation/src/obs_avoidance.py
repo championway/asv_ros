@@ -12,6 +12,7 @@ from std_srvs.srv import SetBool, SetBoolResponse
 class OBS_AVOIDANCE():
 	def __init__(self):
 		self.node_name = rospy.get_name()
+		self.dis_threshold = 5.0
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		self.pub_robot_goal = rospy.Publisher("robot_goal/obs", RobotGoal, queue_size = 1)
 		rospy.Subscriber("robot_goal", RobotGoal, self.goal_cb, queue_size = 1, buff_size = 2**24)
