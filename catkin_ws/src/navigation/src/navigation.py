@@ -9,6 +9,8 @@ import time
 from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Imu
+from std_msgs.msg import UInt32
 from dynamic_reconfigure.server import Server
 from control.cfg import lookaheadConfig
 from asv_msgs.msg import RobotGoal
@@ -32,6 +34,13 @@ class NAVIGATION():
 		self.robot_position = None
 		self.cycle = rospy.get_param("~cycle", True)
 
+		self.satellite_list = []
+		self.satellite_thres = 15
+		self.satellite_data = 0
+		self.imu_angle = 0
+		self.angle_thres = 0.85
+		self.pre_pose = []
+
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
 		# self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
@@ -44,10 +53,37 @@ class NAVIGATION():
 		self.purepursuit.set_lookahead(2.75)
 
 		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber("/mavros/global_position/raw/satellites", UInt32, self.satellite_cb, queue_size = 1, buff_size = 2**24)
 
+	def imu_cb(self, msg):
+		quat = (msg.orientation.x,\
+				msg.orientation.y,\
+				msg.orientation.z,\
+				msg.orientation.w)
+		_, _, angle = tf.transformations.euler_from_quaternion(quat)
+		while angle >= np.pi:
+			angle = angle - 2*np.pi
+		while angle < -np.pi:
+			angle = angle + 2*np.pi
+		self.imu_angle = angle
+
+	def satellite_cb(self, msg):
+		data = msg.data
+		self.satellite_data = msg.data
 
 	def odom_cb(self, msg):
 		self.robot_position = [msg.pose.pose.position.x, msg.pose.pose.position.y]
+		
+		if self.satellite_data < self.satellite_thres:
+			if self.pre_pose != []:
+				angle = self.getAngle()
+				if angle > self.angle_thres:
+					self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
+					return
+
+		self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
+
 		if not self.is_station_keeping:
 			self.stop_pos = [[msg.pose.pose.position.x, msg.pose.pose.position.y]]
 		quat = (msg.pose.pose.orientation.x,\
@@ -86,6 +122,21 @@ class NAVIGATION():
 		# 	self.publish_lookahead(self.robot_position, self.final_goal[-1])
 		# else:
 		# 	self.publish_lookahead(self.robot_position, pursuit_point)
+
+	# Calculate the angle difference between robot heading and vector start from start_pose, end at end_pose and unit x vector of odom frame, 
+	# in radian
+	def getAngle(self):
+		delta_x = self.robot_position[0] - self.pre_pose[0]
+		delta_y = self.robot_position[1] - self.pre_pose[1]
+		theta = np.arctan2(delta_y, delta_x)
+		angle = theta - self.imu_angle
+		# Normalize in [-pi, pi)
+		while angle >= np.pi:
+			angle = angle - 2*np.pi
+		while angle < -np.pi:
+			angle = angle + 2*np.pi
+		# print(theta, self.imu_angle, abs(angle))
+		return abs(angle)
 
 	def reset_cb(self, req):
 		if req.data == True:

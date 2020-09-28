@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+    <arg name="txt_name" default="gazebo.txt"/>
+    <arg name="cycle" default="True"/>
+    <arg name="gui" default="True"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="navigation" type="rviz_view.py" name="rviz_view" output="screen" >
+        </node>
+    </group>
+
+</launch>
