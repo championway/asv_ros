@@ -45,6 +45,7 @@ class NAVIGATION():
 		
 		# self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
 		self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
+		self.pub_fake_goal = rospy.Publisher("fake_goal",Marker, queue_size=1)
 		self.path_srv = rospy.Service("set_path", SetRobotPath, self.path_cb)
 		self.reset_srv = rospy.Service("reset_goals", SetBool, self.reset_cb)
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
@@ -72,17 +73,38 @@ class NAVIGATION():
 		data = msg.data
 		self.satellite_data = msg.data
 
+	def publish_fake_goal(self, x, y):
+		marker = Marker()
+		marker.header.frame_id = "map"
+		marker.header.stamp = rospy.Time.now()
+		marker.ns = "fake_goal"
+		marker.type = marker.CUBE
+		marker.action = marker.ADD
+		marker.pose.position.x = x
+		marker.pose.position.y = y
+		marker.pose.orientation.x = 0
+		marker.pose.orientation.y = 0
+		marker.pose.orientation.z = 0
+		marker.pose.orientation.w = 1
+		marker.scale.x = 0.7
+		marker.scale.y = 0.7
+		marker.scale.z = 0.7
+		marker.color.a = 1.0
+		marker.color.b = 1.0
+		marker.color.g = 1.0
+		marker.color.r = 1.0
+		self.pub_fake_goal.publish(marker)
+
 	def odom_cb(self, msg):
 		self.robot_position = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-		
-		if self.satellite_data < self.satellite_thres:
-			if self.pre_pose != []:
-				angle = self.getAngle()
-				if angle > self.angle_thres:
-					self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-					return
 
-		self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
+		# if self.satellite_data < self.satellite_thres:
+		# 	if self.pre_pose != []:
+		# 		angle = self.getAngle()
+		# 		if angle > self.angle_thres:
+		# 			self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
+		# 			return
+		# self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
 
 		if not self.is_station_keeping:
 			self.stop_pos = [[msg.pose.pose.position.x, msg.pose.pose.position.y]]
@@ -111,6 +133,13 @@ class NAVIGATION():
 				rg.only_angle.data = False
 				self.pub_robot_goal.publish(rg)
 			return
+
+
+		if True:
+			fake_goal = self.purepursuit.get_parallel_fake_goal()
+			if fake_goal is None:
+				return
+			self.publish_fake_goal(fake_goal[0], fake_goal[1])
 
 		rg = RobotGoal()
 		rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]

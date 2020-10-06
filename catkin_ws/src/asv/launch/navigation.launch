@@ -15,6 +15,7 @@
         <arg name="latitude" value="$(arg latitude)"/>
         <arg name="longitude" value="$(arg longitude)"/>
         <arg name="imu_rotate" value="$(arg imu_rotate)" />
+        <arg name="gazebo" value="$(arg gazebo)" />
     </include>
 
     <include file="$(find control)/launch/pid_control.launch">

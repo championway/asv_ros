@@ -43,6 +43,7 @@ class PurePursuit(object):
 		self.active = True
 		self.start = True
 		self.get_waypoint = True
+		self.fake_d = 2.5
 
 	# Waypoint List callback
 	def set_goal(self, robot, goal):
@@ -98,6 +99,30 @@ class PurePursuit(object):
 	def car_control(self, v, omega):
 		omega = omega * 1.5
 		self.publish_cmd(v, omega)
+
+	def get_parallel_fake_goal(self):
+		if self.current_waypoint_index == 0:
+			return None
+		x1 = self.waypoints[self.current_waypoint_index - 1][0]
+		y1 = self.waypoints[self.current_waypoint_index - 1][1]
+		x2 = self.waypoints[self.current_waypoint_index][0]
+		y2 = self.waypoints[self.current_waypoint_index][1]
+		delta_x = x2 - x1
+		delta_y = y2 - y1
+		x, y = self.robot_pose[:2]
+		if delta_x != 0: # if not vertical
+			m = (y2 - y1)/(x2 - x1)
+			k = self.fake_d / math.sqrt(1 + m**2)
+			if delta_x < 0:
+				k = -k
+			x += k
+			y += m * k
+		else: # if vertical
+			if delta_y > 0:
+				y = y + self.fake_d
+			else:
+				y = y - self.fake_d
+		return x, y
 
 ################################### Publish topic methods ###################################
 
