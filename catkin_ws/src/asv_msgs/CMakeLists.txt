@@ -28,6 +28,7 @@ add_message_files(
   Boxlist.msg
   BoolStamped.msg
   UsvDrive.msg
+  WayPoint.msg
   RobotPath.msg
   RobotGoal.msg
   ControlCmd.msg

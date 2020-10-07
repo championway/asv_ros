@@ -13,7 +13,7 @@ from sensor_msgs.msg import Imu
 from std_msgs.msg import UInt32
 from dynamic_reconfigure.server import Server
 from control.cfg import lookaheadConfig
-from asv_msgs.msg import RobotGoal
+from asv_msgs.msg import WayPoint, RobotGoal
 from asv_msgs.srv import SetRobotPath, SetRobotPathResponse
 from std_srvs.srv import SetBool, SetBoolResponse
 import rospkg
@@ -28,6 +28,7 @@ class NAVIGATION():
 		self.start_navigation = False
 		self.stop_pos = []
 		self.goals = []
+		self.full_goals = []
 		self.get_path = False
 		self.final_goal = None # The final goal that you want to arrive
 		self.goal = self.final_goal
@@ -124,26 +125,29 @@ class NAVIGATION():
 		if reach_goal or pursuit_point is None or is_last_idx:
 			if self.cycle:
 				# The start point is the last point of the list
-				start_point = [self.goals[-1].position.x, self.goals[-1].position.y]
+				start_point = [self.goals[-1].waypoint.position.x, self.goals[-1].waypoint.position.y]
+				self.full_goals[0] = self.full_goals[-1]
 				self.purepursuit.set_goal(start_point, self.goals)
 			else:
 				rg = RobotGoal()
-				rg.goal.position.x, rg.goal.position.y = self.goals[-1].position.x, self.goals[-1].position.y
+				rg.goal.position.x, rg.goal.position.y = self.goals[-1].waypoint.position.x, self.goals[-1].waypoint.position.y
 				rg.robot = msg.pose.pose
 				rg.only_angle.data = False
 				self.pub_robot_goal.publish(rg)
 			return
 
+		rg = RobotGoal()
 
-		if True:
+		if self.full_goals[self.purepursuit.current_waypoint_index - 1].bridge_start.data:
 			fake_goal = self.purepursuit.get_parallel_fake_goal()
 			if fake_goal is None:
 				return
 			self.publish_fake_goal(fake_goal[0], fake_goal[1])
-
-		rg = RobotGoal()
-		rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
-		rg.robot = msg.pose.pose
+			rg.goal.position.x, rg.goal.position.y = fake_goal[0], fake_goal[1]
+			rg.robot = msg.pose.pose
+		else:
+			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
+			rg.robot = msg.pose.pose
 		self.pub_robot_goal.publish(rg)
 
 		#yaw = yaw + np.pi/2.
@@ -169,6 +173,7 @@ class NAVIGATION():
 
 	def reset_cb(self, req):
 		if req.data == True:
+			self.full_goals = []
 			self.goals = []
 			self.get_path = False
 		res = SetBoolResponse()
@@ -179,8 +184,13 @@ class NAVIGATION():
 	def path_cb(self, req):
 		rospy.loginfo("Get Path")
 		res = SetRobotPathResponse()
+		wp = WayPoint()
+		wp.bridge_start.data = False
+		wp.bridge_end.data = False
+		self.full_goals.append(wp)
 		if len(req.data.list) > 0:
 			self.goals = req.data.list
+			self.full_goals = self.full_goals + req.data.list
 			self.get_path = True
 			self.purepursuit.set_goal(self.robot_position, self.goals)
 		res.success = True

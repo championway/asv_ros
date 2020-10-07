@@ -7,7 +7,7 @@ import struct
 import math
 import time
 from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
-from asv_msgs.msg import RobotPath
+from asv_msgs.msg import RobotPath, WayPoint
 from asv_msgs.srv import SetRobotPath, SetRobotPathResponse, SetString, SetStringResponse
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from visualization_msgs.msg import Marker, MarkerArray
@@ -21,6 +21,7 @@ class ROBOT_GOAL():
 		self.node_name = rospy.get_name()
 		self.frame_id = "map"
 		self.path_list = []
+		self.waypoint_list = []
 		self.robot_orig = []
 		self.get_orig = False
 		self.rcv_goals = []
@@ -99,14 +100,39 @@ class ROBOT_GOAL():
 
 	def read_str(self, s):
 		self.path_list = []
+		self.waypoint_list = []
 		if len(s) == 0:
 			return False
+		bridge_has_start = False
 		for f in s.splitlines():
 			try:
+				wp = WayPoint()
+				wp.bridge_start.data = False
+				wp.bridge_end.data = False
+
 				line = f.strip()
 				if line[0] == '#':
 					continue
 				data = line.split(',')
+				bridge_start = False
+				bridge_end = False
+				for i in range(2, len(data)):
+					value = data[i].strip()
+					if (value == "bridge_start"):
+						bridge_start = True
+						wp.bridge_start.data = True
+					elif (value == "bridge_end"):
+						bridge_end = True
+						wp.bridge_end.data = True
+				if bridge_has_start:
+					if bridge_end:
+						bridge_has_start = False
+					else:
+						rospy.loginfo("Wrong Bridge Info")
+						return False
+				if bridge_start:
+					bridge_has_start = True
+				self.waypoint_list.append(wp)
 				self.path_list.append([float(data[0]), float(data[1])])
 			except:
 				return False
@@ -143,6 +169,7 @@ class ROBOT_GOAL():
 	def reset(self):
 		self.set_path_succ = False
 		del self.rcv_goals[:]
+		del self.waypoint_list[:]
 		del self.goals[:]
 		self.clear = False
 
@@ -186,8 +213,11 @@ class ROBOT_GOAL():
 		#rospy.wait_for_service('/set_path')
 		rospy.loginfo("Set path to robot")
 		robot_path = RobotPath()
-		for goal in self.goals:
-			robot_path.list.append(goal)
+		for i in range(len(self.goals)):
+			wp = WayPoint()
+			wp = self.waypoint_list[i]
+			wp.waypoint = self.goals[i]
+			robot_path.list.append(wp)
 		try:
 			srv = rospy.ServiceProxy('set_path', SetRobotPath)
 			resp = srv(robot_path)
@@ -244,10 +274,15 @@ class ROBOT_GOAL():
 			marker.scale.x = 1.5
 			marker.scale.y = 1.5
 			marker.scale.z = 1.5
-			marker.color.r = 1
-			marker.color.g = 0
+			marker.color.r = 0
+			marker.color.g = 1
 			marker.color.b = 0
 			marker.color.a = 1
+			if self.waypoint_list[i].bridge_start.data == True or self.waypoint_list[i].bridge_end.data == True:
+				marker.color.r = 1
+				marker.color.g = 0
+				marker.color.b = 0
+
 			marker_array.markers.append(marker)
 		self.pub_marker.publish(marker_array)
 

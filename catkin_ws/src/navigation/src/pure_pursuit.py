@@ -52,7 +52,7 @@ class PurePursuit(object):
 		self.waypoints.append(robot)
 		if self.get_waypoint:
 			for i in range(len(goal)):
-				self.waypoints.append([goal[i].position.x, goal[i].position.y])
+				self.waypoints.append([goal[i].waypoint.position.x, goal[i].waypoint.position.y])
 			self.robot_go = True
 			self.get_waypoint = False
 

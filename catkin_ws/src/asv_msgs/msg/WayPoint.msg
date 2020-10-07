@@ -1,0 +1,3 @@
+geometry_msgs/Pose waypoint
+std_msgs/Bool bridge_start
+std_msgs/Bool bridge_end
