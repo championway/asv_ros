@@ -35,6 +35,7 @@ class NAVIGATION():
 		self.robot_position = None
 		self.cycle = rospy.get_param("~cycle", True)
 
+		self.over_bridge_counter = 0
 		self.satellite_list = []
 		self.satellite_thres = 15
 		self.satellite_data = 0
@@ -138,23 +139,46 @@ class NAVIGATION():
 
 		rg = RobotGoal()
 
+		# if AUV is under the bridge
 		if self.full_goals[self.purepursuit.current_waypoint_index - 1].bridge_start.data:
-			fake_goal = self.purepursuit.get_parallel_fake_goal()
+			fake_goal, is_robot_over_goal = self.purepursuit.get_parallel_fake_goal()
+			rospy.loginfo(is_robot_over_goal)
 			if fake_goal is None:
 				return
 			self.publish_fake_goal(fake_goal[0], fake_goal[1])
 			rg.goal.position.x, rg.goal.position.y = fake_goal[0], fake_goal[1]
 			rg.robot = msg.pose.pose
+
+			if is_robot_over_goal:
+				if self.legal_angle():
+					self.over_bridge_counter = self.over_bridge_counter + 1
+				else:
+					self.over_bridge_counter = 0
+			else:
+				self.over_bridge_counter = 0
+
+			if self.over_bridge_counter > 3:
+				self.purepursuit.current_waypoint_index = self.purepursuit.current_waypoint_index + 1
+
 		else:
 			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
 			rg.robot = msg.pose.pose
 		self.pub_robot_goal.publish(rg)
+
+		self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
 
 		#yaw = yaw + np.pi/2.
 		# if reach_goal or reach_goal is None:
 		# 	self.publish_lookahead(self.robot_position, self.final_goal[-1])
 		# else:
 		# 	self.publish_lookahead(self.robot_position, pursuit_point)
+
+	def legal_angle(self):
+		if self.pre_pose != []:
+			angle = self.getAngle()
+			if angle < self.angle_thres:
+				return True
+		return False
 
 	# Calculate the angle difference between robot heading and vector start from start_pose, end at end_pose and unit x vector of odom frame, 
 	# in radian
