@@ -142,7 +142,6 @@ class NAVIGATION():
 		# if AUV is under the bridge
 		if self.full_goals[self.purepursuit.current_waypoint_index - 1].bridge_start.data:
 			fake_goal, is_robot_over_goal = self.purepursuit.get_parallel_fake_goal()
-			rospy.loginfo(is_robot_over_goal)
 			if fake_goal is None:
 				return
 			self.publish_fake_goal(fake_goal[0], fake_goal[1])
