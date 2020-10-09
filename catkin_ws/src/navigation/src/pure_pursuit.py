@@ -28,6 +28,7 @@ class PurePursuit(object):
 		self.change_to_next_idx = False
 		self.is_change_next_idx = False
 		self.status = 0
+		self.bridge_mode = False
 		# Init subscribers and publishers
 		#self.pub_cmd = rospy.Publisher('/car_cmd', Twist, queue_size=1)
 		self.pub_status = rospy.Publisher('pure_pursuit/status', Int32, queue_size=1)
@@ -321,7 +322,7 @@ class PurePursuit(object):
 				return None
 		# If distance from robot pose to next waypoint is less than the lookahead distance, then we reach this
 		# waypoint
-		if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
+		if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance and not self.bridge_mode:
 			if cwpi != 0:
 				rospy.loginfo("[%s]Arrived waypoint: %d"%(self.node_name, cwpi))
 				self.status = cwpi
@@ -357,7 +358,7 @@ class PurePursuit(object):
 					fake_robot_waypoint = (wp[cwpi][0], wp[cwpi][1])
 					self.change_to_next_idx = True
 				if self.change_to_next_idx and not self.is_change_next_idx:
-					if self.current_waypoint_index < len(self.waypoints)-1:
+					if self.current_waypoint_index < len(self.waypoints)-1 and not self.bridge_mode:
 						if cwpi != 0:
 							rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
 							self.status = cwpi
@@ -378,7 +379,8 @@ class PurePursuit(object):
 			if self.start:
 				if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
 					#rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
-					self.current_waypoint_index = self.current_waypoint_index + 1
-					self.start = False
+					if not self.bridge_mode:
+						self.current_waypoint_index = self.current_waypoint_index + 1
+						self.start = False
 			return fake_robot_waypoint
 		return (x_intersect, y_intersect)

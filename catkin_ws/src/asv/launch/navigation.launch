@@ -26,6 +26,7 @@
         <arg name="veh" value="$(arg veh)"/>
         <arg name="cycle" value="$(arg cycle)"/>
         <arg name="txt_name" value="$(arg txt_name)"/>
+        <arg name="gazebo" value="$(arg gazebo)" />
     </include>
 
     <include file="$(find joystick_control)/launch/joystick.launch">

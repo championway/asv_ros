@@ -38,10 +38,10 @@ class NAVIGATION():
 		self.over_bridge_counter = 0
 		self.satellite_list = []
 		self.satellite_thres = 15
-		self.satellite_data = 0
 		self.imu_angle = 0
 		self.angle_thres = 0.85
 		self.pre_pose = []
+		self.bridge_mode = False
 
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
@@ -56,9 +56,8 @@ class NAVIGATION():
 		self.purepursuit.set_lookahead(2.75)
 
 		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-		rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
-		rospy.Subscriber("/mavros/global_position/raw/satellites", UInt32, self.satellite_cb, queue_size = 1, buff_size = 2**24)
-
+		rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		
 	def imu_cb(self, msg):
 		quat = (msg.orientation.x,\
 				msg.orientation.y,\
@@ -70,10 +69,6 @@ class NAVIGATION():
 		while angle < -np.pi:
 			angle = angle + 2*np.pi
 		self.imu_angle = angle
-
-	def satellite_cb(self, msg):
-		data = msg.data
-		self.satellite_data = msg.data
 
 	def publish_fake_goal(self, x, y):
 		marker = Marker()
@@ -99,14 +94,6 @@ class NAVIGATION():
 
 	def odom_cb(self, msg):
 		self.robot_position = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-
-		# if self.satellite_data < self.satellite_thres:
-		# 	if self.pre_pose != []:
-		# 		angle = self.getAngle()
-		# 		if angle > self.angle_thres:
-		# 			self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
-		# 			return
-		# self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
 
 		if not self.is_station_keeping:
 			self.stop_pos = [[msg.pose.pose.position.x, msg.pose.pose.position.y]]
@@ -141,6 +128,7 @@ class NAVIGATION():
 
 		# if AUV is under the bridge
 		if self.full_goals[self.purepursuit.current_waypoint_index - 1].bridge_start.data:
+			self.bridge_mode = True
 			fake_goal, is_robot_over_goal = self.purepursuit.get_parallel_fake_goal()
 			if fake_goal is None:
 				return
@@ -157,11 +145,16 @@ class NAVIGATION():
 				self.over_bridge_counter = 0
 
 			if self.over_bridge_counter > 3:
+				if self.purepursuit.current_waypoint_index != 0:
+					self.purepursuit.status = self.purepursuit.status + 1
 				self.purepursuit.current_waypoint_index = self.purepursuit.current_waypoint_index + 1
 
 		else:
+			self.bridge_mode = False
 			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
 			rg.robot = msg.pose.pose
+
+		self.purepursuit.bridge_mode = self.bridge_mode
 		self.pub_robot_goal.publish(rg)
 
 		self.pre_pose = [msg.pose.pose.position.x, msg.pose.pose.position.y]
@@ -182,6 +175,8 @@ class NAVIGATION():
 	# Calculate the angle difference between robot heading and vector start from start_pose, end at end_pose and unit x vector of odom frame, 
 	# in radian
 	def getAngle(self):
+		if self.pre_pose == []:
+			return
 		delta_x = self.robot_position[0] - self.pre_pose[0]
 		delta_y = self.robot_position[1] - self.pre_pose[1]
 		theta = np.arctan2(delta_y, delta_x)

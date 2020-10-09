@@ -4,8 +4,11 @@
     <arg name="txt_name" default="gazebo.txt"/>
     <arg name="cycle" default="True"/>
     <arg name="gui" default="True"/>
+    <arg name="gazebo" default="false"/>
 
     <group ns="$(arg veh)">
+        <remap unless="$(arg gazebo)"  from="imu/data" to="/mavros/imu/data"/>
+        <remap if="$(arg gazebo)" from="imu/data" to="/imu/data"/>
         <node pkg="navigation" type="get_goals_txt.py" name="get_goals_txt" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>
             <param name="txt_name" value="$(arg txt_name)"/>
