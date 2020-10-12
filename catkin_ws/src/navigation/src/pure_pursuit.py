@@ -75,7 +75,7 @@ class PurePursuit(object):
 		self.pub_status.publish(status)
 		if self.destination_pose == None:
 			self.active = False
-			rospy.loginfo("[%s]Approach destination" %(self.node_name))
+			rospy.loginfo("[%s]Arrived destination" %(self.node_name))
 			self.status = -1
 			msg = Bool()
 			msg.data = True
@@ -300,6 +300,8 @@ class PurePursuit(object):
 
 	# Pure pursuit process
 	def pure_pursuit(self):
+		if self.current_waypoint_index >= len(self.waypoints): # For bridge mode, if reach destination
+			return None
 		x_robot, y_robot = self.robot_pose[:2]
 		wp = self.waypoints
 		cwpi = self.current_waypoint_index

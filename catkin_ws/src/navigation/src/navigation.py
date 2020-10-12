@@ -145,8 +145,10 @@ class NAVIGATION():
 				self.over_bridge_counter = 0
 
 			if self.over_bridge_counter > 3:
-				if self.purepursuit.current_waypoint_index != 0:
-					self.purepursuit.status = self.purepursuit.status + 1
+				if not (not self.cycle and self.purepursuit.current_waypoint_index == len(self.purepursuit.waypoints) - 1):
+					rospy.loginfo("[%s]Arrived waypoint: %d"%("Over Bridge", self.purepursuit.current_waypoint_index))
+					if self.purepursuit.status != -1:
+						self.purepursuit.status = self.purepursuit.status + 1
 				self.purepursuit.current_waypoint_index = self.purepursuit.current_waypoint_index + 1
 
 		else:
