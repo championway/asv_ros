@@ -53,7 +53,7 @@ class NAVIGATION():
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
 
 		self.purepursuit = PurePursuit()
-		self.purepursuit.set_lookahead(2.75)
+		self.purepursuit.set_lookahead(2.2)
 
 		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 		rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)

@@ -44,7 +44,7 @@ class PurePursuit(object):
 		self.active = True
 		self.start = True
 		self.get_waypoint = True
-		self.fake_d = 2.5
+		self.fake_d = self.lookahead_distance
 
 	# Waypoint List callback
 	def set_goal(self, robot, goal):
@@ -101,13 +101,15 @@ class PurePursuit(object):
 		omega = omega * 1.5
 		self.publish_cmd(v, omega)
 
-	def get_parallel_fake_goal(self):
+	def get_parallel_fake_goal(self, x1 = None, y1 = None, x2 = None, y2 = None, dis = None):
 		if self.current_waypoint_index == 0:
 			return None
-		x1 = self.waypoints[self.current_waypoint_index - 1][0]
-		y1 = self.waypoints[self.current_waypoint_index - 1][1]
-		x2 = self.waypoints[self.current_waypoint_index][0]
-		y2 = self.waypoints[self.current_waypoint_index][1]
+		if x1 is None or y1 is None or x2 is None or y2 is None or dis is None:
+			x1 = self.waypoints[self.current_waypoint_index - 1][0]
+			y1 = self.waypoints[self.current_waypoint_index - 1][1]
+			x2 = self.waypoints[self.current_waypoint_index][0]
+			y2 = self.waypoints[self.current_waypoint_index][1]
+			dis = self.fake_d
 		delta_x = x2 - x1
 		delta_y = y2 - y1
 		x, y = self.robot_pose[:2]
@@ -120,7 +122,7 @@ class PurePursuit(object):
 			bridge_start_side = (((x2 - vertical_point[0])*(y1 - vertical_point[1]) - (y2 - vertical_point[0])*(x1 - vertical_point[0])) > 0)
 			robot_side = (((x2 - vertical_point[0])*(y - vertical_point[1]) - (y2 - vertical_point[0])*(x - vertical_point[0])) > 0)
 			is_robot_over_goal = (bridge_start_side != robot_side)
-			k = self.fake_d / math.sqrt(1 + m**2)
+			k = dis / math.sqrt(1 + m**2)
 			if delta_x < 0:
 				k = -k
 			x += k
@@ -130,9 +132,9 @@ class PurePursuit(object):
 			robot_side = (y > y2)
 			is_robot_over_goal = (bridge_start_side != robot_side)
 			if delta_y > 0:
-				y = y + self.fake_d
+				y = y + dis
 			else:
-				y = y - self.fake_d
+				y = y - dis
 		return [x, y], is_robot_over_goal
 
 ################################### Publish topic methods ###################################
@@ -372,17 +374,19 @@ class PurePursuit(object):
 				self.is_change_next_idx = False
 		# Insert new fake waypoint, and remove waypoints which have been visited
 		waypoints_to_search = [fake_robot_waypoint] + wp[cwpi : ]
-		# Not use
-		if self.lookahead_distance < self.distance_from_path:
+
+		if self.lookahead_distance < self.distance_from_path: # Not use
 			x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.distance_from_path)
 		else:
 			x_intersect, y_intersect = self.circleIntersect(self.robot_pose, waypoints_to_search[0], waypoints_to_search[1], self.lookahead_distance)
-		if (x_intersect, y_intersect) == (None, None):
+		if (x_intersect, y_intersect) == (None, None): # if there is not intersect with the line segement
 			if self.start:
 				if self.distanceBtwnPoints(x_robot, y_robot, wp[cwpi][0], wp[cwpi][1]) <= self.lookahead_distance :
 					#rospy.loginfo("[%s]Arrived waypoint : %d" %(self.node_name, cwpi))
 					if not self.bridge_mode:
 						self.current_waypoint_index = self.current_waypoint_index + 1
 						self.start = False
+			parrallel_pose, _ = self.get_parallel_fake_goal(self.robot_pose[0], self.robot_pose[1], fake_robot_waypoint[0], fake_robot_waypoint[1], self.lookahead_distance)
+			fake_robot_waypoint = (parrallel_pose[0], parrallel_pose[1])
 			return fake_robot_waypoint
 		return (x_intersect, y_intersect)
