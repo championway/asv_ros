@@ -21,6 +21,10 @@ import math
 from scipy.stats import norm
 import numpy as np
 
+import rospkg
+import yaml
+import os
+
 class LocailizationGPSImu(object):
     def __init__(self):
         self.node_name = rospy.get_name()
@@ -43,6 +47,13 @@ class LocailizationGPSImu(object):
         self.long_orig = rospy.get_param('~longitude', 0.0)
         self.utm_orig = fromLatLong(self.lat_orig, self.long_orig)
         self.imu_rotate = rospy.get_param('~imu_rotate',np.pi/2)
+
+        rospack = rospkg.RosPack()
+        self.imu_param_path = os.path.join(rospack.get_path('asv_config'), "calibration/imu.yaml")
+        self.imu_param = None
+
+        with open (self.imu_param_path, 'r') as file:
+            self.imu_param = yaml.safe_load(file)
 
         # Service
         self.srv_imu_offset = rospy.Service('~imu_offset', SetValue, self.cb_srv_imu_offest)
@@ -86,7 +97,7 @@ class LocailizationGPSImu(object):
         roll = tf.transformations.euler_from_quaternion(q)[0]
         pitch = tf.transformations.euler_from_quaternion(q)[1]
         yaw = tf.transformations.euler_from_quaternion(q)[2]
-        yaw = yaw + self.imu_rotate
+        yaw = yaw + self.imu_rotate - float(self.imu_param["imu"])
 
         if self.start == False:
             self.start = True
