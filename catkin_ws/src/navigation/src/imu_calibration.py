@@ -52,7 +52,7 @@ class IMUCalibration():
 		
 
 		rospy.Subscriber("/ASV/odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-		rospy.Subscriber("/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
 		
 	def imu_cb(self, msg):
 		if self.start and not self.end:
