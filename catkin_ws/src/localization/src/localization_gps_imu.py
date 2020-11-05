@@ -97,7 +97,8 @@ class LocailizationGPSImu(object):
         roll = tf.transformations.euler_from_quaternion(q)[0]
         pitch = tf.transformations.euler_from_quaternion(q)[1]
         yaw = tf.transformations.euler_from_quaternion(q)[2]
-        yaw = yaw + self.imu_rotate + float(self.imu_param["imu"])
+        yaw = yaw + self.imu_rotate - float(self.imu_param["imu"])
+        # yaw = yaw + self.imu_rotate - 0.7
 
         if self.start == False:
             self.start = True

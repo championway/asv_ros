@@ -10,7 +10,7 @@ from geometry_msgs.msg import PoseArray, Pose, PoseStamped, Point
 from visualization_msgs.msg import Marker, MarkerArray
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
-from std_msgs.msg import UInt32
+from std_msgs.msg import UInt32, String
 from dynamic_reconfigure.server import Server
 from control.cfg import lookaheadConfig
 from asv_msgs.msg import WayPoint, RobotGoal
@@ -43,11 +43,17 @@ class NAVIGATION():
 		self.pre_pose = []
 		self.bridge_mode = False
 
+		self.satellite_avg = 0
+		self.satellite_curr = 0
+
+		self.log_string = ""
+
 		rospy.loginfo("[%s] Initializing " %(self.node_name))
 		
 		# self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
 		self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
 		self.pub_fake_goal = rospy.Publisher("fake_goal",Marker, queue_size=1)
+		self.pub_log_str = rospy.Publisher("log_str",String, queue_size=1)
 		self.path_srv = rospy.Service("set_path", SetRobotPath, self.path_cb)
 		self.reset_srv = rospy.Service("reset_goals", SetBool, self.reset_cb)
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
@@ -56,7 +62,8 @@ class NAVIGATION():
 		self.purepursuit.set_lookahead(2.2)
 
 		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-		rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		rospy.Subscriber("/mavros/global_position/raw/satellites", UInt32, self.satellite_cb, queue_size = 1, buff_size = 2**24)
+		# rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
 		
 	def imu_cb(self, msg):
 		quat = (msg.orientation.x,\
@@ -69,6 +76,10 @@ class NAVIGATION():
 		while angle < -np.pi:
 			angle = angle + 2*np.pi
 		self.imu_angle = angle
+
+	def satellite_cb(self, msg):
+		self.satellite_curr = msg.data
+		
 
 	def publish_fake_goal(self, x, y):
 		marker = Marker()
@@ -102,6 +113,12 @@ class NAVIGATION():
 				msg.pose.pose.orientation.z,\
 				msg.pose.pose.orientation.w)
 		_, _, yaw = tf.transformations.euler_from_quaternion(quat)
+
+		while yaw >= np.pi:
+			yaw = yaw - 2*np.pi
+		while yaw < -np.pi:
+			yaw = yaw + 2*np.pi
+		self.imu_angle = yaw
 
 		if len(self.goals) == 0 or not self.get_path: # if the robot haven't recieve any goal
 			return
@@ -138,11 +155,17 @@ class NAVIGATION():
 
 			if is_robot_over_goal:
 				if self.legal_angle():
-					self.over_bridge_counter = self.over_bridge_counter + 1
+					if self.satellite_curr >= int(self.satellite_avg) - 1 or True:
+						self.over_bridge_counter = self.over_bridge_counter + 1
+						self.log_string = "over bridge, leagal angle, satellite"
+					else:
+						self.log_string = "over bridge, leagal angle, " + str(self.satellite_curr) + "," + str(self.satellite_avg)
 				else:
 					self.over_bridge_counter = 0
+					self.log_string = "over bridge, illeagal angle"
 			else:
 				self.over_bridge_counter = 0
+				self.log_string = "not over the bridge"
 
 			if self.over_bridge_counter > 3:
 				if not (not self.cycle and self.purepursuit.current_waypoint_index == len(self.purepursuit.waypoints) - 1):
@@ -152,9 +175,15 @@ class NAVIGATION():
 				self.purepursuit.current_waypoint_index = self.purepursuit.current_waypoint_index + 1
 
 		else:
+			self.log_string = "not under bridge"
 			self.bridge_mode = False
 			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
 			rg.robot = msg.pose.pose
+
+			if self.satellite_avg == 0:
+				self.satellite_avg = self.satellite_curr
+			else:
+				self.satellite_avg = (self.satellite_avg*3 + self.satellite_curr)/4.
 
 		self.purepursuit.bridge_mode = self.bridge_mode
 		self.pub_robot_goal.publish(rg)
@@ -166,6 +195,9 @@ class NAVIGATION():
 		# 	self.publish_lookahead(self.robot_position, self.final_goal[-1])
 		# else:
 		# 	self.publish_lookahead(self.robot_position, pursuit_point)
+		ss = String()
+		ss.data = self.log_string
+		self.pub_log_str.publish(ss)
 
 	def legal_angle(self):
 		if self.pre_pose != []:
