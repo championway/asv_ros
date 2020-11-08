@@ -34,6 +34,7 @@ class NAVIGATION():
 		self.goal = self.final_goal
 		self.robot_position = None
 		self.cycle = rospy.get_param("~cycle", True)
+		self.gazebo = rospy.get_param("~gazebo", False)
 
 		self.over_bridge_counter = 0
 		self.satellite_list = []
@@ -138,6 +139,7 @@ class NAVIGATION():
 				rg.goal.position.x, rg.goal.position.y = self.goals[-1].waypoint.position.x, self.goals[-1].waypoint.position.y
 				rg.robot = msg.pose.pose
 				rg.only_angle.data = False
+				rg.mode.data = "normal"
 				self.pub_robot_goal.publish(rg)
 			return
 
@@ -146,6 +148,7 @@ class NAVIGATION():
 		# if AUV is under the bridge
 		if self.full_goals[self.purepursuit.current_waypoint_index - 1].bridge_start.data:
 			self.bridge_mode = True
+			rg.mode.data = "bridge"
 			fake_goal, is_robot_over_goal = self.purepursuit.get_parallel_fake_goal()
 			if fake_goal is None:
 				return
@@ -155,7 +158,7 @@ class NAVIGATION():
 
 			if is_robot_over_goal:
 				if self.legal_angle():
-					if self.satellite_curr >= int(self.satellite_avg) - 1 or True:
+					if self.satellite_curr >= int(self.satellite_avg) - 1 or self.gazebo:
 						self.over_bridge_counter = self.over_bridge_counter + 1
 						self.log_string = "over bridge, leagal angle, satellite"
 					else:
@@ -175,6 +178,7 @@ class NAVIGATION():
 				self.purepursuit.current_waypoint_index = self.purepursuit.current_waypoint_index + 1
 
 		else:
+			rg.mode.data = "normal"
 			self.log_string = "not under bridge"
 			self.bridge_mode = False
 			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]

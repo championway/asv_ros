@@ -35,6 +35,7 @@ class IMUCalibration():
 		self.odom_slope = 0.
 
 		self.calibrate_value = 0.
+		self.gazebo = rospy.get_param("~gazebo", False)
 
 		rospack = rospkg.RosPack()
 		self.imu_param_path = os.path.join(rospack.get_path('asv_config'), "calibration/imu.yaml")
@@ -52,7 +53,12 @@ class IMUCalibration():
 		
 
 		rospy.Subscriber("/ASV/odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
-		# rospy.Subscriber("/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		if self.gazebo:
+			rospy.loginfo("Gazebo")
+			rospy.Subscriber("/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
+		else:
+			rospy.loginfo("Not Gazebo")
+			rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
 		
 	def imu_cb(self, msg):
 		if self.start and not self.end:
@@ -84,20 +90,20 @@ class IMUCalibration():
 
 		self.odom = [msg.pose.pose.position.x, msg.pose.pose.position.y]
 
-		if self.start and not self.end:
-			while angle >= np.pi:
-				angle = angle - 2*np.pi
-			while angle < -np.pi:
-				angle = angle + 2*np.pi
-			if self.imu_cnt > 0:
-				if abs(angle - self.imu_avg) < self.imu_threshold: # prevent noise
-					self.imu_cnt += 1
-					self.imu_sum += angle
-					self.imu_avg = self.imu_sum / self.imu_cnt
-			else: # first data
-				self.imu_cnt += 1
-				self.imu_sum += angle
-				self.imu_avg = self.imu_sum / self.imu_cnt
+		# if self.start and not self.end:
+		# 	while angle >= np.pi:
+		# 		angle = angle - 2*np.pi
+		# 	while angle < -np.pi:
+		# 		angle = angle + 2*np.pi
+		# 	if self.imu_cnt > 0:
+		# 		if abs(angle - self.imu_avg) < self.imu_threshold: # prevent noise
+		# 			self.imu_cnt += 1
+		# 			self.imu_sum += angle
+		# 			self.imu_avg = self.imu_sum / self.imu_cnt
+		# 	else: # first data
+		# 		self.imu_cnt += 1
+		# 		self.imu_sum += angle
+		# 		self.imu_avg = self.imu_sum / self.imu_cnt
 
 	def reset_cb(self, req):
 		if req.data == True:

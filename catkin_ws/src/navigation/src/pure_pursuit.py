@@ -117,11 +117,17 @@ class PurePursuit(object):
 		if delta_x != 0: # if not vertical
 			m = (y2 - y1)/(x2 - x1)
 
-			vertical_point = [x2 - m, y2 + 1] # slope = ((y2 + 1) - y2)/((x2 - m) - x2) = -1/m
-			# ((b.X - a.X)*(c.Y - a.Y) - (b.Y - a.Y)*(c.X - a.X)) > 0
-			bridge_start_side = (((x2 - vertical_point[0])*(y1 - vertical_point[1]) - (y2 - vertical_point[0])*(x1 - vertical_point[0])) > 0)
-			robot_side = (((x2 - vertical_point[0])*(y - vertical_point[1]) - (y2 - vertical_point[0])*(x - vertical_point[0])) > 0)
-			is_robot_over_goal = (bridge_start_side != robot_side)
+			a = np.array([x1, y1])
+			b = np.array([x2, y2])
+			c = np.array([x, y])
+			ba = a - b
+			bc = c - b
+			cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+			print(cosine_angle)
+			angle = np.degrees(np.arccos(cosine_angle))
+
+			is_robot_over_goal = (angle > 90.)
+			
 			k = dis / math.sqrt(1 + m**2)
 			if delta_x < 0:
 				k = -k

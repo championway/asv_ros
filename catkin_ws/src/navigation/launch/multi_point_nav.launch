@@ -16,6 +16,7 @@
         </node>
         <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>
+            <param name="gazebo" value="$(arg gazebo)"/>
         </node>
     </group>
 

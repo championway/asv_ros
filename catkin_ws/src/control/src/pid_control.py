@@ -41,7 +41,7 @@ class Robot_PID():
 		self.station_keeping_dis = 3.5 # meters
 		self.frame_id = 'map'
 		self.goal = None
-		self.pid_parent = ["pos", "ang"]
+		self.pid_parent = ["pos", "ang", "pos_bridge", "ang_bridge"]
 		self.pid_child = ["kp", "ki", "kd"]
 		rospack = rospkg.RosPack()
 		self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid.yaml")
@@ -62,6 +62,9 @@ class Robot_PID():
 		
 		self.pos_control = PID_control("Position")
 		self.ang_control = PID_control("Angular")
+
+		self.pos_bridge_control = PID_control("Position_Bridge")
+		self.ang_bridge_control = PID_control("Angular_Bridge")
 
 		self.set_pid_param()
 
@@ -91,12 +94,19 @@ class Robot_PID():
 		goal_distance = self.get_distance(self.robot_position, self.goal)
 		goal_angle = self.get_goal_angle(yaw, self.robot_position, self.goal)
 		
+		pos_output, ang_output = 0, 0
 		if goal_distance < self.station_keeping_dis:
 			# rospy.loginfo("Station Keeping")
 			# pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
-			pos_output, ang_output = self.control(goal_distance, goal_angle)
+			if (msg.mode.data == "bridge"):
+				pos_output, ang_output = self.bridge_control(goal_distance, goal_angle)
+			else:
+				pos_output, ang_output = self.control(goal_distance, goal_angle)
 		else:
-			pos_output, ang_output = self.control(goal_distance, goal_angle)
+			if (msg.mode.data == "bridge"):
+				pos_output, ang_output = self.bridge_control(goal_distance, goal_angle)
+			else:
+				pos_output, ang_output = self.control(goal_distance, goal_angle)
 
 		cmd_msg = MotorCmd()
 		if not msg.only_angle.data: # for navigation
@@ -117,6 +127,17 @@ class Robot_PID():
 
 		# -1 = -180/180 < output/180 < 180/180 = 1
 		ang_output = self.alpha_a*(self.ang_control.output/180.)
+		return pos_output, ang_output
+
+	def bridge_control(self, goal_distance, goal_angle):
+		self.pos_bridge_control.update(goal_distance)
+		self.ang_bridge_control.update(goal_angle)
+
+		# pos_output will always be positive
+		pos_output = self.pos_constrain(self.alpha_p*(-self.pos_bridge_control.output/self.dis4constV))
+
+		# -1 = -180/180 < output/180 < 180/180 = 1
+		ang_output = self.alpha_a*(self.ang_bridge_control.output/180.)
 		return pos_output, ang_output
 
 	def station_keeping(self, goal_distance, goal_angle):
@@ -195,6 +216,14 @@ class Robot_PID():
 		# self.pos_station_control.SetPoint = 0.0
 		# self.ang_station_control.SetPoint = 0.0
 
+		self.pos_bridge_control.setSampleTime(1)
+		self.ang_bridge_control.setSampleTime(1)
+		# self.pos_station_control.setSampleTime(1)
+		# self.ang_station_control.setSampleTime(1)
+
+		self.pos_bridge_control.SetPoint = 0.0
+		self.ang_bridge_control.SetPoint = 0.0
+
 	def get_goal_angle(self, robot_yaw, robot, goal):
 		robot_angle = np.degrees(robot_yaw)
 		p1 = [robot[0], robot[1]]
@@ -249,9 +278,18 @@ class Robot_PID():
 		self.ang_control.setKp(self.pid_param['ang']['kp'])
 		self.ang_control.setKi(self.pid_param['ang']['ki'])
 		self.ang_control.setKd(self.pid_param['ang']['kd'])
+
+		self.pos_bridge_control.setKp(self.pid_param['pos_bridge']['kp'])
+		self.pos_bridge_control.setKi(self.pid_param['pos_bridge']['ki'])
+		self.pos_bridge_control.setKd(self.pid_param['pos_bridge']['kd'])
+		self.ang_bridge_control.setKp(self.pid_param['ang_bridge']['kp'])
+		self.ang_bridge_control.setKi(self.pid_param['ang_bridge']['ki'])
+		self.ang_bridge_control.setKd(self.pid_param['ang_bridge']['kd'])
 		rospy.loginfo("PID parameters:")
 		print("pos: ", self.pid_param['pos'])
 		print("ang: ", self.pid_param['ang'])
+		print("pos_bridge: ", self.pid_param['pos_bridge'])
+		print("ang_bridge: ", self.pid_param['ang_bridge'])
 
 	def pos_pid_cb(self, config, level):
 		print("Position: [Kp]: {Kp}   [Ki]: {Ki}   [Kd]: {Kd}\n".format(**config))
