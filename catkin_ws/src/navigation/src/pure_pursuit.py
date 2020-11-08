@@ -123,7 +123,10 @@ class PurePursuit(object):
 			ba = a - b
 			bc = c - b
 			cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
-			print(cosine_angle)
+			if cosine_angle > 1.:
+				cosine_angle = 1.0
+			elif cosine_angle < -1.:
+				cosine_angle = -1.
 			angle = np.degrees(np.arccos(cosine_angle))
 
 			is_robot_over_goal = (angle > 90.)

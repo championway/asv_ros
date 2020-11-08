@@ -9,6 +9,7 @@ import time
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from sensor_msgs.msg import Imu, NavSatFix
 import urllib2
+from std_msgs.msg import String
 
 class CHECK_INTERNET():
     def __init__(self):
@@ -21,20 +22,25 @@ class CHECK_INTERNET():
 
         self.time_start = rospy.get_time()
         self.time_threshold = rospy.get_param("~sec", 4.0)
+        self.pub_log_str = rospy.Publisher("internet/log_str",String, queue_size=1)
 
         rospy.Timer(rospy.Duration(1.2), self.event_cb)
 
     def event_cb(self, event):
+        ss = String()
         if self.internet_on(self.url):
             self.time_start = rospy.get_time()
         if (rospy.get_time() - self.time_start) > self.time_threshold:
+            ss.data = "No Internet"
             if not self.send_no_internet:
                 print("No Internet")
                 self.srv_no_internet()
         else:
+            ss.data = "Got Internet"
             if self.send_no_internet:
                 print("Got Internet")
                 self.srv_got_internet()
+        self.pub_log_str.publish(ss)
 
     def internet_on(self, url):
         try:

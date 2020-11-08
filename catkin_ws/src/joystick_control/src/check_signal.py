@@ -8,6 +8,7 @@ import math
 import time
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from sensor_msgs.msg import Imu, NavSatFix
+from std_msgs.msg import String
 
 class CHECK_SIGNAL():
     def __init__(self):
@@ -23,6 +24,7 @@ class CHECK_SIGNAL():
         
         # self.pub_lookahead = rospy.Publisher("lookahead_point", Marker, queue_size = 1)
         # self.pub_robot_goal = rospy.Publisher("robot_goal", RobotGoal, queue_size = 1)
+        self.pub_log_str = rospy.Publisher("signal/log_str",String, queue_size=1)
 
         self.gps_sub = rospy.Subscriber("/mavros/global_position/raw/fix", NavSatFix, self.gps_cb, queue_size = 1, buff_size = 2**24)
         self.imu_sub = rospy.Subscriber("/mavros/imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
@@ -32,12 +34,16 @@ class CHECK_SIGNAL():
     def event_cb(self, event):
         if not self.start:
             return
+        ss = String()
         if (rospy.get_time() - self.time_start) > self.time_threshold:
+            ss.data = "No signal"
             if not self.send_no_signal:
                 self.srv_no_signal()
         else:
+            ss.data = "Got signal"
             if self.send_no_signal:
                 self.srv_got_signal()
+        self.pub_log_str.publish(ss)
 
     def gps_cb(self, msg):
         if not self.start:
