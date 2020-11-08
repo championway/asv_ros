@@ -1,2 +1,4 @@
 ang: {kd: 0.01, ki: 0.0, kp: 0.57}
+ang_bridge: {kd: 0.028, ki: 0.0, kp: 0.57}
 pos: {kd: 0.01, ki: 0.0, kp: 0.25}
+pos_bridge: {kd: 0.01, ki: 0.0, kp: 0.25}
