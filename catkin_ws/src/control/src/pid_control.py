@@ -28,6 +28,8 @@ from PID import PID_control
 class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
+		self.small_angle_thres = 0.35
+		self.angle_mag = 1/2.5
 		self.dis4constV = 5. # Distance for constant velocity
 		self.alpha_p = 1.2
 		self.alpha_a = 1.3
@@ -99,11 +101,21 @@ class Robot_PID():
 			# rospy.loginfo("Station Keeping")
 			# pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
 			if (msg.mode.data == "bridge"):
+				if (abs(goal_angle) < self.small_angle_thres):
+					bool neg = (goal_angle < 0)
+					goal_angle = self.small_angle_thres*((abs(goal_angle)/self.small_angle_thres)**self.angle_mag)
+					if neg:
+						goal_angle = -goal_angle
 				pos_output, ang_output = self.bridge_control(goal_distance, goal_angle)
 			else:
 				pos_output, ang_output = self.control(goal_distance, goal_angle)
 		else:
 			if (msg.mode.data == "bridge"):
+				if (abs(goal_angle) < self.small_angle_thres):
+					bool neg = (goal_angle < 0)
+					goal_angle = self.small_angle_thres*((abs(goal_angle)/self.small_angle_thres)*self.angle_mag)
+					if neg:
+						goal_angle = -goal_angle
 				pos_output, ang_output = self.bridge_control(goal_distance, goal_angle)
 			else:
 				pos_output, ang_output = self.control(goal_distance, goal_angle)
