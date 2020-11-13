@@ -102,7 +102,7 @@ class Robot_PID():
 			# pos_output, ang_output = self.station_keeping(goal_distance, goal_angle)
 			if (msg.mode.data == "bridge"):
 				if (abs(goal_angle) < self.small_angle_thres):
-					bool neg = (goal_angle < 0)
+					neg = (goal_angle < 0)
 					goal_angle = self.small_angle_thres*((abs(goal_angle)/self.small_angle_thres)**self.angle_mag)
 					if neg:
 						goal_angle = -goal_angle
@@ -112,7 +112,7 @@ class Robot_PID():
 		else:
 			if (msg.mode.data == "bridge"):
 				if (abs(goal_angle) < self.small_angle_thres):
-					bool neg = (goal_angle < 0)
+					neg = (goal_angle < 0)
 					goal_angle = self.small_angle_thres*((abs(goal_angle)/self.small_angle_thres)*self.angle_mag)
 					if neg:
 						goal_angle = -goal_angle
