@@ -36,8 +36,6 @@ class Robot_PID():
 		self.pos_ctrl_max = 3
 		self.pos_ctrl_min = 0.0
 		self.alpha_v = 1.0
-		self.trim_left_v = 1.0
-		self.trim_right_v = 1.0
 		# self.pos_station_max = 0.8
 		# self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 2.5
