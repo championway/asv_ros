@@ -75,6 +75,7 @@ class JoyMapper(object):
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
         status.navigate = self.navigate
+	rospy.loginfo(self.motor_msg.right, status.right, self.motor_msg.left, status.left)
         
         self.pub_status.publish(status)
         if self.gazebo:
