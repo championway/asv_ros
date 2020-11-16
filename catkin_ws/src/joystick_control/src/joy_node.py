@@ -5,7 +5,7 @@ import math
 from sensor_msgs.msg import Joy
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.msg import MotorCmd, Heading, ControlCmd, Status
-from asv_msgs.srv import SetCmd, SetCmdRequest, SetCmdResponse
+from asv_msgs.srv import SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse
 
 from robotx_gazebo.msg import UsvDrive
 
@@ -40,10 +40,15 @@ class JoyMapper(object):
         self.navigate = False
         self.useVJoystick = False
         self.pre_ControlMsg = ControlCmd()
+        self.trim_left_v = 1.0
+        self.trim_right_v = 1.0
 
         self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
         self.estop_srv = rospy.Service("estop", SetBool, self.estop_cb)
         self.gui_cmd_srv = rospy.Service("gui_cmd", SetCmd, self.gui_cmd_cb)
+        
+        self.trim_left_srv = rospy.Service("trim_left", SetValue, self.trim_left_cb)
+        self.trim_right_srv = rospy.Service("trim_right", SetValue, self.trim_right_cb)
 
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd, self.cbCmd, queue_size=1)
@@ -64,8 +69,8 @@ class JoyMapper(object):
             self.motor_msg.horizontal = -0.5
 
         status = Status()
-        status.right = self.motor_msg.right
-        status.left = self.motor_msg.left
+        status.right = self.motor_msg.right * self.trim_right_v
+        status.left = self.motor_msg.left * self.trim_left_v
         status.horizontal = self.motor_msg.horizontal
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
@@ -74,11 +79,23 @@ class JoyMapper(object):
         self.pub_status.publish(status)
         if self.gazebo:
             motor_msg = UsvDrive()
-            motor_msg.right = -self.motor_msg.left
-            motor_msg.left = self.motor_msg.right
+            motor_msg.right = -self.motor_msg.left * self.trim_left_v
+            motor_msg.left = self.motor_msg.right * self.trim_right_v
             self.pub_motor_cmd.publish(motor_msg)
         else:
             self.pub_motor_cmd.publish(self.motor_msg)
+            
+    def trim_left_cb(self, req):
+        res = SetValueResponse()
+        self.trim_left_v = req.value
+        res.success = True
+        return res
+	
+    def trim_right_cb(self, req):
+        res = SetValueResponse()
+        self.trim_right_v = req.value
+        res.success = True
+        return res
 
     def cbCmd(self, cmd_msg):
         if not self.emergencyStop and self.autoMode:
