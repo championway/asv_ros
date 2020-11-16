@@ -75,6 +75,7 @@ class JoyMapper(object):
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
         status.navigate = self.navigate
+        print(status.right, self.motor_msg.right, self.trim_right_v, status.left, self.motor_msg.left, self.trim_left_v)
         
         self.pub_status.publish(status)
         if self.gazebo:
