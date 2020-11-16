@@ -2,11 +2,13 @@
 import rospy
 import math
 
+import yaml
 from sensor_msgs.msg import Joy
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.msg import MotorCmd, Heading, ControlCmd, Status
-from asv_msgs.srv import SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse
-
+from asv_msgs.srv import SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse, SetString, SetStringResponse
+import rospkg
+import os
 from robotx_gazebo.msg import UsvDrive
 
 class JoyMapper(object):
@@ -40,16 +42,27 @@ class JoyMapper(object):
         self.navigate = False
         self.useVJoystick = False
         self.pre_ControlMsg = ControlCmd()
+        self.alpha_v = 1.0
         self.trim_left_v = 1.0
         self.trim_right_v = 1.0
+
+        self.trim_parent = ["right", "left"]
+        self.param_srv = rospy.Service("trim_config", SetString, self.trim_cb)
+        rospack = rospkg.RosPack()
+        self.trim_param_path = os.path.join(rospack.get_path('asv_config'), "calibration/motor_trim.yaml")
+        self.trim_param = None
+
+        with open (self.trim_param_path, 'r') as file:
+            self.trim_param = yaml.safe_load(file)
+
+        self.set_trim_param()
 
         self.no_signal = rospy.Service("no_signal", SetBool, self.no_signal_cb)
         self.estop_srv = rospy.Service("estop", SetBool, self.estop_cb)
         self.gui_cmd_srv = rospy.Service("gui_cmd", SetCmd, self.gui_cmd_cb)
         
-        self.trim_left_srv = rospy.Service("trim_left", SetValue, self.trim_left_cb)
-        self.trim_right_srv = rospy.Service("trim_right", SetValue, self.trim_right_cb)
-
+        self.alpha_srv = rospy.Service("alphaV", SetValue, self.alpha_cb)
+        
         # Subscriptions
         self.sub_cmd_drive = rospy.Subscriber("cmd_drive",MotorCmd, self.cbCmd, queue_size=1)
         self.sub_joy = rospy.Subscriber("joy", Joy, self.cbJoy, queue_size=1)
@@ -69,39 +82,52 @@ class JoyMapper(object):
             self.motor_msg.horizontal = -0.5
 
         status = Status()
-        status.right = self.motor_msg.right * self.trim_right_v
-        status.left = self.motor_msg.left * self.trim_left_v
+        status.right = max(min(self.motor_msg.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
+        status.left = max(min(self.motor_msg.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
         status.horizontal = self.motor_msg.horizontal
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
         status.navigate = self.navigate
-        print(status.right, self.motor_msg.right, self.trim_right_v, status.left, self.motor_msg.left, self.trim_left_v)
+        # print(self.trim_right_v, self.trim_left_v)
         
         self.pub_status.publish(status)
         if self.gazebo:
             motor_msg = UsvDrive()
-            motor_msg.right = -self.motor_msg.left * self.trim_left_v
-            motor_msg.left = self.motor_msg.right * self.trim_right_v
+            motor_msg.right = -status.left
+            motor_msg.left = status.right
             self.pub_motor_cmd.publish(motor_msg)
         else:
             self.pub_motor_cmd.publish(self.motor_msg)
-            
-    def trim_left_cb(self, req):
+
+    def alpha_cb(self, req):
         res = SetValueResponse()
-        self.trim_left_v = req.value
-        ss = ""
-        ss = "Trim Right: " + str(req.value)
-        rospy.loginfo(ss)
+        self.alpha_v = req.value
         res.success = True
         return res
-	
-    def trim_right_cb(self, req):
-        res = SetValueResponse()
-        self.trim_right_v = req.value
-        ss = ""
-        ss = "Trim Right: " + str(req.value)
-        rospy.loginfo(ss)
-        res.success = True
+            
+    def set_trim_param(self):
+        self.trim_left_v = float(self.trim_param['left'])
+        self.trim_right_v = float(self.trim_param['right'])
+
+    def trim_cb(self, req):
+        s = req.str
+        ss = s.split('/')
+        string_valid = False
+        if len(ss) == 2:
+            if ss[0] in self.trim_parent:
+                try:
+                    string_valid = True
+                    self.trim_param[ss[0]] = float(ss[1])
+                    with open(self.trim_param_path, "w") as file:
+                        yaml.dump(self.trim_param, file)
+                    self.set_trim_param()
+                except:
+                    pass
+        res = SetStringResponse()
+        if string_valid:
+            res.success = True
+        else:
+            res.success = False
         return res
 
     def cbCmd(self, cmd_msg):
