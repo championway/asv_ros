@@ -36,6 +36,8 @@ class Robot_PID():
 		self.pos_ctrl_max = 3
 		self.pos_ctrl_min = 0.0
 		self.alpha_v = 1.0
+		self.trim_left_v = 1.0
+		self.trim_right_v = 1.0
 		# self.pos_station_max = 0.8
 		# self.pos_station_min = -0.8
 		self.cmd_ctrl_max = 2.5
@@ -56,6 +58,8 @@ class Robot_PID():
 
 		self.alpha_srv = rospy.Service("alphaV", SetValue, self.alpha_cb)
 		self.param_srv = rospy.Service("param", SetString, self.param_cb)
+		self.trim_left_srv = rospy.Service("trim_left", SetValue, self.trim_left_cb)
+		self.trim_right_srv = rospy.Service("trim_right", SetValue, self.trim_right_cb)
 
 		self.pub_cmd = rospy.Publisher("cmd_drive", MotorCmd, queue_size = 1)
 		rospy.Subscriber('robot_goal', RobotGoal, self.robot_goal_cb, queue_size = 1, buff_size = 2**24)
@@ -122,8 +126,8 @@ class Robot_PID():
 
 		cmd_msg = MotorCmd()
 		if not msg.only_angle.data: # for navigation
-			cmd_msg.right = self.cmd_constarin(self.alpha_v * pos_output + self.alpha_v/2.5 * ang_output)
-			cmd_msg.left = self.cmd_constarin(self.alpha_v * pos_output - self.alpha_v/2.5 * ang_output)
+			cmd_msg.right = self.cmd_constarin(self.alpha_v * (pos_output * self.trim_right_v) + self.alpha_v/2.5 * (ang_output * self.trim_right_v))
+			cmd_msg.left = self.cmd_constarin(self.alpha_v * (pos_output * self.trim_left_v) - self.alpha_v/2.5 * (ang_output * self.trim_left_v))
 		else: # if only for rotation, instead of moving forward
 			cmd_msg.right = self.cmd_constarin(ang_output)
 			cmd_msg.left = self.cmd_constarin(ang_output)
@@ -171,6 +175,18 @@ class Robot_PID():
 	def alpha_cb(self, req):
 		res = SetValueResponse()
 		self.alpha_v = req.value
+		res.success = True
+		return res
+	
+	def trim_left_cb(self, req):
+		res = SetValueResponse()
+		self.trim_left_v = req.value
+		res.success = True
+		return res
+	
+	def trim_right_cb(self, req):
+		res = SetValueResponse()
+		self.trim_right_v = req.value
 		res.success = True
 		return res
 
