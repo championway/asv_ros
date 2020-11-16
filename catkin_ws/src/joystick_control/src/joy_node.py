@@ -75,7 +75,6 @@ class JoyMapper(object):
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
         status.navigate = self.navigate
-	print(self.motor_msg.right, status.right, self.motor_msg.left, status.left)
         
         self.pub_status.publish(status)
         if self.gazebo:
@@ -89,12 +88,18 @@ class JoyMapper(object):
     def trim_left_cb(self, req):
         res = SetValueResponse()
         self.trim_left_v = req.value
+        ss = ""
+        ss = "Trim Right: " + str(req.value)
+        rospy.loginfo(ss)
         res.success = True
         return res
 	
     def trim_right_cb(self, req):
         res = SetValueResponse()
         self.trim_right_v = req.value
+        ss = ""
+        ss = "Trim Right: " + str(req.value)
+        rospy.loginfo(ss)
         res.success = True
         return res
 
