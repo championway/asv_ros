@@ -81,9 +81,11 @@ class JoyMapper(object):
             self.motor_msg.left = 0
             self.motor_msg.horizontal = -0.5
 
+        self.motor_msg.right = max(min(self.motor_msg.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
+        self.motor_msg.left = max(min(self.motor_msg.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
         status = Status()
-        status.right = max(min(self.motor_msg.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
-        status.left = max(min(self.motor_msg.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
+        status.right = self.motor_msg.right
+        status.left = self.motor_msg.left
         status.horizontal = self.motor_msg.horizontal
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
