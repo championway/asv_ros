@@ -72,21 +72,25 @@ class JoyMapper(object):
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_publish)
 
     def cb_publish(self, event):
+        motor_out = MotorCmd()
+        motor_out.right = self.motor_msg.right
+        motor_out.left = self.motor_msg.left
+        motor_out.horizontal = self.motor_msg.horizontal
         if self.emergencyStop:
-            self.motor_msg.right = 0
-            self.motor_msg.left = 0
+            motor_out.right = 0
+            motor_out.left = 0
 
         if self.check_no_signal:
-            self.motor_msg.right = 0
-            self.motor_msg.left = 0
-            self.motor_msg.horizontal = -0.5
+            motor_out.right = 0
+            motor_out.left = 0
+            motor_out.horizontal = -0.5
 
-        self.motor_msg.right = max(min(self.motor_msg.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
-        self.motor_msg.left = max(min(self.motor_msg.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
+        motor_out.right = max(min(motor_out.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
+        motor_out.left = max(min(motor_out.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
         status = Status()
-        status.right = self.motor_msg.right
-        status.left = self.motor_msg.left
-        status.horizontal = self.motor_msg.horizontal
+        status.right = motor_out.right
+        status.left = motor_out.left
+        status.horizontal = motor_out.horizontal
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
         status.navigate = self.navigate
@@ -94,12 +98,12 @@ class JoyMapper(object):
         
         self.pub_status.publish(status)
         if self.gazebo:
-            motor_msg = UsvDrive()
-            motor_msg.right = -status.left
-            motor_msg.left = status.right
-            self.pub_motor_cmd.publish(motor_msg)
+            motor_usv_msg = UsvDrive()
+            motor_usv_msg.right = -status.left
+            motor_usv_msg.left = status.right
+            self.pub_motor_cmd.publish(motor_usv_msg)
         else:
-            self.pub_motor_cmd.publish(self.motor_msg)
+            self.pub_motor_cmd.publish(motor_out)
 
     def alpha_cb(self, req):
         res = SetValueResponse()

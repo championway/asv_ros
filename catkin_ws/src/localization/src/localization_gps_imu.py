@@ -40,6 +40,9 @@ class LocailizationGPSImu(object):
         self.covariance = np.zeros((36,), dtype=float)
         self.odometry = Odometry()
         self.br = tf.TransformBroadcaster()
+
+        self.IMU_MSG = None
+        self.GPS_MSG = None
         
         # param
         self.imu_offset = 0
@@ -63,33 +66,57 @@ class LocailizationGPSImu(object):
         self.pub_orig = rospy.Publisher("robot_origin", Point, queue_size=1)
 
         # Subscriber
-        sub_imu = message_filters.Subscriber("imu/data", Imu)
-        sub_gps = message_filters.Subscriber("fix", NavSatFix)
-        ats = ApproximateTimeSynchronizer((sub_imu, sub_gps), queue_size = 1, slop = 0.1)
-        ats.registerCallback(self.cb_gps_imu)
+        sub_imu_only = rospy.Subscriber("imu/data", Imu, self.cb_imu, queue_size = 1)
+        sub_gps_only = rospy.Subscriber("fix", NavSatFix, self.cb_gps, queue_size = 1)
+        
+        # sub_imu = message_filters.Subscriber("imu/data", Imu)
+        # sub_gps = message_filters.Subscriber("fix", NavSatFix)
+        # ats = ApproximateTimeSynchronizer((sub_imu, sub_gps), queue_size = 1, slop = 0.1)
+        # ats.registerCallback(self.cb_gps_imu)
 
-    def cb_gps(self, msg_gps):
+        self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_timer)
+
+    def cb_timer(self, event):
+        if self.flush_count < 10 and self.GPS_MSG is not None and self.IMU_MSG is not None:
+            # rospy.loginfo("[%s] Flush Data" %self.node_name)
+            self.flush_count = self.flush_count + 1
+            self.utm_orig = fromLatLong(self.GPS_MSG.latitude, self.GPS_MSG.longitude)
+            self.robot_origin.x = self.utm_orig.easting
+            self.robot_origin.y = self.utm_orig.northing
+            return        
+        self.pub_orig.publish(self.robot_origin)
+        self.process_gps(self.GPS_MSG)
+        self.process_imu(self.IMU_MSG)
+        self.kalman_filter()
+
+    def cb_gps(self, msg):
+        self.GPS_MSG = msg
+
+    def cb_imu(self, msg):
+        self.IMU_MSG = msg
+
+    def process_gps(self, msg_gps):
         utm_point = fromLatLong(msg_gps.latitude, msg_gps.longitude)
         self.pose.position.x = utm_point.easting - self.utm_orig.easting
         self.pose.position.y = utm_point.northing - self.utm_orig.northing
         self.pose.position.z = 0
 
 
-    def cb_imu(self, msg_imu):
+    def process_imu(self, msg_imu):
         self.pose.orientation = msg_imu.orientation
 
-    def cb_gps_imu(self, msg_imu, msg_gps):
-        if self.flush_count < 10:
-            # rospy.loginfo("[%s] Flush Data" %self.node_name)
-            self.flush_count = self.flush_count + 1
-            self.utm_orig = fromLatLong(msg_gps.latitude, msg_gps.longitude)
-            self.robot_origin.x = self.utm_orig.easting
-            self.robot_origin.y = self.utm_orig.northing
-            return        
-        self.pub_orig.publish(self.robot_origin)
-        self.cb_gps(msg_gps)
-        self.cb_imu(msg_imu)
-        self.kalman_filter()
+    # def cb_gps_imu(self, msg_imu, msg_gps):
+    #     if self.flush_count < 10:
+    #         # rospy.loginfo("[%s] Flush Data" %self.node_name)
+    #         self.flush_count = self.flush_count + 1
+    #         self.utm_orig = fromLatLong(msg_gps.latitude, msg_gps.longitude)
+    #         self.robot_origin.x = self.utm_orig.easting
+    #         self.robot_origin.y = self.utm_orig.northing
+    #         return        
+    #     self.pub_orig.publish(self.robot_origin)
+    #     self.process_gps(msg_gps)
+    #     self.process_imu(msg_imu)
+    #     self.kalman_filter()
 
     def kalman_filter(self):
 
