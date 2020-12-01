@@ -96,6 +96,8 @@ class LocailizationGPSImu(object):
         self.IMU_MSG = msg
 
     def process_gps(self, msg_gps):
+        if msg_gps is None:
+            return
         utm_point = fromLatLong(msg_gps.latitude, msg_gps.longitude)
         self.pose.position.x = utm_point.easting - self.utm_orig.easting
         self.pose.position.y = utm_point.northing - self.utm_orig.northing
