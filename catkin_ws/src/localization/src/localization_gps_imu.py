@@ -77,8 +77,10 @@ class LocailizationGPSImu(object):
         self.timer = rospy.Timer(rospy.Duration(0.2),self.cb_timer)
 
     def cb_timer(self, event):
-        if self.flush_count < 10 and self.GPS_MSG is not None and self.IMU_MSG is not None:
+        if self.flush_count < 10:
             # rospy.loginfo("[%s] Flush Data" %self.node_name)
+            if self.GPS_MSG is None or self.IMU_MSG is None:
+                return
             self.flush_count = self.flush_count + 1
             self.utm_orig = fromLatLong(self.GPS_MSG.latitude, self.GPS_MSG.longitude)
             self.robot_origin.x = self.utm_orig.easting
@@ -96,8 +98,6 @@ class LocailizationGPSImu(object):
         self.IMU_MSG = msg
 
     def process_gps(self, msg_gps):
-        if msg_gps is None:
-            return
         utm_point = fromLatLong(msg_gps.latitude, msg_gps.longitude)
         self.pose.position.x = utm_point.easting - self.utm_orig.easting
         self.pose.position.y = utm_point.northing - self.utm_orig.northing
