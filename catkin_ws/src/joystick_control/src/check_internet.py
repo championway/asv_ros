@@ -44,7 +44,7 @@ class CHECK_INTERNET():
 
     def internet_on(self, url):
         try:
-            urllib2.urlopen(url, timeout = 1)
+            urllib2.urlopen(url, timeout = self.time_threshold)
             return True
         except urllib2.URLError as err:
             return False
