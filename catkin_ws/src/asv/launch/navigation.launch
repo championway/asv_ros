@@ -8,7 +8,9 @@
     <arg name="cycle" default="True"/>
     <arg name="gui" default="True"/>
     <arg name="port" default="/dev/motor"/>
+    <arg name="baud" default="57600"/>
     <arg name="gazebo" default="false"/>
+    <arg name="g29" default="false"/>
 
     <include file="$(find localization)/launch/localization_gps_imu.launch">
         <arg name="veh" value="$(arg veh)"/>
@@ -33,6 +35,7 @@
         <arg name="veh" value="$(arg veh)"/>
         <arg name="port" value="$(arg port)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
+        <arg name="g29" value="$(arg g29)"/>
     </include>
 
 </launch>

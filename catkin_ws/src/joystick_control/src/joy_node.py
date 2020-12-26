@@ -80,7 +80,7 @@ class JoyMapper(object):
             motor_out.right = 0
             motor_out.left = 0
 
-        if self.check_no_signal:
+        if self.check_no_signal and self.autoMode:
             motor_out.right = 0
             motor_out.left = 0
             motor_out.horizontal = -0.5

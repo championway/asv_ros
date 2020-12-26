@@ -6,6 +6,7 @@
     <arg name="sec" default="4"/>
     <arg name="port" default="/dev/motor"/>
     <arg name="baud" default="57600"/>
+    <arg name="g29" default="false"/>
 
     <group ns="$(arg veh)">
         <remap from="joymapper/joy" to="joy" />
@@ -24,9 +25,20 @@
         </group>
 
         <group unless="$(arg gazebo)">
-            <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen">
-                <param name="gazebo" value="$(arg gazebo)" />
-            </node>
+            <group if="$(arg g29)">
+                <remap from="g29_joy" to="joy" />
+                <node pkg="joystick_control" type="joy_g29.py" name="joy_g29" output="screen">
+                </node>
+                <remap from="joy" to="mapping_joy" />
+                <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen">
+                    <param name="gazebo" value="$(arg gazebo)" />
+                </node>
+            </group>
+            <group unless="$(arg g29)">
+                <node pkg="joystick_control" type="joy_node.py" name="joymapper" output="screen">
+                    <param name="gazebo" value="$(arg gazebo)" />
+                </node>
+            </group>
             <node pkg="joystick_control" type="check_signal.py" name="check_signal" output="screen">
                 <param name="sec" value="$(arg sec)" />
             </node>

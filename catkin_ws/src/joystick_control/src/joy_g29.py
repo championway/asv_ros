@@ -8,9 +8,8 @@ class JoyG29(object):
     def __init__(self):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
-
         self.pub_joy = rospy.Publisher("mapping_joy", Joy, queue_size=1)
-        self.sub_joy = rospy.Subscriber("/ASV/joy", Joy, self.cbJoy, queue_size=1)
+        self.sub_joy = rospy.Subscriber("g29_joy", Joy, self.cbJoy, queue_size=1)
             
     def cbJoy(self, joy_msg):
         out_msg = Joy()
@@ -33,9 +32,18 @@ class JoyG29(object):
         # share -> start
         out_msg.buttons[7] = joy_msg.buttons[8]
         # logo -> Power
-        out_msg.buttons[8] = joy_msg.buttons[9]
-
-        out_msg.axes[1] = joy_msg.axes[1]
+        out_msg.buttons[8] = joy_msg.buttons[24]
+        # accelerator
+        out_msg.axes[1] = (joy_msg.axes[2] - joy_msg.axes[3]) / 2.
+        # steering wheel -> Left/Right Stick
+        out_msg.axes[3] = joy_msg.axes[0]
+        # up_down
+        out_msg.axes[2] = 1.
+        out_msg.axes[5] = 1.
+        if out_msg.buttons[4] == 1 and out_msg.buttons[5] == 0: # RT
+            out_msg.axes[5] = -joy_msg.axes[1]
+        elif out_msg.buttons[4] == 0 and out_msg.buttons[1] == 0: # LT
+            out_msg.axes[2] = -joy_msg.axes[1]
 
         self.pub_joy.publish(out_msg)
 
