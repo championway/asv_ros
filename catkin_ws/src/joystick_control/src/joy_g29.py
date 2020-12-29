@@ -40,9 +40,9 @@ class JoyG29(object):
         # up_down
         out_msg.axes[2] = 1.
         out_msg.axes[5] = 1.
-        if out_msg.buttons[4] == 1 and out_msg.buttons[5] == 0: # RT
+        if joy_msg.buttons[4] == 1 and joy_msg.buttons[5] == 0: # RT
             out_msg.axes[5] = -joy_msg.axes[1]
-        elif out_msg.buttons[4] == 0 and out_msg.buttons[1] == 0: # LT
+        elif joy_msg.buttons[4] == 0 and joy_msg.buttons[5] == 1: # LT
             out_msg.axes[2] = -joy_msg.axes[1]
 
         self.pub_joy.publish(out_msg)
