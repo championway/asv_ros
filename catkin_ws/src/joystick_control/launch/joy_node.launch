@@ -1,7 +1,15 @@
 <?xml version="1.0"?>
 <launch>
 	<arg name="veh" default="ASV"/>
-	<node ns="$(arg veh)" pkg="joy" type="joy_node" name="joy">
-		<param name="dev" value="/dev/input/js0"/>
-	</node>
+	<arg name="g29" default="false"/>
+	<group if="$(arg g29)">
+		<node ns="$(arg veh)" pkg="joy" type="joy_node" name="joy">
+			<param name="dev_name" value="Logitech G29 Driving Force Racing Wheel"/>
+		</node>
+	</group>
+	<group unless="$(arg g29)">
+		<node ns="$(arg veh)" pkg="joy" type="joy_node" name="joy">
+			<param name="dev_name" value="Logitech Gamepad F710"/>
+		</node>
+	</group>
 </launch>
