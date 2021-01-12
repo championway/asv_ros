@@ -26,6 +26,7 @@ class NAVIGATION():
 		self.station_keeping_dis = 1
 		self.is_station_keeping = False
 		self.start_navigation = False
+		self.over_bridge_count = 4
 		self.stop_pos = []
 		self.goals = []
 		self.full_goals = []
@@ -171,7 +172,7 @@ class NAVIGATION():
 				self.over_bridge_counter = 0
 				self.log_string = "not over the bridge"
 
-			if self.over_bridge_counter > 3:
+			if self.over_bridge_counter > self.over_bridge_count:
 				if not (not self.cycle and self.purepursuit.current_waypoint_index == len(self.purepursuit.waypoints) - 1):
 					rospy.loginfo("[%s]Arrived waypoint: %d"%("Over Bridge", self.purepursuit.current_waypoint_index))
 					if self.purepursuit.status != -1:
