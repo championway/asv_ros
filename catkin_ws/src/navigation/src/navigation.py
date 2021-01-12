@@ -158,10 +158,11 @@ class NAVIGATION():
 
 			if is_robot_over_goal:
 				if self.legal_angle():
-					if self.satellite_curr >= int(self.satellite_avg) - 1 or self.gazebo:
+					if self.satellite_curr >= int(self.satellite_avg) or self.gazebo:
 						self.over_bridge_counter = self.over_bridge_counter + 1
 						self.log_string = "over bridge, leagal angle, satellite"
 					else:
+						self.over_bridge_counter = 0
 						self.log_string = "over bridge, leagal angle, " + str(self.satellite_curr) + "," + str(self.satellite_avg)
 				else:
 					self.over_bridge_counter = 0
