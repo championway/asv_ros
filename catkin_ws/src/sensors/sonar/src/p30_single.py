@@ -8,9 +8,10 @@ class SONAR_SINGLE():
     def __init__(self):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
+        self.p30_port = rospy.get_param("~p30_port", "/dev/sonar_front")
 
         self.myPing = Ping1D()
-        self.myPing.connect_serial("/dev/ttyUSB0", 115200)
+        self.myPing.connect_serial(self.p30_port, 115200)
 
         self.pub_sonar = rospy.Publisher("sonar", SonarDataList, queue_size=1)
 
