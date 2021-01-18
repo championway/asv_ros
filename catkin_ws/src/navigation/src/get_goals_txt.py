@@ -117,13 +117,26 @@ class ROBOT_GOAL():
 				bridge_start = False
 				bridge_end = False
 				for i in range(2, len(data)):
-					value = data[i].strip()
-					if (value == "bridge_start"):
-						bridge_start = True
-						wp.bridge_start.data = True
-					elif (value == "bridge_end"):
-						bridge_end = True
-						wp.bridge_end.data = True
+					try:
+						key, value = data[i].strip().split(':')
+						if key == "bridge":
+							if value == "start":
+								bridge_start = True
+								wp.bridge_start.data = True
+							elif value == "end":
+								bridge_end = True
+								wp.bridge_end.data = True
+						elif key == "stop":
+							wp.stop_time.data = float(value)
+					except:
+						return False
+					# value = data[i].strip()
+					# if (value == "bridge_start"):
+					# 	bridge_start = True
+					# 	wp.bridge_start.data = True
+					# elif (value == "bridge_end"):
+					# 	bridge_end = True
+					# 	wp.bridge_end.data = True
 				if bridge_has_start:
 					if bridge_end:
 						bridge_has_start = False
@@ -147,6 +160,7 @@ class ROBOT_GOAL():
 			self.get_path = True
 			res.success = True
 		else:
+			rospy.loginfo("Wrong Path Data")
 			res.success = False
 		return res
 

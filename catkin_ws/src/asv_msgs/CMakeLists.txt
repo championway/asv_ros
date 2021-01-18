@@ -50,7 +50,6 @@ generate_messages(
   sensor_msgs
 )
 
-
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES asv_msgs

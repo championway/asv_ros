@@ -83,6 +83,15 @@ class Robot_PID():
 	def robot_goal_cb(self, msg):
 		self.goal = [msg.goal.position.x, msg.goal.position.y]
 		self.robot_position = [msg.robot.position.x, msg.robot.position.y]
+		
+		if msg.goal.position.x == msg.robot.position.x and msg.goal.position.y == msg.robot.position.y:
+			cmd_msg = MotorCmd()
+			cmd_msg.right = 0
+			cmd_msg.left = 0
+			self.pub_cmd.publish(cmd_msg)
+			self.publish_goal(self.goal)
+			return
+
 		quat = (msg.robot.orientation.x,\
 				msg.robot.orientation.y,\
 				msg.robot.orientation.z,\

@@ -23,6 +23,9 @@ from pure_pursuit import PurePursuit
 class NAVIGATION():
 	def __init__(self):
 		self.node_name = rospy.get_name()
+
+		self.state = "normal"
+
 		self.station_keeping_dis = 1
 		self.is_station_keeping = False
 		self.start_navigation = False
@@ -44,6 +47,10 @@ class NAVIGATION():
 		self.angle_thres = 0.85
 		self.pre_pose = []
 		self.bridge_mode = False
+
+		self.stop_list = []
+		self.stop_start_timer = rospy.get_time()
+		self.stop_end_timer = rospy.get_time()
 
 		self.satellite_avg = 0
 		self.satellite_curr = 0
@@ -67,6 +74,14 @@ class NAVIGATION():
 		rospy.Subscriber("/mavros/global_position/raw/satellites", UInt32, self.satellite_cb, queue_size = 1, buff_size = 2**24)
 		# rospy.Subscriber("imu/data", Imu, self.imu_cb, queue_size = 1, buff_size = 2**24)
 		
+	def stop_state(self, time_threshold):
+		if (rospy.get_time() - self.stop_start_timer) > time_threshold:
+			self.state = "normal"
+			return
+		rg = RobotGoal()
+		rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
+		rg.robot = msg.pose.pose
+
 	def imu_cb(self, msg):
 		quat = (msg.orientation.x,\
 				msg.orientation.y,\
@@ -132,6 +147,7 @@ class NAVIGATION():
 		if reach_goal or pursuit_point is None or is_last_idx:
 			if self.cycle:
 				# The start point is the last point of the list
+				self.stop_list = []
 				start_point = [self.goals[-1].waypoint.position.x, self.goals[-1].waypoint.position.y]
 				self.full_goals[0] = self.full_goals[-1]
 				self.purepursuit.set_goal(start_point, self.goals)
@@ -155,7 +171,7 @@ class NAVIGATION():
 				return
 			self.publish_fake_goal(fake_goal[0], fake_goal[1])
 			rg.goal.position.x, rg.goal.position.y = fake_goal[0], fake_goal[1]
-			rg.robot = msg.pose.pose
+			
 
 			if is_robot_over_goal:
 				if self.legal_angle():
@@ -184,13 +200,26 @@ class NAVIGATION():
 			self.log_string = "not under bridge"
 			self.bridge_mode = False
 			rg.goal.position.x, rg.goal.position.y = pursuit_point[0], pursuit_point[1]
-			rg.robot = msg.pose.pose
-
+			
 			if self.satellite_avg == 0:
 				self.satellite_avg = self.satellite_curr
 			else:
 				self.satellite_avg = (self.satellite_avg*3 + self.satellite_curr)/4.
 
+		if self.full_goals[self.purepursuit.current_waypoint_index - 1].stop_time.data != 0:
+			if self.purepursuit.current_waypoint_index not in self.stop_list: 
+				self.stop_list.append(self.purepursuit.current_waypoint_index)
+				self.state = "stop"
+				self.stop_start_timer = rospy.get_time()
+
+			if self.state == "stop":
+				time_threshold = self.full_goals[self.purepursuit.current_waypoint_index - 1].stop_time.data
+				if (rospy.get_time() - self.stop_start_timer) > time_threshold:
+					self.state = "normal"
+				else:
+					rg.goal.position.x, rg.goal.position.y = self.robot_position[0], self.robot_position[1]
+			
+		rg.robot = msg.pose.pose
 		self.purepursuit.bridge_mode = self.bridge_mode
 		self.pub_robot_goal.publish(rg)
 
