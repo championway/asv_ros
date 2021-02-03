@@ -204,7 +204,7 @@ class NAVIGATION():
 			if self.satellite_avg == 0:
 				self.satellite_avg = self.satellite_curr
 			else:
-				self.satellite_avg = (self.satellite_avg*3 + self.satellite_curr)/4.
+				self.satellite_avg = (self.satellite_avg*3. + self.satellite_curr)/4.
 
 		if self.full_goals[self.purepursuit.current_waypoint_index - 1].stop_time.data != 0:
 			if self.purepursuit.current_waypoint_index not in self.stop_list: 
