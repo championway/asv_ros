@@ -103,7 +103,7 @@ class PurePursuit(object):
 
 	def get_parallel_fake_goal(self, x1 = None, y1 = None, x2 = None, y2 = None, dis = None):
 		if self.current_waypoint_index == 0:
-			return None
+			return None, None
 		if x1 is None or y1 is None or x2 is None or y2 is None or dis is None:
 			x1 = self.waypoints[self.current_waypoint_index - 1][0]
 			y1 = self.waypoints[self.current_waypoint_index - 1][1]
@@ -396,6 +396,8 @@ class PurePursuit(object):
 						self.current_waypoint_index = self.current_waypoint_index + 1
 						self.start = False
 			parrallel_pose, _ = self.get_parallel_fake_goal(self.robot_pose[0], self.robot_pose[1], fake_robot_waypoint[0], fake_robot_waypoint[1], self.lookahead_distance)
+			if parrallel_pose is None:
+				return None
 			fake_robot_waypoint = (parrallel_pose[0], parrallel_pose[1])
 			return fake_robot_waypoint
 		return (x_intersect, y_intersect)
