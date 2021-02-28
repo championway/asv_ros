@@ -48,10 +48,11 @@ class Robot_PID():
 		self.pid_parent = ["pos", "ang", "pos_bridge", "ang_bridge"]
 		self.pid_child = ["kp", "ki", "kd"]
 		rospack = rospkg.RosPack()
-		if self.motor_mode == 0:
-			self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_0.yaml")
-		elif self.motor_mode == 1:
-			self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_1.yaml")
+		self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid.yaml")
+		# if self.motor_mode == 0:
+		# 	self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_0.yaml")
+		# elif self.motor_mode == 1:
+		# 	self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_1.yaml")
 		self.pid_param = None
 
 		with open (self.pid_param_path, 'r') as file:
