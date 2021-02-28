@@ -2,6 +2,7 @@ Header header
 float32 left
 float32 right
 float32 horizontal
+float32 vertical
 bool estop
 bool manual
 bool navigate

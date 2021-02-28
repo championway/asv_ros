@@ -11,6 +11,7 @@
     <arg name="baud" default="57600"/>
     <arg name="gazebo" default="false"/>
     <arg name="g29" default="false"/>
+    <arg name="motor_mode" default='0'/>
 
     <include file="$(find localization)/launch/localization_gps_imu.launch">
         <arg name="veh" value="$(arg veh)"/>
@@ -22,6 +23,7 @@
 
     <include file="$(find control)/launch/pid_control.launch">
         <arg name="veh" value="$(arg veh)"/>
+        <arg name="motor_mode" value="$(arg motor_mode)"/>
     </include>
 
     <include file="$(find navigation)/launch/multi_point_nav.launch">
@@ -36,6 +38,7 @@
         <arg name="port" value="$(arg port)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="g29" value="$(arg g29)"/>
+        <arg name="motor_mode" value="$(arg motor_mode)"/>
     </include>
 
 </launch>

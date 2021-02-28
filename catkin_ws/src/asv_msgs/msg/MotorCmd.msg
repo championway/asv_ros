@@ -3,3 +3,4 @@ Header header
 float32 left
 float32 right
 float32 horizontal
+float32 vertical

@@ -109,7 +109,8 @@ class Ui_Form(object):
         text = "{:<18}".format("[Battery]") + "%.3f V  (%.2f" %(self.battery, battery_percentage) + "%)\n"
         text += "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
         text += "{:<18}".format("[Right Motor]") + str(msg.right) + "\n"
-        text += "{:<18}".format("[Up/Down Motor]") + str(msg.horizontal) + "\n"
+        text += "{:<18}".format("[Vertical Motor]") + str(msg.vertical) + "\n"
+        text += "{:<18}".format("[Horizontal Motor]") + str(msg.horizontal) + "\n"
         if msg.estop:
             text += "{:<18}".format("[E-Stop]") + "True\n"
         else:
@@ -128,6 +129,8 @@ class Ui_Form(object):
             text += "{:<18}".format("[Waypoint]") + "Destination\n"
 
         # self.update_status_text(text)
+        # self.statusOutput.verticalScrollBar().setValue(1000)
+        # print(self.statusOutput.verticalScrollBar().value())
         self.pre_status = msg
         self.thread.run_(text)
 

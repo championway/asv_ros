@@ -17,6 +17,7 @@ class JoyMapper(object):
         rospy.loginfo("[%s] Initializing " %(self.node_name))
 
         self.gazebo = rospy.get_param("~gazebo", False)
+        self.motor_mode = rospy.get_param("~motor_mode", 0)
         if self.gazebo:
             rospy.loginfo("Using gazebo")
         else:
@@ -34,6 +35,8 @@ class JoyMapper(object):
         self.motor_msg = MotorCmd()
         self.motor_msg.right = 0
         self.motor_msg.left = 0
+        self.motor_msg.vertical = 0
+        self.motor_msg.horizontal = 0
         self.MAX = 0.6
         self.MIN = -0.6
         self.dive_MAX = 0.8
@@ -75,21 +78,29 @@ class JoyMapper(object):
         motor_out = MotorCmd()
         motor_out.right = self.motor_msg.right
         motor_out.left = self.motor_msg.left
+        motor_out.vertical = self.motor_msg.vertical
         motor_out.horizontal = self.motor_msg.horizontal
         if self.emergencyStop:
             motor_out.right = 0
             motor_out.left = 0
+            motor_out.horizontal = 0
 
         if self.check_no_signal and self.autoMode:
+            # let ASV float up when no GPS signal receive
             motor_out.right = 0
             motor_out.left = 0
-            motor_out.horizontal = -0.5
+            motor_out.horizontal = 0
+            motor_out.vertical = -0.5
 
+        # Calibration trimming left/right motor
         motor_out.right = max(min(motor_out.right * self.alpha_v  * self.trim_left_v, self.MAX), self.MIN)
         motor_out.left = max(min(motor_out.left * self.alpha_v  * self.trim_right_v, self.MAX), self.MIN)
+        
+
         status = Status()
         status.right = motor_out.right
         status.left = motor_out.left
+        status.vertical = motor_out.vertical
         status.horizontal = motor_out.horizontal
         status.manual = not self.autoMode
         status.estop = self.emergencyStop
@@ -137,12 +148,15 @@ class JoyMapper(object):
         return res
 
     def cbCmd(self, cmd_msg):
+        # From auto mode PID result
         if not self.emergencyStop and self.autoMode:
             self.motor_msg.left = -max(min(cmd_msg.right, self.MAX), self.MIN)
             self.motor_msg.right = max(min(cmd_msg.left, self.MAX), self.MIN)
+            self.motor_msg.vertical = max(min(cmd_msg.vertical, self.MAX), self.MIN)
             self.motor_msg.horizontal = max(min(cmd_msg.horizontal, self.MAX), self.MIN)
             
     def cbJoy(self, joy_msg):
+        # From joystick message
         self.processButtons(joy_msg)
         if not self.emergencyStop and not self.autoMode:
             self.joy = joy_msg
@@ -151,11 +165,16 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(self.joy.axes[1],self.joy.axes[3])
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.left = -max(min(speed + difference , self.MAX), self.MIN)
-            self.motor_msg.right = max(min(speed - difference , self.MAX), self.MIN)
+            if self.motor_mode == 0:
+                self.motor_msg.left = -max(min(speed + difference, self.MAX), self.MIN)
+                self.motor_msg.right = max(min(speed - difference, self.MAX), self.MIN)
+            elif self.motor_mode == 1:
+                self.motor_msg.left = -max(min(speed, self.MAX), self.MIN)
+                self.motor_msg.right = max(min(speed, self.MAX), self.MIN)
+                self.motor_msg.horizontal = max(min(difference , self.MAX), self.MIN)
             go_down = -(self.joy.axes[2] - 1.)/2.
             go_up = -(self.joy.axes[5] - 1.)/2.
-            self.motor_msg.horizontal = max(min((go_down - go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
+            self.motor_msg.vertical = max(min((go_down - go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
 
     def processButtons(self, joy_msg):
         # Button B
@@ -183,6 +202,8 @@ class JoyMapper(object):
                 rospy.loginfo('emergency stop activate')
                 self.motor_msg.right = 0
                 self.motor_msg.left = 0
+                self.motor_msg.horizontal = 0
+                self.motor_msg.vertical = 0
             else:
                 rospy.loginfo('emergency stop release')
 
@@ -210,6 +231,8 @@ class JoyMapper(object):
             if req.data:
                 self.motor_msg.right = 0
                 self.motor_msg.left = 0
+                self.motor_msg.horizontal = 0
+                self.motor_msg.vertical = 0
         res = SetCmdResponse()
         res.success = True
         return res
@@ -234,6 +257,7 @@ class JoyMapper(object):
         #     self.motor_msg.right = 0
         #     self.motor_msg.left = 0
 
+        # From GUI virtual joystick
         if not self.emergencyStop and not self.autoMode and self.useVJoystick:
             boat_heading_msg = Heading()
             forward = -msg.forward/100.
@@ -242,10 +266,15 @@ class JoyMapper(object):
             boat_heading_msg.phi = math.atan2(forward, right)
             speed = boat_heading_msg.speed*math.sin(boat_heading_msg.phi)
             difference = boat_heading_msg.speed*math.cos(boat_heading_msg.phi)
-            self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
-            self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            if self.motor_mode == 0:
+                self.motor_msg.right = -max(min(speed + difference , self.MAX), self.MIN)
+                self.motor_msg.left = max(min(speed - difference , self.MAX), self.MIN)
+            elif self.motor_mode == 1:
+                self.motor_msg.right = -max(min(speed, self.MAX), self.MIN)
+                self.motor_msg.left = max(min(speed, self.MAX), self.MIN)
+                self.motor_msg.horizontal = max(min(difference, self.MAX), self.MIN)
             go_up = -msg.up/100.
-            self.motor_msg.horizontal = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
+            self.motor_msg.vertical = max(min((go_up)*self.dive_MAX, self.dive_MAX), self.dive_MIN)
 
         # self.pre_ControlMsg = msg
 
@@ -269,7 +298,7 @@ class JoyMapper(object):
             rospy.loginfo("No Signal")
         else:
             self.check_no_signal = False
-            self.motor_msg.horizontal = 0
+            self.motor_msg.vertical = 0
             rospy.loginfo("Got Signal")
         res = SetBoolResponse()
         res.success = True
@@ -291,6 +320,8 @@ class JoyMapper(object):
     def on_shutdown(self):
         self.motor_msg.right = 0
         self.motor_msg.left = 0
+        self.motor_msg.vertical = 0
+        self.motor_msg.horizontal = 0
         self.pub_motor_cmd.publish(self.motor_msg)
         rospy.loginfo("shutting down [%s]" %(self.node_name))
 

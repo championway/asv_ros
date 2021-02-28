@@ -21,12 +21,15 @@ namespace asv_msgs
       _right_type right;
       typedef float _horizontal_type;
       _horizontal_type horizontal;
+      typedef float _vertical_type;
+      _vertical_type vertical;
 
     MotorCmd():
       header(),
       left(0),
       right(0),
-      horizontal(0)
+      horizontal(0),
+      vertical(0)
     {
     }
 
@@ -64,6 +67,16 @@ namespace asv_msgs
       *(outbuffer + offset + 2) = (u_horizontal.base >> (8 * 2)) & 0xFF;
       *(outbuffer + offset + 3) = (u_horizontal.base >> (8 * 3)) & 0xFF;
       offset += sizeof(this->horizontal);
+      union {
+        float real;
+        uint32_t base;
+      } u_vertical;
+      u_vertical.real = this->vertical;
+      *(outbuffer + offset + 0) = (u_vertical.base >> (8 * 0)) & 0xFF;
+      *(outbuffer + offset + 1) = (u_vertical.base >> (8 * 1)) & 0xFF;
+      *(outbuffer + offset + 2) = (u_vertical.base >> (8 * 2)) & 0xFF;
+      *(outbuffer + offset + 3) = (u_vertical.base >> (8 * 3)) & 0xFF;
+      offset += sizeof(this->vertical);
       return offset;
     }
 
@@ -104,11 +117,22 @@ namespace asv_msgs
       u_horizontal.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
       this->horizontal = u_horizontal.real;
       offset += sizeof(this->horizontal);
+      union {
+        float real;
+        uint32_t base;
+      } u_vertical;
+      u_vertical.base = 0;
+      u_vertical.base |= ((uint32_t) (*(inbuffer + offset + 0))) << (8 * 0);
+      u_vertical.base |= ((uint32_t) (*(inbuffer + offset + 1))) << (8 * 1);
+      u_vertical.base |= ((uint32_t) (*(inbuffer + offset + 2))) << (8 * 2);
+      u_vertical.base |= ((uint32_t) (*(inbuffer + offset + 3))) << (8 * 3);
+      this->vertical = u_vertical.real;
+      offset += sizeof(this->vertical);
      return offset;
     }
 
     const char * getType(){ return "asv_msgs/MotorCmd"; };
-    const char * getMD5(){ return "d425226b5ff740a226251c7fbbeed592"; };
+    const char * getMD5(){ return "7f3ae7057bce2aeb30e77c3fcbc31ba6"; };
 
   };
 

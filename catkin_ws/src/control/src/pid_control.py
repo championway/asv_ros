@@ -28,6 +28,8 @@ from PID import PID_control
 class Robot_PID():
 	def __init__(self):
 		self.node_name = rospy.get_name()
+		self.motor_mode = rospy.get_param("~motor_mode", 0)
+		rospy.loginfo("Motor Mode: " + str(self.motor_mode))
 		self.small_angle_thres = 0.35
 		self.angle_mag = 1/2.5
 		self.dis4constV = 5. # Distance for constant velocity
@@ -46,7 +48,10 @@ class Robot_PID():
 		self.pid_parent = ["pos", "ang", "pos_bridge", "ang_bridge"]
 		self.pid_child = ["kp", "ki", "kd"]
 		rospack = rospkg.RosPack()
-		self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid.yaml")
+		if self.motor_mode == 0:
+			self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_0.yaml")
+		elif self.motor_mode == 1:
+			self.pid_param_path = os.path.join(rospack.get_path('asv_config'), "pid/pid_1.yaml")
 		self.pid_param = None
 
 		with open (self.pid_param_path, 'r') as file:
@@ -85,9 +90,11 @@ class Robot_PID():
 		self.robot_position = [msg.robot.position.x, msg.robot.position.y]
 		
 		if msg.goal.position.x == msg.robot.position.x and msg.goal.position.y == msg.robot.position.y:
+			# if station keeping
 			cmd_msg = MotorCmd()
 			cmd_msg.right = 0
 			cmd_msg.left = 0
+			cmd_msg.horizontal = 0
 			self.pub_cmd.publish(cmd_msg)
 			self.publish_goal(self.goal)
 			return
@@ -130,12 +137,20 @@ class Robot_PID():
 				pos_output, ang_output = self.control(goal_distance, goal_angle)
 
 		cmd_msg = MotorCmd()
-		if not msg.only_angle.data: # for navigation
-			cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
-			cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
-		else: # if only for rotation, instead of moving forward
-			cmd_msg.right = self.cmd_constarin(ang_output)
-			cmd_msg.left = self.cmd_constarin(ang_output)
+		if self.motor_mode == 0: # three motors mode
+			if not msg.only_angle.data: # for navigation
+				cmd_msg.right = self.cmd_constarin(pos_output + ang_output)
+				cmd_msg.left = self.cmd_constarin(pos_output - ang_output)
+			else: # if only for rotation, instead of moving forward
+				cmd_msg.right = self.cmd_constarin(ang_output)
+				cmd_msg.left = self.cmd_constarin(ang_output)
+		elif self.motor_mode == 1: # four motors mode
+			if not msg.only_angle.data: # for navigation
+				cmd_msg.right = self.cmd_constarin(pos_output)
+				cmd_msg.left = self.cmd_constarin(pos_output)
+				cmd_msg.horizontal = self.cmd_constarin(ang_output)
+			else: # if only for rotation, instead of moving forward
+				cmd_msg.horizontal = self.cmd_constarin(ang_output)
 		self.pub_cmd.publish(cmd_msg)
 		self.publish_goal(self.goal)
 

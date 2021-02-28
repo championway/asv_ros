@@ -2,16 +2,18 @@
 <launch>
 	<arg name="veh" default="ASV"/>
 	<arg name="gazebo" default="true"/>
-    	<arg name="g29" default="false"/>
+	<arg name="motor_mode" default="0"/>
+	<arg name="g29" default="false"/>
 
-    	<include file="$(find joystick_control)/launch/joy_node.launch">
-    		<arg name="veh" value="$(arg veh)"/>
+	<include file="$(find joystick_control)/launch/joy_node.launch">
+		<arg name="veh" value="$(arg veh)"/>
 		<arg name="g29" value="$(arg g29)"/>
-    	</include>
-    	<include file="$(find joystick_control)/launch/joystick.launch">
+	</include>
+	<include file="$(find joystick_control)/launch/joystick.launch">
 		<arg name="veh" value="$(arg veh)"/>
 		<arg name="gazebo" value="$(arg gazebo)"/>
+		<arg name="motor_mode" value="$(arg motor_mode)"/>
 		<arg name="g29" value="$(arg g29)"/>
-    	</include>
-    
+	</include>
+
 </launch>

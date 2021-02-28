@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <launch>
     <arg name="veh" default="ASV"/>
+    <arg name="motor_mode" default="0"/>
 
     <group ns="$(arg veh)">
         <node pkg="control" type="pid_control.py" name="PID_control" output="screen" >
+        	<param name="motor_mode" value="$(arg motor_mode)"/>
         </node>
 
 	    <!-- Load dynamic reconfigure -->
