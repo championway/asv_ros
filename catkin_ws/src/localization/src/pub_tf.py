@@ -20,8 +20,8 @@ def call_back(msg):
 	# M_inv =  np.linalg.inv(M)
 	trans = tf.transformations.translation_from_matrix(M)
 	rot = tf.transformations.quaternion_from_matrix(M)
-	t = rospy.Time.from_sec(0)
-	#t = rospy.Time.now()
+	# t = rospy.Time.from_sec(0)
+	t = rospy.Time.now()
 	br.sendTransform(trans, rot, t, "/robot_base", map_id)
 
 	#quat = tf.transformations.quaternion_from_euler (-r, -p, -y)
