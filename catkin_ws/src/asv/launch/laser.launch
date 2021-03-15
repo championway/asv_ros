@@ -2,7 +2,7 @@
 <launch>
 	<arg name="serial_port" default="/dev/ttyUSB0"/>
 
-	<include file="$(find sensors)/launch/rplidar.launch">
+	<include file="$(find rplidar_ros)/launch/rplidar.launch">
 		<arg name="serial_port" value="$(arg serial_port)"/>
 	</include>
 	<include file="$(find asv)/launch/robot_tf.launch">
