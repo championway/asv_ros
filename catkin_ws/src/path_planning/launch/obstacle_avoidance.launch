@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="veh" default="ASV"/>
+    <arg name="gazebo" default="false"/>
+
+    <group ns="$(arg veh)">
+        <node pkg="path_planning" type="obstacle_avoidance" name="obstacle_avoidance" output="screen" >
+            <!-- <param name="cycle" value="$(arg cycle)"/>
+            <param name="txt_name" value="$(arg txt_name)"/>
+            <param name="gui" value="$(arg gui)"/> -->
+        </node>
+    </group>
+
+</launch>
