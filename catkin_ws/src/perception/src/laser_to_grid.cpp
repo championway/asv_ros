@@ -243,7 +243,7 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
   service = pnh.advertiseService("obstacle_srv", &Obstacle_Detection::obstacle_srv, this);
   // Publisher
   pub_cloud = pnh.advertise<sensor_msgs::PointCloud2> ("pcl_preprocess", 1);
-  pub_map = pnh.advertise<nav_msgs::OccupancyGrid> ("occupancy_grid", 1);
+  pub_map = pnh.advertise<nav_msgs::OccupancyGrid> ("/ASV/occupancy_grid", 1);
   // Subscriber
   sub_cloud = pnh.subscribe("/scan", 1, &Obstacle_Detection::cbLaser, this);
 }

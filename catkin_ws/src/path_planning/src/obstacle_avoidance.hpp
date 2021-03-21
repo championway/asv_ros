@@ -56,8 +56,8 @@ private:
   bool left;        // Follow left wall or right, true if left
   double radius;    // Look ahead distance for target
   double angle[NUM], reverse[NUM], search_angle[NUM];
-  std::string MAP_FRAME = "map";
-  std::string ROBOT_FRAME = "robot_base";
+  std::string MAP_FRAME = "/map";
+  std::string ROBOT_FRAME = "/robot_base";
 
   // ROS
   ros::NodeHandle nh_, pnh_;
@@ -81,7 +81,7 @@ private:
     res.clear();
     nav_msgs::Path planned_path;
     geometry_msgs::Pose msg_pose = msg.goal;
-    convertFrame(mat.inverse(), msg_pose);
+    convertFrame(mat, msg_pose);
     res = find_target(msg_pose.position.x, msg_pose.position.y);
 
     ros::Time END_TIME = ros::Time::now();
@@ -356,6 +356,7 @@ private:
   }
 
   void cbTimer(const ros::TimerEvent& event){
+    printf("Timer\n");
     if(use_odom){
       tf::TransformListener listener;
       tf::StampedTransform transform;
@@ -381,7 +382,7 @@ public:
     timer = pnh_.createTimer(ros::Duration(0.1), &ObstacleAvoidance::cbTimer, this);
     // Get parameters
     if (!pnh.getParam("robot_frame", ROBOT_FRAME))
-      ROBOT_FRAME = "base_link";
+      ROBOT_FRAME = "robot_base";
     if (!nh_.getParam("use_odom", use_odom))
     {
       use_odom = true;
@@ -394,7 +395,7 @@ public:
     }
     if (!pnh_.getParam("cml_verbose", cml_verbose))
     {
-      cml_verbose = true;
+      cml_verbose = false;
       ROS_INFO("[%s] cml_verbose set to true", ros::this_node::getName().c_str());
     }
     if (!pnh_.getParam("left", left))
@@ -439,7 +440,7 @@ public:
       pub_marker = pnh_.advertise<visualization_msgs::Marker>("marker", 1);
       initial_marker(marker);
       pub_serach_arr = pnh_.advertise<visualization_msgs::MarkerArray>("search_array", 1);
-      timer = pnh_.createTimer(ros::Duration(0.3), &ObstacleAvoidance::pub_marker_arr_thread, this);
+      // timer = pnh_.createTimer(ros::Duration(0.3), &ObstacleAvoidance::pub_marker_arr_thread, this);
     }
   }
 };
