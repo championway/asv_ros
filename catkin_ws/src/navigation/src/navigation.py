@@ -39,6 +39,7 @@ class NAVIGATION():
 		self.robot_position = None
 		self.cycle = rospy.get_param("~cycle", True)
 		self.gazebo = rospy.get_param("~gazebo", False)
+		self.lookahead = rospy.get_param("~lookahead", 2.2)
 
 		self.over_bridge_counter = 0
 		self.satellite_list = []
@@ -68,7 +69,7 @@ class NAVIGATION():
 		# self.lookahead_srv = Server(lookaheadConfig, self.lookahead_cb, "LookAhead")
 
 		self.purepursuit = PurePursuit()
-		self.purepursuit.set_lookahead(2.2)
+		self.purepursuit.set_lookahead(self.lookahead)
 
 		rospy.Subscriber("odometry", Odometry, self.odom_cb, queue_size = 1, buff_size = 2**24)
 		rospy.Subscriber("/mavros/global_position/raw/satellites", UInt32, self.satellite_cb, queue_size = 1, buff_size = 2**24)

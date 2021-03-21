@@ -198,7 +198,7 @@ namespace AStar{
              // Make sure within map
              if(new_x<0 or new_x>=width or new_y<0 or new_y>=height) continue;
              // Make sure walkable
-             if(map_(new_x,new_y) >= 70.) continue;
+             if(map_(new_x,new_y) >= 50.) continue;
              // Create new node
              Node* new_nodePtr = new Node(new_x, new_y, candidatePtr);
              children.push_back(*new_nodePtr);

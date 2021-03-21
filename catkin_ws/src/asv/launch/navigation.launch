@@ -21,6 +21,9 @@
         <arg name="gazebo" value="$(arg gazebo)" />
     </include>
 
+    <include file="$(find asv)/launch/robot_tf.launch">
+    </include>
+
     <include file="$(find control)/launch/pid_control.launch">
         <arg name="veh" value="$(arg veh)"/>
         <arg name="motor_mode" value="$(arg motor_mode)"/>

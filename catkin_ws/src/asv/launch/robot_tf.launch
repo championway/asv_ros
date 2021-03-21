@@ -2,7 +2,7 @@
 <launch>
 	<!-- <param name="use_sim_time" value="true"/> -->
 
-	<!-- <node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="1 0 0 0 0 0 1 robot_base base_link 100" /> -->
+	<!-- <node pkg="tf" type="static_transform_publisher" name="laser_broadcaster" args="0 0 0 0 0 0 1 robot_base laser 100" /> -->
 
 	<node pkg="localization" type="pub_tf.py" name="pub_tf" output="screen" />
 

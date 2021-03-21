@@ -1,8 +1,4 @@
 /**********************************
-Author: David Chen
-Revised by Sean Lu
-Date: 2019/03/30 
-Last update: 2019/04/01
 Point Cloud Obstacle Detection
 Subscribe: 
   /velodyne_points      (sensor_msgs/PointCloud2)
@@ -103,24 +99,24 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
 
   //Read yaml file and set costumes parameters
   if(!pnh.getParam("range_min", range_min)) range_min=0.0;
-  if(!pnh.getParam("range_max", range_max)) range_max=30.0;
+  if(!pnh.getParam("range_max", range_max)) range_max=100.0;
   if(!pnh.getParam("angle_min", angle_min)) angle_min = -180.0;
   if(!pnh.getParam("angle_max", angle_max)) angle_max = 180.0;
-  if(!pnh.getParam("height_min", height_min)) height_min = -0.3;
-  if(!pnh.getParam("height_max", height_max)) height_max = 0.5;
-  if(!pnh.getParam("robot_x_max", robot_x_max)) robot_x_max=0.05;
-  if(!pnh.getParam("robot_x_min", robot_x_min)) robot_x_min=-0.6;
-  if(!pnh.getParam("robot_y_max", robot_y_max)) robot_y_max=0.1;
-  if(!pnh.getParam("robot_y_min", robot_y_min)) robot_y_min=-0.1;
+  if(!pnh.getParam("height_min", height_min)) height_min = -0.5;
+  if(!pnh.getParam("height_max", height_max)) height_max = 1.0;
+  if(!pnh.getParam("robot_x_max", robot_x_max)) robot_x_max=0.1;
+  if(!pnh.getParam("robot_x_min", robot_x_min)) robot_x_min=-0.1;
+  if(!pnh.getParam("robot_y_max", robot_y_max)) robot_y_max=0.01;
+  if(!pnh.getParam("robot_y_min", robot_y_min)) robot_y_min=-0.01;
   if(!pnh.getParam("robot_z_max", robot_z_max)) robot_z_max=1.;
   if(!pnh.getParam("robot_z_min", robot_z_min)) robot_z_min=-1.5;
   if(!pnh.getParam("robot_frame", robot_frame)) robot_frame="/robot_base";
   if(!pnh.getParam("lidar_frame", lidar_frame)) lidar_frame="/laser";
-  if(!pnh.getParam("map_resolution", map_resolution)) map_resolution=0.3;
+  if(!pnh.getParam("map_resolution", map_resolution)) map_resolution=0.2;
   if(!pnh.getParam("obs_size", obs_size)) obs_size=2;
   if(!pnh.getParam("dilating_size", dilating_size)) dilating_size=4;
-  if(!pnh.getParam("map_size", map_size)) map_size=200;
-  if(!pnh.getParam("compute_size", compute_size)) compute_size=20;
+  if(!pnh.getParam("map_size", map_size)) map_size=300;
+  if(!pnh.getParam("compute_size", compute_size)) compute_size=60;
   // Parameter information
   ROS_INFO("[%s] Initializing ", node_name.c_str());
   ROS_INFO("[%s] Param [range_max] = %f, [range_min] = %f", node_name.c_str(), range_max, range_min);
@@ -168,7 +164,7 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
               {10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10},
             };*/
 
-  /*kernel =  {
+  kernel =  {
               {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
               {20, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20},
               {20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 30, 20},
@@ -184,7 +180,7 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
               {20, 30, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 30, 20},
               {20, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 20},
               {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
-            };*/
+            };
 
   /*kernel =  {
               {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
@@ -216,7 +212,7 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
               {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20},
             };*/
 
-  kernel =  {
+  /*kernel =  {
               {20, 20, 20, 20, 20, 20, 20, 20, 20},
               {20, 40, 40, 40, 40, 40, 40, 40, 20},
               {20, 40, 60, 60, 60, 60, 60, 40, 20},
@@ -226,7 +222,7 @@ Obstacle_Detection::Obstacle_Detection(ros::NodeHandle &n, ros::NodeHandle &pn):
               {20, 40, 60, 60, 60, 60, 60, 40, 20},
               {20, 40, 40, 40, 40, 40, 40, 40, 20},
               {20, 20, 20, 20, 20, 20, 20, 20, 20},
-            };
+            };*/
 
   /*kernel =  {
               {10, 10, 10, 10, 10, 10, 10},

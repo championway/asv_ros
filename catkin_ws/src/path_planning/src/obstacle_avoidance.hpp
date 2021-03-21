@@ -139,6 +139,10 @@ private:
     }
     grid = msg;
     grid_to_matrix(msg, map);
+
+    return;
+    
+    /*
     std::copy(std::begin(angle), std::end(angle), std::begin(search_angle));
     res = find_target();
     // Find reverse side
@@ -183,17 +187,17 @@ private:
           e_stop_cmd.request.data = true;
           e_stop.call(e_stop_cmd);
           return;
-          /*
+          
           // Publish zero point
-          geometry_msgs::PoseStamped ps;
-          planned_path.poses.clear();
-          planned_path.poses.push_back(ps);
-          planned_path.header.frame_id = (use_odom==true? MAP_FRAME: ROBOT_FRAME);
-          pub_path.publish(planned_path);
-          ros::Publisher pub_stop_cmd = nh_.advertise<std_msgs::Bool>("/husky/arrive", 1);
-          std_msgs::Bool stop_cmd; stop_cmd.data=true; pub_stop_cmd.publish(stop_cmd);
-          ros::shutdown();
-          */
+          // geometry_msgs::PoseStamped ps;
+          // planned_path.poses.clear();
+          // planned_path.poses.push_back(ps);
+          // planned_path.header.frame_id = (use_odom==true? MAP_FRAME: ROBOT_FRAME);
+          // pub_path.publish(planned_path);
+          // ros::Publisher pub_stop_cmd = nh_.advertise<std_msgs::Bool>("/husky/arrive", 1);
+          // std_msgs::Bool stop_cmd; stop_cmd.data=true; pub_stop_cmd.publish(stop_cmd);
+          // ros::shutdown();
+          
         } // End if
       }
       // Got a path with reverse side
@@ -238,6 +242,7 @@ private:
     pub_path.publish(planned_path);
     if (verbose)
       pub_marker.publish(marker);
+    */
   }
 
   // Initial marker after constructed
@@ -356,7 +361,6 @@ private:
   }
 
   void cbTimer(const ros::TimerEvent& event){
-    printf("Timer\n");
     if(use_odom){
       tf::TransformListener listener;
       tf::StampedTransform transform;
