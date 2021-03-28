@@ -12,7 +12,7 @@ from asv_msgs.msg import ControlCmd, Status
 from std_msgs.msg import Int32
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse
-from sensor_msgs.msg import Image, CompressedImage, NavSatFix, BatteryState
+from sensor_msgs.msg import Image, CompressedImage, NavSatFix, BatteryState, FluidPressure
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
 import cv2
@@ -59,6 +59,7 @@ class Ui_Form(object):
         self.dead_zone = 10
         self.battery = 0.
         self.battery_full = 16.8
+        self.fluid = 0.
         self.useVJoyStick = False
         self.pre_status = Status()
         self.cv_bridge = CvBridge()
@@ -96,6 +97,9 @@ class Ui_Form(object):
     def cbBattery(self, msg):
         self.battery = msg.voltage
 
+    def cbFluid(self, msg):
+        self.fluid = msg.fluid_pressure
+
     def cbStatus(self, msg):
         # if self.pre_status.manual != msg.manual:
         #     self.manual = msg.manual
@@ -107,6 +111,7 @@ class Ui_Form(object):
         text = ""
         battery_percentage = (self.battery/self.battery_full)*100.
         text = "{:<18}".format("[Battery]") + "%.3f V  (%.2f" %(self.battery, battery_percentage) + "%)\n"
+        text += "{:<18}".format("[Fluid Pressure]") + str(self.fluid) + "\n"
         text += "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
         text += "{:<18}".format("[Right Motor]") + str(msg.right) + "\n"
         text += "{:<18}".format("[Vertical Motor]") + str(msg.vertical) + "\n"
@@ -366,7 +371,7 @@ class Ui_Form(object):
     def setupUi(self, Form):
         self.window = Form
         Form.setObjectName(_fromUtf8("Form"))
-        Form.resize(1038, 689)
+        Form.resize(1050, 750)
         self.navigateBtn = QtGui.QPushButton(Form)
         self.navigateBtn.setGeometry(QtCore.QRect(620, 50, 181, 51))
         self.navigateBtn.setObjectName(_fromUtf8("navigateBtn"))
@@ -400,7 +405,7 @@ class Ui_Form(object):
         self.updownScroll.setOrientation(QtCore.Qt.Vertical)
         self.updownScroll.setObjectName(_fromUtf8("updownScroll"))
         self.statusOutput = QtGui.QTextBrowser(Form)
-        self.statusOutput.setGeometry(QtCore.QRect(300, 510, 291, 161))
+        self.statusOutput.setGeometry(QtCore.QRect(300, 510, 291, 220))
         self.statusOutput.setObjectName(_fromUtf8("statusOutput"))
         self.updownValue = QtGui.QTextBrowser(Form)
         self.updownValue.setGeometry(QtCore.QRect(600, 640, 101, 31))
@@ -453,7 +458,7 @@ class Ui_Form(object):
         self.status_internet.setGeometry(QtCore.QRect(760, 20, 161, 17))
         self.status_internet.setObjectName(_fromUtf8("status_internet"))
         self.textEditPath = QtGui.QTextEdit(Form)
-        self.textEditPath.setGeometry(QtCore.QRect(10, 510, 281, 161))
+        self.textEditPath.setGeometry(QtCore.QRect(10, 510, 281, 220))
         self.textEditPath.setObjectName(_fromUtf8("textEditPath"))
         self.ImgTopicInput = QtGui.QTextEdit(Form)
         self.ImgTopicInput.setGeometry(QtCore.QRect(100, 350, 401, 31))
@@ -535,6 +540,7 @@ class Ui_Form(object):
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
         self.sub_nav_status = rospy.Subscriber("/ASV/pure_pursuit/status",Int32 , self.cbNavStatus, queue_size=1)
         self.sub_battery = rospy.Subscriber("/mavros/battery", BatteryState, self.cbBattery, queue_size=1)
+        self.sub_fluid = rospy.Subscriber("/mavros/imu/diff_pressure", FluidPressure, self.cbFluid, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
