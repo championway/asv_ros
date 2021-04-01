@@ -9,7 +9,7 @@
 import rospy
 from PyQt4 import QtCore, QtGui
 from asv_msgs.msg import ControlCmd, Status
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, Float64
 from std_srvs.srv import SetBool, SetBoolResponse, SetBoolRequest
 from asv_msgs.srv import SetString, SetStringResponse, SetCmd, SetCmdRequest, SetCmdResponse, SetValue, SetValueResponse
 from sensor_msgs.msg import Image, CompressedImage, NavSatFix, BatteryState, FluidPressure
@@ -57,8 +57,10 @@ class Ui_Form(object):
         self.updownCmd = 0
         self.forbackCmd = 0
         self.dead_zone = 10
-        self.battery = 0.
-        self.battery_full = 16.8
+        self.battery1 = 0.
+        self.battery1_full = 16.8
+        self.battery2 = 0.
+        self.battery2_full = 16.8
         self.fluid = 0.
         self.useVJoyStick = False
         self.pre_status = Status()
@@ -95,10 +97,12 @@ class Ui_Form(object):
         self.navStatus = msg.data
 
     def cbBattery(self, msg):
-        self.battery = msg.voltage
+        self.battery1 = msg.voltage
+        if len(msg.cell_voltage) > 0:
+            self.battery2 = msg.cell_voltage[0]
 
     def cbFluid(self, msg):
-        self.fluid = msg.fluid_pressure
+        self.fluid = msg.data
 
     def cbStatus(self, msg):
         # if self.pre_status.manual != msg.manual:
@@ -109,8 +113,10 @@ class Ui_Form(object):
         #     self.navigate = msg.navigate
         self.check_Navigate(msg.navigate)
         text = ""
-        battery_percentage = (self.battery/self.battery_full)*100.
-        text = "{:<18}".format("[Battery]") + "%.3f V  (%.2f" %(self.battery, battery_percentage) + "%)\n"
+        battery1_percentage = (self.battery1/self.battery1_full)*100.
+        battery2_percentage = (self.battery2/self.battery2_full)*100.
+        text += "{:<18}".format("[Battery 1]") + "%.3f V  (%.2f" %(self.battery1, battery1_percentage) + "%)\n"
+        text += "{:<18}".format("[Battery 2]") + "%.3f V  (%.2f" %(self.battery2, battery2_percentage) + "%)\n"
         text += "{:<18}".format("[Fluid Pressure]") + str(self.fluid) + "\n"
         text += "{:<18}".format("[Left Motor]") + str(msg.left) + "\n"
         text += "{:<18}".format("[Right Motor]") + str(msg.right) + "\n"
@@ -540,7 +546,7 @@ class Ui_Form(object):
         self.sub_status = rospy.Subscriber("/ASV/status",Status , self.cbStatus, queue_size=1)
         self.sub_nav_status = rospy.Subscriber("/ASV/pure_pursuit/status",Int32 , self.cbNavStatus, queue_size=1)
         self.sub_battery = rospy.Subscriber("/mavros/battery", BatteryState, self.cbBattery, queue_size=1)
-        self.sub_fluid = rospy.Subscriber("/mavros/imu/diff_pressure", FluidPressure, self.cbFluid, queue_size=1)
+        self.sub_fluid = rospy.Subscriber("/mavros/global_position/rel_alt", Float64, self.cbFluid, queue_size=1)
 
     def retranslateUi(self, Form):
         Form.setWindowTitle(_translate("Form", "Form", None))
