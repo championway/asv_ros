@@ -5,6 +5,7 @@
     <arg name="cycle" default="True"/>
     <arg name="gui" default="True"/>
     <arg name="gazebo" default="false"/>
+    <arg name="lookahead" default="2.5"/>
 
     <group ns="$(arg veh)">
         <remap unless="$(arg gazebo)"  from="imu/data" to="/mavros/imu/data"/>
@@ -17,6 +18,7 @@
         <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>
             <param name="gazebo" value="$(arg gazebo)"/>
+            <param name="lookahead" value="$(arg lookahead)"/>
         </node>
     </group>
 
