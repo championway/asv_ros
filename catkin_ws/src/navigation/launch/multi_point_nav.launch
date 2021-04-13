@@ -18,7 +18,7 @@
         <node pkg="navigation" type="navigation.py" name="navigation" output="screen" >
             <param name="cycle" value="$(arg cycle)"/>
             <param name="gazebo" value="$(arg gazebo)"/>
-            <!--param name="lookahead" value="$(arg lookahead)"/-->
+            <param name="lookahead" value="$(arg lookahead)"/>
         </node>
     </group>
 
