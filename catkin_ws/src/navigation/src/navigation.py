@@ -40,6 +40,7 @@ class NAVIGATION():
 		self.cycle = rospy.get_param("~cycle", True)
 		self.gazebo = rospy.get_param("~gazebo", False)
 		self.lookahead = rospy.get_param("~lookahead", 2.2)
+		rospy.loginfo("LookAhead: " + str(self.lookahead))
 
 		self.over_bridge_counter = 0
 		self.satellite_list = []
