@@ -4,7 +4,7 @@ import time
 from brping import Ping1D
 from asv_msgs.msg import SonarData, SonarDataList
 
-class SONAR_SINGLE():
+class P30_MULTI():
     def __init__(self):
         self.node_name = rospy.get_name()
         rospy.loginfo("[%s] Initializing " %(self.node_name))
@@ -90,6 +90,6 @@ class SONAR_SINGLE():
             exit()
 
 if __name__ == '__main__':
-    rospy.init_node('SONAR_SINGLE')
-    foo = SONAR_SINGLE()
+    rospy.init_node('P30_MULTI')
+    foo = P30_MULTI()
     rospy.spin()
