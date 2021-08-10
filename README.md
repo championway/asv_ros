@@ -7,7 +7,7 @@
 |[My Website](https://championway.github.io)|
 
 - If you have any question or suggestion, please feel free to contact me:
-ccpwearth@gmail.com
+ccpwearth@gmail.com (Pin-wei Chen)
 
 ## Requirements Environment
 
